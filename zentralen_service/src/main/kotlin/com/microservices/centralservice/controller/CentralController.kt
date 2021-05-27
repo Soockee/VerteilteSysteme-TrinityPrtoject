@@ -2,6 +2,7 @@ package com.microservices.centralservice.controller
 
 import com.microservices.centralservice.model.Central
 import com.microservices.centralservice.service.CentralService
+import org.springframework.amqp.core.Queue
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -23,8 +24,8 @@ class CentralController(
     fun create(
         @RequestBody central: Central
     ): Mono<Central> {
-        //val queue: Queue = Queue("projects")
-        //template.convertAndSend(queue.getName(), "kekw")
+        val queue: Queue = Queue("central")
+        template.convertAndSend(queue.getName(), "kekw")
         return centralService.create(central)
     }
 

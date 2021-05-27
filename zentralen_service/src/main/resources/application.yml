@@ -2,10 +2,10 @@ spring:
   main:
     web-application-type: reactive
   rabbitmq:
-    host: messaging_rabbitmq
+    host: rabbit_mq
     port: 5672
-    username: msCloudBois
-    password: _420this_is_madness_1337
+    #username: msCloudBois
+    #password: _420this_is_madness_1337
     #addresses: master.ms.depressive.life:5672
   r2dbc:
     host: db
