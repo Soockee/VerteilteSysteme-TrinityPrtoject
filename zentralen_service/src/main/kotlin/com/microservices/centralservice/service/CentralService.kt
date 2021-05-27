@@ -1,33 +1,32 @@
-package com.microservices.projectservice.service
+package com.microservices.centralservice.service
 
-import com.microservices.projectservice.exception.BadRequestException
-import com.microservices.projectservice.exception.NotFoundException
-import com.microservices.projectservice.model.Project
-import com.microservices.projectservice.persistence.ProjectRepository
-import org.springframework.amqp.rabbit.core.RabbitTemplate
+import com.microservices.centralservice.exception.BadRequestException
+import com.microservices.centralservice.exception.NotFoundException
+import com.microservices.centralservice.model.Central
+import com.microservices.centralservice.persistence.CentralRepository
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 import java.util.UUID
 
 @Service
-class ProjectService(
-    private val repository: ProjectRepository
+class CentralService(
+    private val repository: CentralRepository
 ) {
-    fun create(project: Project): Mono<Project> {
-        return repository.save(project)
+    fun create(central: Central): Mono<Central> {
+        return repository.save(central)
     }
 
-    fun get(id: UUID): Mono<Project> {
+    fun get(id: UUID): Mono<Central> {
         return repository
             .findById(id)
             .switchIfEmpty(Mono.error(NotFoundException()))
     }
 
     fun update(
-        id: UUID,
-        project: Project
-    ): Mono<Project> {
-        return Mono.just(project)
+            id: UUID,
+            central: Central
+    ): Mono<Central> {
+        return Mono.just(central)
             .filter { i -> i.id == id }
             .switchIfEmpty(Mono.error(BadRequestException("Given IDs do not match")))
             .flatMap { _ ->
@@ -35,8 +34,8 @@ class ProjectService(
             }
             .switchIfEmpty(Mono.error(NotFoundException()))
             .map { i ->
-                i.name = project.name
-                i.description = project.description
+                i.name = central.name
+                i.description = central.description
                 i
             }
             .flatMap { i ->
@@ -46,7 +45,7 @@ class ProjectService(
 
     fun delete(
         id: UUID
-    ): Mono<Project> {
+    ): Mono<Central> {
         return repository
             .findById(id)
             .switchIfEmpty(Mono.error(NotFoundException()))

@@ -1,11 +1,11 @@
-package com.microservices.projectservice.config
+package com.microservices.centralservice.config
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
 
 @ConfigurationProperties
 @ConstructorBinding
-data class ProjectServiceProperties(
+data class CentralServiceProperties(
     val spring: Spring
 )
 

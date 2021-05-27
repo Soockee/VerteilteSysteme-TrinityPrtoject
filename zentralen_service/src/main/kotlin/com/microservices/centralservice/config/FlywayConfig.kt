@@ -1,4 +1,4 @@
-package com.microservices.projectservice.config
+package com.microservices.centralservice.config
 
 import org.flywaydb.core.Flyway
 import org.springframework.context.annotation.Bean
@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 class FlywayConfig(
-    private val projectServiceProperties: ProjectServiceProperties
+    private val centralServiceProperties: CentralServiceProperties
 ) {
     @Bean(initMethod = "migrate")
     fun flyway(): Flyway {
@@ -14,9 +14,9 @@ class FlywayConfig(
             Flyway
                 .configure()
                 .dataSource(
-                    projectServiceProperties.spring.flyway.url,
-                    projectServiceProperties.spring.flyway.user,
-                    projectServiceProperties.spring.flyway.password
+                    centralServiceProperties.spring.flyway.url,
+                    centralServiceProperties.spring.flyway.user,
+                    centralServiceProperties.spring.flyway.password
                 )
         )
     }

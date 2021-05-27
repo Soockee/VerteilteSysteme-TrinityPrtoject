@@ -1,10 +1,10 @@
-package com.microservices.projectservice
+package com.microservices.centralservice
 
 import org.junit.jupiter.api.Test
 import org.springframework.boot.test.context.SpringBootTest
 
 @SpringBootTest
-class ProjectServiceApplicationTests {
+class CentralServiceApplicationTests {
 
     @Test
     fun contextLoads() {

@@ -1,9 +1,9 @@
-package com.microservices.projectservice.service
+package com.microservices.centralservice.service
 
-import com.microservices.projectservice.exception.BadRequestException
-import com.microservices.projectservice.exception.NotFoundException
-import com.microservices.projectservice.model.Project
-import com.microservices.projectservice.persistence.ProjectRepository
+import com.microservices.centralservice.exception.BadRequestException
+import com.microservices.centralservice.exception.NotFoundException
+import com.microservices.centralservice.model.Central
+import com.microservices.centralservice.persistence.CentralRepository
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers.any
@@ -16,13 +16,13 @@ import reactor.test.StepVerifier
 import java.util.UUID
 
 @ExtendWith(MockitoExtension::class)
-class ProjectServiceTest(
-    @Mock private val repository: ProjectRepository
+class CentralServiceTest(
+    @Mock private val repository: CentralRepository
 ) {
-    private val service = ProjectService(repository)
+    private val service = CentralService(repository)
 
-    private fun getTestIssue(id: UUID?): Project {
-        return Project(
+    private fun getTestIssue(id: UUID?): Central {
+        return Central(
             id,
             "testName",
             null
@@ -30,9 +30,9 @@ class ProjectServiceTest(
     }
 
     private fun mockRepositorySave(id: UUID) {
-        Mockito.`when`(repository.save(any<Project>())).then {
+        Mockito.`when`(repository.save(any<Central>())).then {
             val hopefullyIssue = it.arguments.first()
-            if (hopefullyIssue is Project) {
+            if (hopefullyIssue is Central) {
                 hopefullyIssue.id = id
             }
             Mono.just(hopefullyIssue)
@@ -93,7 +93,7 @@ class ProjectServiceTest(
     fun testShouldUpdate() {
         val id = UUID.randomUUID()
         val testProject = getTestIssue(id)
-        val updateIssue = Project(
+        val updateIssue = Central(
             id,
             "updatedName",
             "updatedDescription"

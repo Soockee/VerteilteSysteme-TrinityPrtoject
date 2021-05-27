@@ -1,6 +1,6 @@
-package com.microservices.projectservice
+package com.microservices.centralservice
 
-import com.microservices.projectservice.config.ProjectServiceProperties
+import com.microservices.centralservice.config.CentralServiceProperties
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.runApplication
@@ -8,9 +8,9 @@ import org.springframework.data.r2dbc.repository.config.EnableR2dbcRepositories
 
 @SpringBootApplication
 @EnableR2dbcRepositories
-@EnableConfigurationProperties(ProjectServiceProperties::class)
-class ProjectServiceApplication
+@EnableConfigurationProperties(CentralServiceProperties::class)
+class CentralServiceApplication
 
 fun main(args: Array<String>) {
-    runApplication<ProjectServiceApplication>(*args)
+    runApplication<CentralServiceApplication>(*args)
 }
