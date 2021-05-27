@@ -1,0 +1,17 @@
+# Use postgres/example user/password credentials
+version: '3.1'
+
+services:
+
+  db:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: projectservice
+      POSTGRES_USER: projectservice
+      POSTGRES_DB: projectservice
+    
+  app:
+    image: zentralen_service
+    #build: . 
+    ports:
+      - 8080:8080

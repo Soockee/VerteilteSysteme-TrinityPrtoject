@@ -1,0 +1,24 @@
+spring:
+  main:
+    web-application-type: reactive
+  rabbitmq:
+    host: messaging_rabbitmq
+    port: 5672
+    username: msCloudBois
+    password: _420this_is_madness_1337
+    #addresses: master.ms.depressive.life:5672
+  r2dbc:
+    host: project_db
+    port: 5432
+    database: projectservice
+    username: projectservice
+    password: projectservice
+    #url: r2dbc:postgresql://${spring.r2dbc.host}:${spring.r2dbc.port}/${spring.r2dbc.database}
+    url: r2dbc:postgresql://${spring.r2dbc.host}/${spring.r2dbc.database}
+      
+      
+  flyway:
+    url: jdbc:postgresql://${spring.r2dbc.host}:${spring.r2dbc.port}/${spring.r2dbc.database}
+    user: ${spring.r2dbc.username}
+    password: ${spring.r2dbc.password}
+
