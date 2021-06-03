@@ -3,6 +3,7 @@ package com.microservices.centralservice.service
 import com.microservices.centralservice.exception.BadRequestException
 import com.microservices.centralservice.exception.NotFoundException
 import com.microservices.centralservice.model.Central
+
 import com.microservices.centralservice.persistence.CentralRepository
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
@@ -55,7 +56,5 @@ class CentralService(
                     .thenReturn(i)
             }
     }
-    fun getConditions(): Mono<ConditionResponse>{
-        var conditions = repository.findAll()
-    }
+    
 }
