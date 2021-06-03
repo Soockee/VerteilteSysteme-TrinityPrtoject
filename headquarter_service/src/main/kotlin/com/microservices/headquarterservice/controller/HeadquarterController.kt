@@ -1,7 +1,9 @@
 package com.microservices.headquarterservice.controller
 
 import com.microservices.headquarterservice.model.Headquarter
+import com.microservices.headquarterservice.model.ConditionResponse
 import com.microservices.headquarterservice.service.HeadquarterService
+import com.microservices.headquarterservice.service.ConditionService
 import org.springframework.amqp.core.Queue
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -17,6 +19,7 @@ import java.util.UUID
 @RestController("HeadquarterController")
 class HeadquarterController(
         private val headquarterService: HeadquarterService,
+        private val conditionService: ConditionService,
         val template: RabbitTemplate,
 
         ) {
@@ -51,8 +54,8 @@ class HeadquarterController(
         return headquarterService.delete(id)
     }
 
-    @GetMapping("/condition/")
-    fun get(): Mono<ConditionResponse> {
-        return headquarterService.getConditions()
-    }
+  //  @GetMapping("/condition/")
+  //  fun get(): Mono<ConditionResponse> {
+   //     return conditionService.getConditions()
+  //  }
 }

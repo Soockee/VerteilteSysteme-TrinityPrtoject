@@ -11,13 +11,12 @@ import java.util.UUID
 
 import com.microservices.headquarterservice.model.ConditionResponse
 @Service
-class CentralService(
+class ConditionService(
     private val repository: HeadquarterRepository
 ){
 
 
-    fun getConditions(): Mono<ConditionResponse>{
-        var conditions = repository.findAll()
-        return null;
-    }
+    //fun getConditions(): Mono<ConditionResponse>{
+    //    var conditions = repository.findAll()
+    //}
 }

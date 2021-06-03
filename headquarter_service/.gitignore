@@ -136,4 +136,3 @@ buildNumber.properties
 target
 .project
 # End of https://www.toptal.com/developers/gitignore/api/java,kotlin,maven
-.idea/*
