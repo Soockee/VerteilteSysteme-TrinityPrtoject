@@ -50,4 +50,9 @@ class CentralController(
     ): Mono<Central> {
         return centralService.delete(id)
     }
+
+    @GetMapping("/condition/")
+    fun get(): Mono<Central> {
+        return headquarterService.getConditions()
+    }
 }
