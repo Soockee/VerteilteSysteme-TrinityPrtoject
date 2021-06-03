@@ -10,9 +10,9 @@ spring:
   r2dbc:
     host: db
     port: 5432
-    database: centralservice
-    username: centralservice
-    password: centralservice123
+    database: headquarterservice
+    username: headquarterservice
+    password: headquarterservice123
     #url: r2dbc:postgresql://${spring.r2dbc.host}:${spring.r2dbc.port}/${spring.r2dbc.database}
     url: r2dbc:postgresql://${spring.r2dbc.host}/${spring.r2dbc.database}
       
