@@ -31,22 +31,22 @@ run via bash:
 ## HTTPIE Example
 Create Project 
 ```
-http POST localhost:8080/central/ name="sample central"
+http POST localhost:8080/headquarter/ name="sample headquarter"
 ```
 
 Get Project with example id
 ```
-http GET localhost:8080/central/409ba8d0-a757-11eb-9c6b-0242ac190002
+http GET localhost:8080/headquarter/409ba8d0-a757-11eb-9c6b-0242ac190002
 ```
 
 Update Project 
 ```
-http PUT localhost:8080/central/409ba8d0-a757-11eb-9c6b-0242ac190002 name="kekw" description="hello world" id=409ba8d0-a757-11eb-9c6b-0242ac190002
+http PUT localhost:8080/headquarter/409ba8d0-a757-11eb-9c6b-0242ac190002 name="kekw" description="hello world" id=409ba8d0-a757-11eb-9c6b-0242ac190002
 ```
 
 delete Project 
 ```
-http DELETE localhost:8080/central/409ba8d0-a757-11eb-9c6b-0242ac190002 name="kekw" description="hello world" id="409ba8d0-a757-11eb-9c6b-0242ac190002"
+http DELETE localhost:8080/headquarter/409ba8d0-a757-11eb-9c6b-0242ac190002 name="kekw" description="hello world" id="409ba8d0-a757-11eb-9c6b-0242ac190002"
 ```
 
 ## Database Adminer

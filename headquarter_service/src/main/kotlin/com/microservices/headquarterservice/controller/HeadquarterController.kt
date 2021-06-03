@@ -1,8 +1,7 @@
-package com.microservices.centralservice.controller
+package com.microservices.headquarterservice.controller
 
-import com.microservices.centralservice.model.Central
-import com.microservices.headquarterservice.model.ConditionResponse
-import com.microservices.centralservice.service.CentralService
+import com.microservices.headquarterservice.model.Headquarter
+import com.microservices.headquarterservice.service.HeadquarterService
 import org.springframework.amqp.core.Queue
 import org.springframework.amqp.rabbit.core.RabbitTemplate
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -15,41 +14,41 @@ import org.springframework.web.bind.annotation.RestController
 import reactor.core.publisher.Mono
 import java.util.UUID
 
-@RestController("CentralController")
-class CentralController(
-        private val centralService: CentralService,
+@RestController("HeadquarterController")
+class HeadquarterController(
+        private val headquarterService: HeadquarterService,
         val template: RabbitTemplate,
 
         ) {
-    @PostMapping("/central/")
+    @PostMapping("/headquarter/")
     fun create(
-        @RequestBody central: Central
-    ): Mono<Central> {
+        @RequestBody headquarter: Headquarter
+    ): Mono<Headquarter> {
         val queue: Queue = Queue("central")
         template.convertAndSend(queue.getName(), "kekw")
-        return centralService.create(central)
+        return headquarterService.create(headquarter)
     }
 
     @GetMapping("/central/{id}")
     fun get(
         @PathVariable id: UUID
-    ): Mono<Central> {
-        return centralService.get(id)
+    ): Mono<Headquarter> {
+        return headquarterService.get(id)
     }
 
-    @PutMapping("/central/{id}")
+    @PutMapping("/headquarter/{id}")
     fun put(
         @PathVariable id: UUID,
-        @RequestBody central: Central
-    ): Mono<Central> {
-        return centralService.update(id, central)
+        @RequestBody headquarter: Headquarter
+    ): Mono<Headquarter> {
+        return headquarterService.update(id, headquarter)
     }
 
     @DeleteMapping("/central/{id}")
     fun delete(
         @PathVariable id: UUID
-    ): Mono<Central> {
-        return centralService.delete(id)
+    ): Mono<Headquarter> {
+        return headquarterService.delete(id)
     }
 
     @GetMapping("/condition/")

@@ -1,4 +1,4 @@
-package com.microservices.centralservice.config
+package com.microservices.headquarterservice.config
 
 import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.boot.context.properties.ConstructorBinding
@@ -10,8 +10,8 @@ data class CentralServiceProperties(
 )
 
 data class Spring(
-    val r2dbc: R2dbc,
-    val flyway: Flyway
+        val r2dbc: R2dbc,
+        val flyway: Flyway
 )
 
 data class R2dbc(

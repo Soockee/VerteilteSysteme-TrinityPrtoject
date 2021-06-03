@@ -1,4 +1,4 @@
-package com.microservices.centralservice.exception
+package com.microservices.headquarterservice.exception
 
 import org.springframework.http.HttpStatus
 import org.springframework.web.server.ResponseStatusException
