@@ -1,4 +1,4 @@
-package com.microservices.centralservice.model
+package com.microservices.headquarterservice.model
 
 import org.springframework.data.annotation.Id
 import java.util.UUID

@@ -2,9 +2,9 @@ package com.microservices.headquarterservice.service
 
 import com.microservices.headquarterservice.exception.BadRequestException
 import com.microservices.headquarterservice.exception.NotFoundException
-import com.microservices.headquarterservice.model.Central
+import com.microservices.headquarterservice.model.Headquarter
 
-import com.microservices.headquarterservice.persistence.CentralRepository
+import com.microservices.headquarterservice.persistence.HeadquarterRepository
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 import java.util.UUID

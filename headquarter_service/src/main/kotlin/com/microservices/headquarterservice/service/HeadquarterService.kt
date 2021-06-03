@@ -2,7 +2,7 @@ package com.microservices.headquarterservice.service
 
 import com.microservices.headquarterservice.exception.BadRequestException
 import com.microservices.headquarterservice.exception.NotFoundException
-import com.microservices.headquarterservice.model.Headquarter
+import com.microservices.headquarterservice.model.
 import com.microservices.headquarterservice.persistence.HeadquarterRepository
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
@@ -12,7 +12,7 @@ import java.util.UUID
 class HeadquarterService(
     private val repository: HeadquarterRepository
 ) {
-    fun create(headquarter: Headquarter): Mono<Headquarter> {
+    fun create(headquarter: Headquarter): Mono<headquarter> {
         return repository.save(headquarter)
     }
 
