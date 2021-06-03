@@ -9,9 +9,10 @@ CREATE TABLE headquarter (
 );
 
 CREATE TABLE condition (
-    conditionsId UUID NOT NULL DEFAULT uuid_generate_v1 (),
-    suppliedId UUID NOT NULL,
-    price NUMERIC(9,4),
-    negotioationTimestamp: TIMESTAMP,
-    PRIMARY KEY(conditionsId)
+    conditions_id UUID NOT NULL DEFAULT uuid_generate_v1 (),
+    supplier_id UUID NOT NULL,
+    price NUMERIC(9,4) NOT NULL,
+    negotiation_timestamp TIMESTAMP DEFAULT now (),
+
+    PRIMARY KEY(conditions_id)
 );

@@ -11,5 +11,14 @@ services:
     volumes:
       - rabbitmq_data:/data
 
+
+  adminer:
+    image: adminer:latest
+    environment:
+      ADMINER_DEFAULT_SERVER: headquarter_service_db
+      ADMINER_DEFAULT_DB_NAME: headquarterservice
+    ports:
+      - 9000:8080
+
 volumes:
   rabbitmq_data:
