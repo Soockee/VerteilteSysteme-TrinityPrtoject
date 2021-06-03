@@ -7,3 +7,11 @@ CREATE TABLE central (
 
     PRIMARY KEY(id)
 );
+
+CREATE TABLE condition (
+    conditionsId UUID NOT NULL DEFAULT uuid_generate_v1 (),
+    suppliedId UUID NOT NULL,
+    price NUMERIC(9,4),
+    negotioationTimestamp: TIMESTAMP,
+    PRIMARY KEY(conditionsId)
+);

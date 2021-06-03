@@ -55,4 +55,7 @@ class CentralService(
                     .thenReturn(i)
             }
     }
+    fun getConditions(): Mono<ConditionResponse>{
+        var conditions = repository.findAll()
+    }
 }
