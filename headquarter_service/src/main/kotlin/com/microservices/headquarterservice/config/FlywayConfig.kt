@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 class FlywayConfig(
-    private val centralServiceProperties: CentralServiceProperties
+    private val headquarterServiceProperties: HeadquarterServiceProperties
 ) {
     @Bean(initMethod = "migrate")
     fun flyway(): Flyway {
@@ -14,9 +14,9 @@ class FlywayConfig(
             Flyway
                 .configure()
                 .dataSource(
-                    centralServiceProperties.spring.flyway.url,
-                    centralServiceProperties.spring.flyway.user,
-                    centralServiceProperties.spring.flyway.password
+                    headquarterServiceProperties.spring.flyway.url,
+                    headquarterServiceProperties.spring.flyway.user,
+                    headquarterServiceProperties.spring.flyway.password
                 )
         )
     }

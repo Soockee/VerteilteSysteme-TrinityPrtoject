@@ -5,7 +5,7 @@ import org.springframework.boot.context.properties.ConstructorBinding
 
 @ConfigurationProperties
 @ConstructorBinding
-data class CentralServiceProperties(
+data class HeadquarterServiceProperties(
     val spring: Spring
 )
 
