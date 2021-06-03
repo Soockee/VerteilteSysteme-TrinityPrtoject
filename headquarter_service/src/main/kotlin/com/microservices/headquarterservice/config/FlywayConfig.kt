@@ -1,4 +1,4 @@
-package com.microservices.centralservice.config
+package com.microservices.headquarterservice.config
 
 import org.flywaydb.core.Flyway
 import org.springframework.context.annotation.Bean

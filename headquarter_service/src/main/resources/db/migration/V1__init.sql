@@ -1,6 +1,6 @@
 CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
 
-CREATE TABLE central (
+CREATE TABLE headquarter (
     id UUID NOT NULL DEFAULT uuid_generate_v1 (),
     name character varying(255) NOT NULL,
     description TEXT,

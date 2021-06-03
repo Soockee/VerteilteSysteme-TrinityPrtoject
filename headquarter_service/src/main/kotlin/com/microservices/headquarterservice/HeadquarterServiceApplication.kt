@@ -1,6 +1,6 @@
-package com.microservices.centralservice
+package com.microservices.headquarterservice
 
-import com.microservices.centralservice.config.CentralServiceProperties
+import com.microservices.headquarterservice.config.CentralServiceProperties
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.EnableConfigurationProperties
 import org.springframework.boot.runApplication
