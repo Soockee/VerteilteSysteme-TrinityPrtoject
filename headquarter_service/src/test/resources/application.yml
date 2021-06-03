@@ -1,0 +1,15 @@
+
+spring:
+  main:
+    web-application-type: reactive
+  r2dbc:
+    host: db
+    port: 5432
+    database: projectservice
+    username: projectservice
+    password: projectservice
+    url: r2dbc:h2:file:///./tmp/${spring.r2dbc.database};MODE=PostgreSQL;DB_CLOSE_DELAY=-1
+  flyway:
+    url: jdbc:h2:mem://${spring.r2dbc.host}:${spring.r2dbc.port}/${spring.r2dbc.database}
+    user: ${spring.r2dbc.username}
+    password: ${spring.r2dbc.password}
