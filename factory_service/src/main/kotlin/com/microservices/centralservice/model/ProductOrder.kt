@@ -8,5 +8,6 @@ data class ProductOrder(
     val customerId: UUID,
     val receptionTime: Long,
     var status: Status,
-    var products: List<Product>
+    var products: List<Product>,
+    var partOders: List<PartOrder>
 )
