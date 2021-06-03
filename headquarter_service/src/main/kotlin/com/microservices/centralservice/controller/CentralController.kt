@@ -1,6 +1,7 @@
 package com.microservices.centralservice.controller
 
 import com.microservices.centralservice.model.Central
+import com.microservices.headquarterservice.model.ConditionResponse
 import com.microservices.centralservice.service.CentralService
 import org.springframework.amqp.core.Queue
 import org.springframework.amqp.rabbit.core.RabbitTemplate
@@ -52,7 +53,7 @@ class CentralController(
     }
 
     @GetMapping("/condition/")
-    fun get(): Mono<Central> {
+    fun get(): Mono<ConditionResponse> {
         return headquarterService.getConditions()
     }
 }
