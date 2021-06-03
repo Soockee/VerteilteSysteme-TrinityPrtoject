@@ -1,23 +1,22 @@
-package com.microservices.centralservice.service
+package com.microservices.headquarterservice.service
 
-import com.microservices.centralservice.exception.BadRequestException
-import com.microservices.centralservice.exception.NotFoundException
-import com.microservices.centralservice.model.Central
-
-import com.microservices.centralservice.persistence.CentralRepository
+import com.microservices.headquarterservice.exception.BadRequestException
+import com.microservices.headquarterservice.exception.NotFoundException
+import com.microservices.headquarterservice.model.Headquarter
+import com.microservices.headquarterservice.persistence.HeadquarterRepository
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
 import java.util.UUID
 
 @Service
-class CentralService(
-    private val repository: CentralRepository
+class HeadquarterService(
+    private val repository: HeadquarterRepository
 ) {
-    fun create(central: Central): Mono<Central> {
-        return repository.save(central)
+    fun create(headquarter: Headquarter): Mono<Headquarter> {
+        return repository.save(headquarter)
     }
 
-    fun get(id: UUID): Mono<Central> {
+    fun get(id: UUID): Mono<Headquarter> {
         return repository
             .findById(id)
             .switchIfEmpty(Mono.error(NotFoundException()))
@@ -25,9 +24,9 @@ class CentralService(
 
     fun update(
             id: UUID,
-            central: Central
-    ): Mono<Central> {
-        return Mono.just(central)
+            headquarter: Headquarter
+    ): Mono<Headquarter> {
+        return Mono.just(headquarter)
             .filter { i -> i.id == id }
             .switchIfEmpty(Mono.error(BadRequestException("Given IDs do not match")))
             .flatMap { _ ->
@@ -35,8 +34,8 @@ class CentralService(
             }
             .switchIfEmpty(Mono.error(NotFoundException()))
             .map { i ->
-                i.name = central.name
-                i.description = central.description
+                i.name = headquarter.name
+                i.description = headquarter.description
                 i
             }
             .flatMap { i ->
@@ -46,7 +45,7 @@ class CentralService(
 
     fun delete(
         id: UUID
-    ): Mono<Central> {
+    ): Mono<Headquarter> {
         return repository
             .findById(id)
             .switchIfEmpty(Mono.error(NotFoundException()))

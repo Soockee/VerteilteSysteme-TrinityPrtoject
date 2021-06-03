@@ -1,9 +1,9 @@
-package com.microservices.centralservice.service
+package com.microservices.headquarterservice.service
 
-import com.microservices.centralservice.exception.BadRequestException
-import com.microservices.centralservice.exception.NotFoundException
-import com.microservices.centralservice.model.Central
-import com.microservices.centralservice.persistence.CentralRepository
+import com.microservices.headquarterservice.exception.BadRequestException
+import com.microservices.headquarterservice.exception.NotFoundException
+import com.microservices.headquarterservice.model.Headquarter
+import com.microservices.headquarterservice.persistence.HeadquarterRepository
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.ArgumentMatchers.any
@@ -16,13 +16,13 @@ import reactor.test.StepVerifier
 import java.util.UUID
 
 @ExtendWith(MockitoExtension::class)
-class CentralServiceTest(
-    @Mock private val repository: CentralRepository
+class HeadquarterServiceTest(
+    @Mock private val repository: HeadquarterRepository
 ) {
-    private val service = CentralService(repository)
+    private val service = HeadquarterService(repository)
 
-    private fun getTestIssue(id: UUID?): Central {
-        return Central(
+    private fun getTestIssue(id: UUID?): Headquarter {
+        return Headquarter(
             id,
             "testName",
             null
@@ -30,9 +30,9 @@ class CentralServiceTest(
     }
 
     private fun mockRepositorySave(id: UUID) {
-        Mockito.`when`(repository.save(any<Central>())).then {
+        Mockito.`when`(repository.save(any<Headquarter>())).then {
             val hopefullyIssue = it.arguments.first()
-            if (hopefullyIssue is Central) {
+            if (hopefullyIssue is Headquarter) {
                 hopefullyIssue.id = id
             }
             Mono.just(hopefullyIssue)
@@ -93,7 +93,7 @@ class CentralServiceTest(
     fun testShouldUpdate() {
         val id = UUID.randomUUID()
         val testProject = getTestIssue(id)
-        val updateIssue = Central(
+        val updateIssue = Headquarter(
             id,
             "updatedName",
             "updatedDescription"
