@@ -6,8 +6,8 @@ import java.util.*
 data class ProductOrder(
     @Id val productOrderId: UUID,
     val customerId: UUID,
-    val receptionTime: Long,
-    var status: Status,
-    var products: List<Product>,
-    var partOders: List<PartOrder>
+    val receptionTime: Long = System.currentTimeMillis(),
+    var status: Status = Status.OPEN,
+    var products: List<Product> = listOf(),
+    var partOrders: List<PartOrder> = listOf()
 )
