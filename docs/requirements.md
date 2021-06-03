@@ -1,37 +1,36 @@
 # Entitäten
 
-* Werk (locations)
-    * Produkt (product)
+* Factory
+    * Product
 
-* Support (support)
-    * Ticket (ticket)
+* Support
+    * Ticket
 
-* Lieferant
-    * Einzelteile (parts)
+* Supplier
+    * parts
 
-* Bestellungen/Aufträge (order)
+* Order 
 
-## Zentrale
+## headquarter
 
-* Verwaltung der Produkte
+* Verwaltung der Products
     
-* Verwaltung der Einzelteile
+* Verwaltung der parts
 
-## Fabrik
+## Factory
 
-## Auftrag-Message von der Zentrale
+## Auftrag-Message von der Headerquarter
 ``` json
-
-        auftrag: {
-            kundennummer: UUID
-            produkte:[
+        order: {
+            customerId: UUID
+            products:[
                 {    
-                    produktID: UUID
-                    anzahl: Number (1-n)
-                    produktionsZeit: Number (1-n seconds)
-                    einzelteile: [
-                        einzelteilID: UUID
-                        anzahl: Number (1-n)
+                    productId: UUID
+                    count: Number (1-n)
+                    productionTime: Number (1-n seconds)
+                    parts: [
+                        partId: UUID
+                        count: Number (1-n)
                     ]
                 }
             ]
@@ -41,39 +40,38 @@
 ## Auftrag in der DB
 ``` json
 {
-    auftraeage:[
+    productOrders:[
         {    
-            auftragsID: UUID,
-            kundennummer: UUID,
-            eingangsTimestamp: Number (timestamp in milliseconds),
+            productOrderId: UUID,
+            customerId: UUID,
+            receptionTime: Number (timestamp in milliseconds),
             status: enum{open, done},
-            produkte:[
+            products:[
                 {
-                    produktID: UUID,
-                    anzahl: Number (1-n),
+                    productId: UUID,
+                    count: Number (1-n),
                     status: enum{open, done},
-                    produktionsZeit: Number (1-n seconds),
-                    einzelteile: [
+                    productionTime: Number (1-n seconds),
+                    parts: [
                         {
-                            einzelteilID: UUID,
-                            anzahl: Number (1-n)
+                            partId: UUID,
+                            count: Number (1-n)
                         }
                     ]
                 }
             ],
-            bestellungen: [
+            partOrders: [
                 {
-                    orderID: UUID,
+                    partOrderId: UUID,
                     status: enum{open, done},
-                    lieferantenID: UUID,
-                    einzelteile: [
+                    supplierId: UUID,
+                    parts: [
                         {
-                            einzelteilFremdID: UUID (Die ID die beim Lieferanten hinterlegt ist),
-                            anzahl: Number (1-n),
-                            konditionsID: UUID
+                            partSupplierId: UUID (Die ID die beim Lieferanten hinterlegt ist),
+                            count: Number (1-n),
+                            conditionId: UUID
                         }
                     ]
-                    
                 }
             ]
         }
@@ -84,48 +82,44 @@
 ## Konditionen(gecached)
 ``` json
 {	
-    einzelteilID: UUID
-    konditionen:[
+    partId: UUID
+    conditions:[
         {
-            konditionsID: UUID,
-            lieferantenID: UUID,
-            preis: {Number, currency: enum{euro}},
-            einzelteilFremdID: UUID,
+            conditionsId: UUID,
+            supplierId: UUID,
+            price: {Number, currency: enum{euro}},
+            partSupplierId: UUID,
             negotiationTimestamp: Number (timestamp in milliseconds)
         }
     ]
-
 }
 ```
 
-## Bestellungs-Request an den Lieferanten
+## ProductOrder-Request an den Lieferanten
 ### Request
 ``` json
 {	
-    einzelteile:[ 
+    productOrder:[ 
         {
-    		einzelteilFremdID: UUID,
+    		partSupplierId: UUID,
     		negotiationTimestamp: Number (timestamp in milliseconds),
-    		einzelteilFremdID: UUID,
-    		anzahl: Number (1-n)
+    		count: Number (1-n)
     	}
     ]
 }
 ```
-### Response 
+### ProductOrder-Response 
 ``` json
 {
-    orderID: UUID,
+    productOrderId: UUID,
 }
 ```
 
 ## KPI-Message an die Zentrale
 ``` json
 {	
-    auftragsAnzahl seit Mitternacht: number (0-n)
-    Anzahl der fertig produzierten Waren: number(0-n)
-    
-    
+    productsCount: number (0-n) //auftragsAnzahl seit Mitternacht: number (0-n)
+    finishedProductsCount: number(0-n)
 }
 ```
 # Requirements
