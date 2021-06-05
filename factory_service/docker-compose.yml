@@ -1,17 +1,8 @@
-# Use postgres/example user/password credentials
 version: '3.1'
-
 services:
-
-  db:
-    image: postgres
-    environment:
-      POSTGRES_PASSWORD: centralservice123
-      POSTGRES_USER: centralservice
-      POSTGRES_DB: centralservice
-    
-  app:
-    image: factory_service
-    build: .
+  factory-database:
+    image: mongo
+    container_name: factory
+    restart: always
     ports:
-      - 8080:8080
+    - 27017:27017
