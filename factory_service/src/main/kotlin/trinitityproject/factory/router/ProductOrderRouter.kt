@@ -42,6 +42,9 @@ class ProductOrderRouter {
                 GET("/{id}", accept(APPLICATION_JSON), handler::getProductOrderService)
                 POST("/", accept(APPLICATION_JSON), handler::createProductOrderService)
             }
+            "/sendMessage".nest {
+                GET("/", accept(APPLICATION_JSON), handler::sendToMessageBus)
+            }
         }
     }
 }

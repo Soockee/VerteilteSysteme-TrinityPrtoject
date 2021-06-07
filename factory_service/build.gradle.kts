@@ -33,7 +33,7 @@ dependencies {
     implementation("org.springdoc:springdoc-openapi-webflux-ui:1.5.9")
     implementation("org.springdoc:springdoc-openapi-webflux-core:1.5.9")
     implementation("org.springdoc:springdoc-openapi-kotlin:1.5.9")
-
+    implementation("org.springframework.boot:spring-boot-starter-amqp")
     compileOnly("javax.servlet:javax.servlet-api")
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
