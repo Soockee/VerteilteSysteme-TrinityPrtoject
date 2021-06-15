@@ -16,16 +16,13 @@ import org.springframework.beans.factory.annotation.Value
 class HeadquarterService(
     private val repository: HeadquarterRepository,
     private val rabbitTemplate: AmqpTemplate,
+    @Value("\${microservice.rabbitmq.routingkey}")
+    val headquarterRoutingKey: String? = null,
+    @Value("\${microservice.rabbitmq.queue}")
+    val headquarterQueueName: String? = null,
+    @Value("\${microservice.rabbitmq.exchange}")
+    val headquarterExchangeName: String? = null,
 ) {
-
-    @Value("${microservice.rabbitmq.queue}")
-	val headquarterQueueName: String? = null
-
-	@Value("${microservice.rabbitmq.exchange}")
-	val headquarterExchangeName: String? = null
-	
-    @Value("${microservice.rabbitmq.routingkey}")
-	val headquarterRoutingKey: String? = null
 
     fun create(headquarter: Headquarter): Mono<Headquarter> {
         return repository.save(headquarter)

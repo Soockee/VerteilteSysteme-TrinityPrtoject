@@ -1,6 +1,5 @@
 package com.microservices.headquarterservice
 
-import com.microservices.headquarterservice.config.HeadquarterServiceProperties
 import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.context.properties.ConfigurationPropertiesScan
 import org.springframework.boot.runApplication
