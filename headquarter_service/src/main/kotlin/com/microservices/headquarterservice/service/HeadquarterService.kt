@@ -3,15 +3,30 @@ package com.microservices.headquarterservice.service
 import com.microservices.headquarterservice.exception.BadRequestException
 import com.microservices.headquarterservice.exception.NotFoundException
 import com.microservices.headquarterservice.model.Headquarter
+
+
 import com.microservices.headquarterservice.persistence.HeadquarterRepository
 import org.springframework.stereotype.Service
+import org.springframework.amqp.core.AmqpTemplate
 import reactor.core.publisher.Mono
 import java.util.UUID
+import org.springframework.beans.factory.annotation.Value
 
 @Service
 class HeadquarterService(
-    private val repository: HeadquarterRepository
+    private val repository: HeadquarterRepository,
+    private val rabbitTemplate: AmqpTemplate,
 ) {
+
+    @Value("${microservice.rabbitmq.queue}")
+	val headquarterQueueName: String? = null
+
+	@Value("${microservice.rabbitmq.exchange}")
+	val headquarterExchangeName: String? = null
+	
+    @Value("${microservice.rabbitmq.routingkey}")
+	val headquarterRoutingKey: String? = null
+
     fun create(headquarter: Headquarter): Mono<Headquarter> {
         return repository.save(headquarter)
     }
@@ -55,5 +70,7 @@ class HeadquarterService(
                     .thenReturn(i)
             }
     }
+
+
     
 }
