@@ -21,18 +21,17 @@ class HeadquarterController(
         private val headquarterService: HeadquarterService,
         private val conditionService: ConditionService,
         val template: RabbitTemplate,
-
         ) {
     @PostMapping("/headquarter/")
     fun create(
         @RequestBody headquarter: Headquarter
     ): Mono<Headquarter> {
-        val queue: Queue = Queue("central")
+        val queue: Queue = Queue("headquarter")
         template.convertAndSend(queue.getName(), "kekw")
         return headquarterService.create(headquarter)
     }
 
-    @GetMapping("/central/{id}")
+    @GetMapping("/headquarter/{id}")
     fun get(
         @PathVariable id: UUID
     ): Mono<Headquarter> {
@@ -47,7 +46,7 @@ class HeadquarterController(
         return headquarterService.update(id, headquarter)
     }
 
-    @DeleteMapping("/central/{id}")
+    @DeleteMapping("/headquarter/{id}")
     fun delete(
         @PathVariable id: UUID
     ): Mono<Headquarter> {

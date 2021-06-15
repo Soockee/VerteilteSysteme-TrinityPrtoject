@@ -2,13 +2,12 @@ package com.microservices.headquarterservice.model
 
 import org.springframework.data.annotation.Id
 import java.util.UUID
+import java.math.BigDecimal
 import java.sql.Timestamp
-import java.sql.Date
-
 
 data class ConditionResponse(
-    @Id var conditionsId: UUID?,
-    var supplierId: UUID,
-    var price: String,
-    var negotioationTimestamp: Date,
+    @Id var conditions_id: UUID?,
+    var supplier_id: UUID?,
+    var price: BigDecimal,
+    var negotioation_timestamp: Timestamp?,
 )

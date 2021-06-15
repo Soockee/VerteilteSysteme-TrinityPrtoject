@@ -22,3 +22,9 @@ spring:
     user: ${spring.r2dbc.username}
     password: ${spring.r2dbc.password}
 
+microservices:
+  rabbitmq:
+    queue: headquarter.queue
+    exchange:   headquarter.exchange
+    routingkey: headquarter.routing
+

@@ -1,6 +1,7 @@
 package com.microservices.headquarterservice.controller
 
 import com.microservices.headquarterservice.model.Condition
+import com.microservices.headquarterservice.model.ConditionResponse
 
 import com.microservices.headquarterservice.service.ConditionService
 import org.springframework.amqp.core.Queue
@@ -25,7 +26,10 @@ class ConditionController(
     fun create(
         @RequestBody condition: Condition
     ): Mono<Condition> {
-        return conditionService.create(condition)
+        var conditionResult: Mono<Condition> = conditionService.create(condition)
+        var conditionResponse: ConditionResponse = ConditionResponse(condition.conditions_id, condition.supplier_id, condition.price, condition.negotiation_timestamp)
+        conditionService.send(conditionResponse)
+        return conditionResult
     }
     @GetMapping("/conditions/")
     fun getAll(
