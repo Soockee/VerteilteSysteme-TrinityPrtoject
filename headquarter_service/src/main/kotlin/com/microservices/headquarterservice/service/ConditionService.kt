@@ -18,17 +18,13 @@ import java.sql.Timestamp
 class ConditionService(
     private val repository: ConditionRepository,
     private val rabbitTemplate: AmqpTemplate,
+    @Value("\${microservice.rabbitmq.routingkey}")
+    val headquarterRoutingKey: String? = null,
+    @Value("\${microservice.rabbitmq.queue}")
+    val headquarterQueueName: String? = null,
+    @Value("\${microservice.rabbitmq.exchange}")
+    val headquarterExchangeName: String? = null,
 ){
-
-    @Value("${microservice.rabbitmq.queue}")
-	val headquarterQueueName: String? = null
-
-	@Value("${microservice.rabbitmq.exchange}")
-	val headquarterExchangeName: String? = null
-	
-    @Value("${microservice.rabbitmq.routingkey}")
-	val headquarterRoutingKey: String? = null
-
     fun create(condition: Condition): Mono<Condition> {
         // supplier_id where does it come from
         // condition.supplier_id = ???
