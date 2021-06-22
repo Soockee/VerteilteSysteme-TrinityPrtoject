@@ -10,8 +10,8 @@ services:
       POSTGRES_USER: headquarterservice
       POSTGRES_DB: headquarterservice
     
-  app:
-    image: headquarter_service
-    build: .
-    ports:
-      - 8080:8080
+  #app:
+  #  image: headquarter_service
+  #  build: .
+  #  ports:
+  #    - 8080:8080

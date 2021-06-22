@@ -16,3 +16,12 @@ CREATE TABLE condition (
 
     PRIMARY KEY(conditions_id)
 );
+
+CREATE TABLE product (
+    product_id UUID NOT NULL DEFAULT uuid_generate_v1 (),
+    name character varying(255) NOT NULL,
+    productionTime INTEGER NOT NULL,
+    parts JSON NOT NULL,
+
+    PRIMARY KEY(product_id)
+);

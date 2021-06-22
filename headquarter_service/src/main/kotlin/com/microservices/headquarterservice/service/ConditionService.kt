@@ -11,6 +11,7 @@ import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import java.sql.Timestamp
+import java.util.*
 
 @Service
 class ConditionService(
@@ -29,8 +30,15 @@ class ConditionService(
         condition.negotiation_timestamp = Timestamp(System.currentTimeMillis());
         return repository.save(condition)
     }
+
     fun getAll(): Flux<Condition> {
         return repository.findAll()
+    }
+
+    fun getByPartId(partId: String): Flux<Condition> {
+        var condition: Flux<Condition> = repository.findAll().filter{ elem -> elem.part_id == UUID.fromString(partId) }
+        System.out.println("Ask partId: " + partId + "; result: " + condition)
+        return condition
     }
 
     fun send(condition: ConditionResponse) {

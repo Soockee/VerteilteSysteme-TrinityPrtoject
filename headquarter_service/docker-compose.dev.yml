@@ -20,5 +20,14 @@ services:
     ports:
       - 9000:8080
 
+  db:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: headquarterservice123
+      POSTGRES_USER: headquarterservice
+      POSTGRES_DB: headquarterservice
+    ports:
+      - 5432:5432
+
 volumes:
   rabbitmq_data:

@@ -21,6 +21,8 @@ data class ConditionResponse(
         var conditions_id: UUID?,
         @Serializable(with = UUIDSerializer::class)
         var supplier_id: UUID?,
+        @Serializable(with = UUIDSerializer::class)
+        var part_id: UUID?,
         @Serializable(with = BigDecimalSerializer::class)
         var price: BigDecimal,
         @Serializable(with = TimestampSerializer::class)
