@@ -13,9 +13,7 @@
 
 ## headquarter
 
-* Verwaltung der Products
-    
-* Verwaltung der parts
+!["diagram"](./img/headquarter.png)
 
 ## Factory
 
