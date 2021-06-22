@@ -1,17 +1,15 @@
 package com.microservices.headquarterservice.service
 
-import com.microservices.headquarterservice.exception.BadRequestException
-import com.microservices.headquarterservice.exception.NotFoundException
 import com.microservices.headquarterservice.model.Condition
-import com.microservices.headquarterservice.persistence.ConditionRepository
-import org.springframework.stereotype.Service
-import reactor.core.publisher.Mono
-import java.util.UUID
-
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.amqp.core.AmqpTemplate
 import com.microservices.headquarterservice.model.ConditionResponse
+import com.microservices.headquarterservice.persistence.ConditionRepository
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
+import org.springframework.amqp.core.AmqpTemplate
+import org.springframework.beans.factory.annotation.Value
+import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
+import reactor.core.publisher.Mono
 import java.sql.Timestamp
 
 @Service
@@ -36,7 +34,7 @@ class ConditionService(
     }
 
     fun send(condition: ConditionResponse) {
-		rabbitTemplate.convertAndSend(headquarterExchangeName, headquarterRoutingKey, condition);
+		rabbitTemplate.convertAndSend(headquarterExchangeName, headquarterRoutingKey, Json.encodeToString(condition));
 		System.out.println("Send msg = " + condition);
 	}
 

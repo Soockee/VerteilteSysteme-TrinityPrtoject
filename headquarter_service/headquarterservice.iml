@@ -10,9 +10,8 @@
           <option name="additionalArguments" value="-java-parameters -Xjsr305=strict" />
         </compilerSettings>
         <compilerArguments>
-          <option name="jvmTarget" value="1.8" />
-          <option name="languageVersion" value="1.4" />
-          <option name="apiVersion" value="1.4" />
+          <option name="languageVersion" value="1.5" />
+          <option name="apiVersion" value="1.5" />
           <option name="pluginOptions">
             <array>
               <option value="plugin:org.jetbrains.kotlin.allopen:annotation=org.springframework.stereotype.Component" />
@@ -26,6 +25,7 @@
           <option name="pluginClasspaths">
             <array>
               <option value="$KOTLIN_BUNDLED$/lib/allopen-compiler-plugin.jar" />
+              <option value="$KOTLIN_BUNDLED$/lib/kotlinx-serialization-compiler-plugin.jar" />
             </array>
           </option>
           <option name="errors">
@@ -107,17 +107,20 @@
     <orderEntry type="library" name="Maven: io.projectreactor.kotlin:reactor-kotlin-extensions:1.1.3" level="project" />
     <orderEntry type="library" name="Maven: io.projectreactor:reactor-core:3.4.4" level="project" />
     <orderEntry type="library" name="Maven: org.flywaydb:flyway-core:7.1.1" level="project" />
-    <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-reflect:1.4.32" level="project" />
-    <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib:1.4.32" level="project" />
-    <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib-common:1.4.32" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-reflect:1.5.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib:1.5.0" level="project" />
     <orderEntry type="library" name="Maven: org.jetbrains:annotations:13.0" level="project" />
-    <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.4.32" level="project" />
-    <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.4.32" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib-common:1.5.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.5.0" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains.kotlin:kotlin-stdlib-jdk7:1.5.0" level="project" />
     <orderEntry type="library" name="Maven: org.jetbrains.kotlinx:kotlinx-coroutines-reactor:1.4.3" level="project" />
     <orderEntry type="library" name="Maven: org.jetbrains.kotlinx:kotlinx-coroutines-core-jvm:1.4.3" level="project" />
     <orderEntry type="library" name="Maven: org.jetbrains.kotlinx:kotlinx-coroutines-reactive:1.4.3" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-databind:2.11.4" level="project" />
     <orderEntry type="library" name="Maven: com.fasterxml.jackson.core:jackson-core:2.11.4" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains.kotlinx:kotlinx-serialization-json:1.2.1" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains.kotlinx:kotlinx-serialization-json-jvm:1.2.1" level="project" />
+    <orderEntry type="library" name="Maven: org.jetbrains.kotlinx:kotlinx-serialization-core-jvm:1.2.1" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: io.r2dbc:r2dbc-postgresql:0.8.7.RELEASE" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: com.ongres.scram:client:2.1" level="project" />
     <orderEntry type="library" scope="RUNTIME" name="Maven: com.ongres.scram:common:2.1" level="project" />
