@@ -1,68 +1,54 @@
 package com.microservices.headquarterservice.model
 
+import java.util.*
+import kotlinx.serialization.*
 import kotlinx.serialization.KSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.descriptors.PrimitiveKind
-import kotlinx.serialization.descriptors.PrimitiveSerialDescriptor
-import kotlinx.serialization.descriptors.SerialDescriptor
-import kotlinx.serialization.encoding.Decoder
-import kotlinx.serialization.encoding.Encoder
-import org.springframework.data.annotation.Id
-import java.math.BigDecimal
-import java.sql.Timestamp
-import java.text.DecimalFormat
-import java.util.*
+import kotlinx.serialization.builtins.ListSerializer
+import kotlinx.serialization.descriptors.*
+import kotlinx.serialization.encoding.*
 
-@Serializable
-data class ConditionResponse(
+@Serializable(with = ConditionResponseSerializer::class)
+data class ConditionResponse(@Contextual var part_id: UUID, var conditions: List<Condition>)
 
-        @Id
-        @Serializable(with = UUIDSerializer::class)
-        var conditions_id: UUID?,
-        @Serializable(with = UUIDSerializer::class)
-        var supplier_id: UUID?,
-        @Serializable(with = UUIDSerializer::class)
-        var part_id: UUID?,
-        @Serializable(with = BigDecimalSerializer::class)
-        var price: BigDecimal,
-        @Serializable(with = TimestampSerializer::class)
-        var negotioation_timestamp: Timestamp?,
-)
+@OptIn(ExperimentalSerializationApi::class)
+@Serializer(forClass = ConditionResponse::class)
+object ConditionResponseSerializer : KSerializer<ConditionResponse> {
+    override val descriptor: SerialDescriptor =
+            buildClassSerialDescriptor("ConditionResponse") {
+                element<String>("part_id")
+                element<List<Condition>>("conditions")
+            }
 
-object UUIDSerializer : KSerializer<UUID> {
-    override fun deserialize(decoder: Decoder): UUID {
-        return UUID.fromString(decoder.decodeString())
+    override fun serialize(encoder: Encoder, value: ConditionResponse) {
+        encoder.encodeStructure(descriptor) {
+            encodeStringElement(descriptor, 0, value.part_id.toString())
+            encodeSerializableElement(
+                    descriptor, 1, ListSerializer(ConditionSerializer), value.conditions)
+        }
     }
 
-    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("UUID", PrimitiveKind.STRING)
+    override fun deserialize(decoder: Decoder): ConditionResponse {
+        return decoder.decodeStructure(descriptor) {
+            var part_id: UUID? = null
+            var conditions: List<Condition>? = null
 
-    override fun serialize(encoder: Encoder, value: UUID) {
-        return encoder.encodeString(value.toString())
-    }
-}
+            loop@ while (true) {
+                when (val index = decodeElementIndex(descriptor)) {
+                    CompositeDecoder.DECODE_DONE -> break@loop
+                    0 -> part_id = UUID.fromString(decodeStringElement(descriptor, 0))
+                    1 ->
+                            conditions =
+                                    decodeSerializableElement(
+                                            descriptor, 1, ListSerializer(ConditionSerializer))
+                    else -> throw SerializationException("Unexpected index $index")
+                }
+            }
 
-object BigDecimalSerializer : KSerializer<BigDecimal> {
-    override fun deserialize(decoder: Decoder): BigDecimal {
-        val df = DecimalFormat()
-        df.isParseBigDecimal = true
-        return df.parse(decoder.decodeString()) as BigDecimal
-    }
-
-    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("BigDecimal", PrimitiveKind.STRING)
-
-    override fun serialize(encoder: Encoder, value: BigDecimal) {
-        return encoder.encodeString(value.toString())
-    }
-}
-
-object TimestampSerializer : KSerializer<Timestamp> {
-    override fun deserialize(decoder: Decoder): Timestamp {
-        return Timestamp.valueOf(decoder.decodeString())
-    }
-
-    override val descriptor: SerialDescriptor = PrimitiveSerialDescriptor("Timestamp", PrimitiveKind.STRING)
-
-    override fun serialize(encoder: Encoder, value: Timestamp) {
-        return encoder.encodeString(value.toString())
+            ConditionResponse(
+                    requireNotNull(part_id),
+                    requireNotNull(conditions),
+            )
+        }
     }
 }

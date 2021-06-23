@@ -17,11 +17,11 @@ class HeadquarterService(
     private val repository: HeadquarterRepository,
     private val rabbitTemplate: AmqpTemplate,
     @Value("\${microservice.rabbitmq.routingkey}")
-    val headquarterRoutingKey: String? = null,
+    val headquarterRoutingKey: String,
     @Value("\${microservice.rabbitmq.queue}")
-    val headquarterQueueName: String? = null,
+    val headquarterQueueName: String,
     @Value("\${microservice.rabbitmq.exchange}")
-    val headquarterExchangeName: String? = null,
+    val headquarterExchangeName: String,
 ) {
 
     fun create(headquarter: Headquarter): Mono<Headquarter> {
