@@ -34,20 +34,13 @@ class ConditionController(
         val conditions = conditionService.getByPartId(partId)
 
         conditions.subscribe(this::printCondition)
-        // val response  = conditions.flatMap(con -> buildConditionResponse(con))
         return conditions
-        // conditionService.send(conditionResponse)
     }
 
     @GetMapping("/conditions/")
     fun getAll(): Flux<Condition> {
         logger.warn("Log conditions request")
         return conditionService.getAll()
-    }
-
-    fun buildConditionResponse(conditions: Flux<Condition>, partId: String): Mono<Void> {
-        val conditionResponse = ConditionResponse(UUID.fromString(partId), mutableListOf())
-        return Mono.empty()
     }
 
     fun printCondition(condition: Condition){

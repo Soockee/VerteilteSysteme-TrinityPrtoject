@@ -12,8 +12,8 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import java.sql.Timestamp
 import java.util.*
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 @Service
 class ConditionService(
     private val repository: ConditionRepository,
@@ -32,7 +32,7 @@ class ConditionService(
     fun create(condition: Condition): Mono<Condition> {
         // supplier_id where does it come from
         // condition.supplier_id = ???
-        condition.negotiation_timestamp = Timestamp(System.currentTimeMillis());
+        condition.negotiation_timestamp = Timestamp(System.currentTimeMillis())
         return repository.save(condition)
     }
 
@@ -44,14 +44,19 @@ class ConditionService(
     }
 
     fun getByPartId(partId: String): Flux<Condition> {
-        var condition: Flux<Condition> = repository.findAll()
-        var filtered_condition = condition.filter{ elem -> elem.part_supplier_id.toString().equals(partId)}
-        logger.warn("Ask partId: " + partId + "; result: " + filtered_condition)
-        return filtered_condition
+        var condition: Flux<Condition> = repository.findAll().filter{ elem -> elem.part_supplier_id.toString().equals(partId)}
+        var conditionResponse = ConditionResponse(UUID.fromString(partId), mutableListOf())
+        var conditionList: MutableList<Condition>? = condition.collectList().block();
+        if(!conditionList.isNullOrEmpty()){
+            conditionResponse.conditions = conditionList
+            rabbitTemplate.convertAndSend(headquarterExchangeName, headquarterRoutingKey, Json.encodeToString(conditionResponse))
+        }
+        return condition
     }
 
+
     fun send(condition: ConditionResponse) {
-		rabbitTemplate.convertAndSend(headquarterExchangeName, headquarterRoutingKey, Json.encodeToString(condition));
+		rabbitTemplate.convertAndSend(headquarterExchangeName, headquarterRoutingKey, Json.encodeToString(condition))
         logger.debug("Send msg = " + condition)
 	}
 

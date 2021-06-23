@@ -15,8 +15,9 @@ import kotlinx.serialization.encoding.*
 import org.springframework.data.annotation.*
 import org.springframework.data.annotation.Id
 
-@Serializable()
-data class Condition(
+@Serializable
+@SerialName("Condition")
+class Condition(
                 @Id var conditions_id: UUID,
                 var supplier_id: UUID,
                 var part_supplier_id: UUID,
@@ -24,6 +25,8 @@ data class Condition(
                 var currency: String,
                 var negotiation_timestamp: Timestamp,
 )
+
+
 
 object UUIDSerializer : KSerializer<UUID> {
         override fun deserialize(decoder: Decoder): UUID {

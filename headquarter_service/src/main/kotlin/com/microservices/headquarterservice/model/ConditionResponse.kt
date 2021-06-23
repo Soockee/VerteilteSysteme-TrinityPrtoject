@@ -1,3 +1,4 @@
+//@file:UseSerializers(UUIDSerializer::class)
 package com.microservices.headquarterservice.model
 
 import java.util.*
@@ -9,25 +10,27 @@ import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 
 @Serializable(with = ConditionResponseSerializer::class)
-data class ConditionResponse(@Contextual var part_id: UUID, var conditions: List<Condition>)
+class ConditionResponse(var part_id: UUID, var conditions: MutableList<Condition>)
 
-@OptIn(ExperimentalSerializationApi::class)
+@OptIn(
+    kotlinx.serialization.InternalSerializationApi::class,
+    kotlinx.serialization.ExperimentalSerializationApi::class
+)
 @Serializer(forClass = ConditionResponse::class)
 object ConditionResponseSerializer : KSerializer<ConditionResponse> {
     override val descriptor: SerialDescriptor =
             buildClassSerialDescriptor("ConditionResponse") {
                 element<String>("part_id")
-                element<List<Condition>>("conditions")
+                element<MutableList<Condition>>("conditions")
             }
 
     override fun serialize(encoder: Encoder, value: ConditionResponse) {
         encoder.encodeStructure(descriptor) {
             encodeStringElement(descriptor, 0, value.part_id.toString())
             encodeSerializableElement(
-                    descriptor, 1, ListSerializer(ConditionSerializer), value.conditions)
+                    descriptor, 1, ListSerializer(Condition::class.serializer()), value.conditions)
         }
     }
-
     override fun deserialize(decoder: Decoder): ConditionResponse {
         return decoder.decodeStructure(descriptor) {
             var part_id: UUID? = null
@@ -40,14 +43,14 @@ object ConditionResponseSerializer : KSerializer<ConditionResponse> {
                     1 ->
                             conditions =
                                     decodeSerializableElement(
-                                            descriptor, 1, ListSerializer(ConditionSerializer))
+                                            descriptor, 1, ListSerializer(Condition::class.serializer()))
                     else -> throw SerializationException("Unexpected index $index")
                 }
             }
 
             ConditionResponse(
                     requireNotNull(part_id),
-                    requireNotNull(conditions),
+                    requireNotNull(conditions?.toMutableList()),
             )
         }
     }
