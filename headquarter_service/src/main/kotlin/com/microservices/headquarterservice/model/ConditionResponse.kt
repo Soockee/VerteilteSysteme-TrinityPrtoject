@@ -1,4 +1,4 @@
-//@file:UseSerializers(UUIDSerializer::class)
+// @file:UseSerializers(UUIDSerializer::class)
 package com.microservices.headquarterservice.model
 
 import java.util.*
@@ -13,9 +13,8 @@ import kotlinx.serialization.encoding.*
 class ConditionResponse(var part_id: UUID, var conditions: MutableList<Condition>)
 
 @OptIn(
-    kotlinx.serialization.InternalSerializationApi::class,
-    kotlinx.serialization.ExperimentalSerializationApi::class
-)
+        kotlinx.serialization.InternalSerializationApi::class,
+        kotlinx.serialization.ExperimentalSerializationApi::class)
 @Serializer(forClass = ConditionResponse::class)
 object ConditionResponseSerializer : KSerializer<ConditionResponse> {
     override val descriptor: SerialDescriptor =
@@ -43,7 +42,9 @@ object ConditionResponseSerializer : KSerializer<ConditionResponse> {
                     1 ->
                             conditions =
                                     decodeSerializableElement(
-                                            descriptor, 1, ListSerializer(Condition::class.serializer()))
+                                            descriptor,
+                                            1,
+                                            ListSerializer(Condition::class.serializer()))
                     else -> throw SerializationException("Unexpected index $index")
                 }
             }

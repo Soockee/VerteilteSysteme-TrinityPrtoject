@@ -42,10 +42,11 @@ CREATE TABLE supplier (
 );
 
 CREATE TABLE supplier_part (
+    supplier_part_id UUID NOT NULL DEFAULT uuid_generate_v1 (),
     part_id UUID NOT NULL,
     supplier_id integer NOT NULL,
     name character varying(255) NOT NULL,
-    PRIMARY KEY(part_id,supplier_id)
+    PRIMARY KEY(supplier_part_id)
 );
 
 
@@ -75,10 +76,19 @@ VALUES('8a34a8fe-d419-11eb-b8bc-0242ac130003','7f58bc28-d418-11eb-b8bc-0242ac130
 INSERT INTO condition (supplier_id,part_supplier_id,price,currency)
 VALUES('8d017b98-d419-11eb-b8bc-0242ac130003','7f58bfe8-d418-11eb-b8bc-0242ac130003', 1.55,'USD');
 INSERT INTO condition (supplier_id,part_supplier_id,price,currency)
+VALUES('8a34a8fe-d419-11eb-b8bc-0242ac130003','7f58bfe8-d418-11eb-b8bc-0242ac130003', 1.70,'USD');
+INSERT INTO condition (supplier_id,part_supplier_id,price,currency)
 VALUES('8d017b98-d419-11eb-b8bc-0242ac130003','93338fb6-d418-11eb-b8bc-0242ac130003', 20.0,'USD');
 
-
+/*
+    Parts:
+    2x Same Supplier different part
+    1x different Supplier same part
+*/
 INSERT INTO part (supplier_id,supplier_part_id)
 VALUES('8d017b98-d419-11eb-b8bc-0242ac130003','7f58bfe8-d418-11eb-b8bc-0242ac130003');
 INSERT INTO part (supplier_id,supplier_part_id)
 VALUES('8d017b98-d419-11eb-b8bc-0242ac130003','93338fb6-d418-11eb-b8bc-0242ac130003');
+
+INSERT INTO part (supplier_id,supplier_part_id)
+VALUES('8a34a8fe-d419-11eb-b8bc-0242ac130003','7f58bfe8-d418-11eb-b8bc-0242ac130003');
