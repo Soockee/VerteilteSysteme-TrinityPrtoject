@@ -4,7 +4,6 @@ import com.microservices.headquarterservice.model.Condition
 import com.microservices.headquarterservice.model.Product
 import com.microservices.headquarterservice.model.ProductPart
 import com.microservices.headquarterservice.model.ProductResponse
-import com.microservices.headquarterservice.service.ProductPartService
 import com.microservices.headquarterservice.service.ProductService
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
@@ -14,8 +13,6 @@ import java.util.*
 @RestController("ProductController")
 class ProductController (
     private val productService: ProductService,
-    private val productPartService: ProductPartService,
-
     ) {
     @PostMapping("/product/")
     fun create(

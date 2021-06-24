@@ -14,7 +14,7 @@ CREATE TABLE condition (
     part_id UUID NOT NULL,
     price NUMERIC(9,4) NOT NULL,
     currency character varying(255) NOT NULL,
-    negotiation_timestamp TIMESTAMP DEFAULT now (),
+    negotiation_timestamp TIMESTAMP DEFAULT now(),
 
     PRIMARY KEY(conditions_id)
 );
@@ -47,6 +47,24 @@ CREATE TABLE supplier (
     supplier_id UUID NOT NULL DEFAULT uuid_generate_v1 (),
     name character varying(255) NOT NULL,
     PRIMARY KEY(supplier_id)
+);
+
+CREATE TABLE "order" (
+    order_id UUID NOT NULL DEFAULT uuid_generate_v1 (),
+    customer_id UUID NOT NULL DEFAULT uuid_generate_v1 (), -- TODO: Need Customer Managment
+    begin_order TIMESTAMP NOT NULL DEFAULT now(),
+    status character varying(255) NOT NULL,
+
+    PRIMARY KEY (order_id)
+);
+
+CREATE TABLE order_product (
+    order_product_id UUID NOT NULL DEFAULT uuid_generate_v1 (),
+    order_id UUID NOT NULL DEFAULT uuid_generate_v1 (),
+    product_id UUID NOT NULL DEFAULT uuid_generate_v1 (),
+    count INTEGER NOT NULL,
+
+    PRIMARY KEY(order_product_id)
 );
 
 
