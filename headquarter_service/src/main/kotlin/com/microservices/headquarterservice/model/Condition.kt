@@ -19,7 +19,7 @@ import org.springframework.data.annotation.Id
 class Condition(
                 @Id var conditions_id: UUID,
                 var supplier_id: UUID,
-                var part_supplier_id: UUID,
+                var part_id: UUID,
                 var price: BigDecimal,
                 var currency: String,
                 var negotiation_timestamp: Timestamp,

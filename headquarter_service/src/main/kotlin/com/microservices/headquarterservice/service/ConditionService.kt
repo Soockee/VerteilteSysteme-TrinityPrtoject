@@ -19,7 +19,6 @@ import reactor.core.publisher.Mono
 class ConditionService(
         private val repository: ConditionRepository,
         private val partService: PartService,
-        private val supplierPartService: SupplierPartService,
         private val supplierService: SupplierService,
         private val rabbitTemplate: AmqpTemplate,
         @Value("\${microservice.rabbitmq.routingkey}") val headquarterRoutingKey: String,
@@ -45,7 +44,7 @@ class ConditionService(
     fun getByPartId(partId: String): Flux<Condition> {
         var condition: Flux<Condition> =
                 repository.findAll().filter { elem ->
-                    elem.part_supplier_id.toString().equals(partId)
+                    elem.part_id.toString().equals(partId)
                 }
         
         var conditionResponse = ConditionResponse(UUID.fromString(partId), mutableListOf())
@@ -59,25 +58,6 @@ class ConditionService(
         }
         return condition
     }
-
-    // fun getConditionResponseByPartName(part_name: String): Flux<Condition> {
-    //     var parts: Flux<Part> =
-    //             partService.getAll().filter { elem -> elem.part_id.toString().equals(partId) }
-    //     var condition: Flux<Condition> =
-    //             repository.findAll().filter { elem ->
-    //                 elem.part_supplier_id.toString().equals(partId)
-    //             }
-    //     var conditionResponse = ConditionResponse(UUID.fromString(partId), mutableListOf())
-    //     var conditionList: MutableList<Condition>? = condition.collectList().block()
-    //     if (!conditionList.isNullOrEmpty()) {
-    //         conditionResponse.conditions = conditionList
-    //         rabbitTemplate.convertAndSend(
-    //                 headquarterExchangeName,
-    //                 headquarterRoutingKey,
-    //                 Json.encodeToString(conditionResponse))
-    //     }
-    //     return condition
-    // }
 
     fun send(condition: ConditionResponse) {
         rabbitTemplate.convertAndSend(
