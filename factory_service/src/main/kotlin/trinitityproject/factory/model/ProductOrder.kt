@@ -1,15 +1,29 @@
 package trinitityproject.factory.model
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 import java.util.*
 
 @Document
 data class ProductOrder(
-    @Id val productOrderId: UUID = UUID.randomUUID(),
+    @Id
+    @JsonProperty("productOrderId", access = JsonProperty.Access.READ_ONLY)
+    val productOrderId: UUID = UUID.randomUUID(),
+
+    @JsonProperty("customerId")
     val customerId: UUID,
-    val receptionTime: Long = System.currentTimeMillis(),
+
+    @JsonProperty("receptionTime", access = JsonProperty.Access.READ_ONLY)
+    private val receptionTime: Long = System.currentTimeMillis(),
+
+    @JsonProperty("status", access = JsonProperty.Access.READ_ONLY)
     var status: Status = Status.OPEN,
+
+    @JsonProperty("products")
     var products: List<Product>,
-    var partOrders: List<PartOrder>
+
+    @JsonProperty("partOrders", access = JsonProperty.Access.READ_ONLY)
+    var partOrders: List<PartOrder> = listOf()
 )
+
