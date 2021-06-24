@@ -8,6 +8,7 @@ import trinitityproject.factory.model.PartOrder
 import trinitityproject.factory.model.Position
 import trinitityproject.factory.model.Status
 import trinitityproject.factory.repository.ProductOrderRepository
+import trinitityproject.factory.model.ProductOrder
 import java.util.*
 
 @Service
@@ -116,4 +117,27 @@ class PartOrderService(
     fun getSuitableSupplier(partId: UUID): UUID {
         return UUID.randomUUID();
     }
+
+    fun getRequiredParts(order: ProductOrder): List<Pair<UUID, Int>> {
+        return order.products
+            .map { product ->
+                product
+                    .parts
+                    .map { part ->
+                        Pair(part.partId, (part.count * product.count))
+                    }
+            }
+            .flatten()
+            .groupingBy {
+                it.first
+            }
+            .aggregate { key, acc: Pair<UUID, Int>?, element, first ->
+                if (first)
+                    Pair(key, element.second)
+                else
+                    Pair(key, acc!!.second + element.second)
+            }
+            .map { it.value }
+    }
+
 }

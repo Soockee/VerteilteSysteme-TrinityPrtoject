@@ -10,5 +10,5 @@ data class Part(
     val partId: UUID,
 
     @JsonProperty("count")
-    val count: Number
+    val count: Int
 )
