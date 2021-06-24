@@ -5,6 +5,5 @@ import org.springframework.data.annotation.Id
 
 data class Part(
                 @Id var part_id: UUID,
-                var supplier_part_id: UUID,
-                var supplier_id: UUID,
+                var name: String,
 )

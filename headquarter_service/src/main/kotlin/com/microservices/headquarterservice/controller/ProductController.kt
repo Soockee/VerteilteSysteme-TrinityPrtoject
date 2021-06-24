@@ -1,19 +1,20 @@
 package com.microservices.headquarterservice.controller
 
-import com.microservices.headquarterservice.model.Part
+import com.microservices.headquarterservice.model.Condition
 import com.microservices.headquarterservice.model.Product
-import com.microservices.headquarterservice.service.PartService
+import com.microservices.headquarterservice.model.ProductPart
+import com.microservices.headquarterservice.model.ProductResponse
+import com.microservices.headquarterservice.service.ProductPartService
 import com.microservices.headquarterservice.service.ProductService
-import org.springframework.web.bind.annotation.GetMapping
-import org.springframework.web.bind.annotation.PostMapping
-import org.springframework.web.bind.annotation.RequestBody
-import org.springframework.web.bind.annotation.RestController
+import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import java.util.*
 
 @RestController("ProductController")
 class ProductController (
     private val productService: ProductService,
+    private val productPartService: ProductPartService,
 
     ) {
     @PostMapping("/product/")
@@ -21,6 +22,22 @@ class ProductController (
         @RequestBody product: Product
     ): Mono<Product> {
         return productService.create(product)
+    }
+
+    @GetMapping("/product/")
+    fun get(@RequestParam productId: String): Mono<Void> {
+        productService.getProductResponse(UUID.fromString(productId))
+        return Mono.empty()
+    }
+
+    @GetMapping("/product-parts/")
+    fun getProductParts(@RequestParam productId: String): Flux<ProductPart> {
+        return productService.getProductPartsByProductId(UUID.fromString(productId))
+    }
+
+    @GetMapping("/product-parts/all/")
+    fun getAllProductParts():  Flux<ProductPart> {
+        return productService.getAllProductParts()
     }
 
     @GetMapping( "/products/")
