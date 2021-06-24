@@ -14,6 +14,8 @@ class ReportService(
     private val repository: ProductOrderRepository,
     private val timeService: TimeService
 ) {
+    private val costPerHour = 1
+
     /**
      * Generates a report consisting of the following data:
      *  - Number of orders since midnight until now
@@ -30,10 +32,10 @@ class ReportService(
 
         val productOrdersToday = this.getProductOrdersToday(productOrders);
 
-        val finishedProducts: List<Product> = this.getFinishedProducts(productOrdersToday);
+        val finishedProducts: List<Product> = this.getFinishedProductsToday(productOrders);
 
         val report = Report(
-            productOrders.size,
+            productOrdersToday.size,
             finishedProducts.size,
             this.calculateCosts(finishedProducts));
 
@@ -45,9 +47,17 @@ class ReportService(
      *
      * @return Cost of finished goods
      */
-    fun calculateCosts(productOrders: List<Product>): Number {
-        //TODO(Fabian): Implement
-        return 0;
+    fun calculateCosts(products: List<Product>): Number {
+        var partCosts: Double = 0.0
+        var productionTime: Double = 0.0
+
+        products.forEach { product ->
+            // TODO(Fabian): Get Part costs from part conditions
+
+            productionTime += product.productionTime
+        }
+
+        return partCosts + productionTime * this.costPerHour;
     }
 
     /**
@@ -56,9 +66,7 @@ class ReportService(
      * @return Orders received since midnight
      */
     fun getProductOrdersToday(productOrders: List<ProductOrder>): List<ProductOrder> {
-        productOrders.filter { productOrder -> timeService.isToday(productOrder.receptionTime) }
-
-        return productOrders
+        return productOrders.filter { productOrder -> timeService.isToday(productOrder.receptionTime) }
     }
 
     /**
@@ -66,12 +74,14 @@ class ReportService(
      *
      * @return Finished goods since midnight
      */
-    fun getFinishedProducts(productOrders: List<ProductOrder>): List<Product> {
+    fun getFinishedProductsToday(productOrders: List<ProductOrder>): List<Product> {
         var finishedProducts: MutableList<Product> = ArrayList()
 
         productOrders.forEach { productOrder ->
             productOrder.products.forEach { product ->
-                if(product.status == Status.DONE) finishedProducts.add(product)
+                if(product.status == Status.DONE && this.timeService.isToday(product.completionTime)) {
+                    finishedProducts.add(product)
+                }
             }
         }
 

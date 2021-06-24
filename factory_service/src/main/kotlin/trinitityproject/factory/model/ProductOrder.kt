@@ -15,7 +15,7 @@ data class ProductOrder(
     val customerId: UUID,
 
     @JsonProperty("receptionTime", access = JsonProperty.Access.READ_ONLY)
-    private val receptionTime: Long = System.currentTimeMillis(),
+    val receptionTime: Long = System.currentTimeMillis(),
 
     @JsonProperty("status", access = JsonProperty.Access.READ_ONLY)
     var status: Status = Status.OPEN,

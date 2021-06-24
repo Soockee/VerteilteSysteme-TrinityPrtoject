@@ -12,12 +12,15 @@ data class Product(
     @JsonProperty("count")
     val count: Number,
 
-    @JsonProperty("status", access = JsonProperty.Access.READ_ONLY)
-    var status: Status = Status.OPEN,
-
     @JsonProperty("productionTime")
     val productionTime: Long,
 
     @JsonProperty("parts")
-    val parts: List<Part>
+    val parts: List<Part>,
+
+    @JsonProperty("status", access = JsonProperty.Access.READ_ONLY)
+    var status: Status = Status.OPEN,
+
+    @JsonProperty("status", access = JsonProperty.Access.READ_ONLY)
+    var completionTime: Long
 )
