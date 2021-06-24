@@ -7,16 +7,12 @@ import kotlinx.coroutines.reactive.asFlow
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.amqp.core.*
-import org.springframework.amqp.rabbit.annotation.Queue
-import org.springframework.amqp.rabbit.annotation.RabbitListener
 import org.springframework.http.MediaType.APPLICATION_JSON
 import org.springframework.http.ResponseEntity
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.server.*
 import org.springframework.web.reactive.function.server.ServerResponse.ok
 import reactor.core.publisher.Mono
-import reactor.kotlin.core.publisher.toMono
-import trinitityproject.factory.messaging.DestinationsConfig
 import trinitityproject.factory.model.*
 import trinitityproject.factory.repository.ProductOrderRepository
 import java.util.*
@@ -26,7 +22,6 @@ import javax.annotation.PostConstruct
 @Component
 class ProductOrderHandler(
     private val repository: ProductOrderRepository,
-    private val destinationsConfig: DestinationsConfig,
     private val amqpAdmin: AmqpAdmin,
     private val amqpTemplate: AmqpTemplate
 ) {
@@ -34,70 +29,32 @@ class ProductOrderHandler(
 
     @PostConstruct
     fun setupQueueDestinations() {
-        //Setup of the quueues defined in application.properties
-        destinationsConfig.getQueues()
-            .forEach { (key: String?, destination: DestinationsConfig.DestinationInfo) ->
-                log.info(
-                    "[I54] Creating directExchange: key={}, name={}, routingKey={}",
-                    key,
-                    destination.exchange,
-                    destination.routingKey
-                )
-                val ex: Exchange = ExchangeBuilder.directExchange(
-                    destination.exchange
-                )
-                    .durable(true)
-                    .build()
-                amqpAdmin.declareExchange(ex)
-                val q = QueueBuilder.durable(
-                    destination.routingKey
-                )
-                    .build()
-                amqpAdmin.declareQueue(q)
-                val b = BindingBuilder.bind(q)
-                    .to(ex)
-                    .with(destination.routingKey)
-                    .noargs()
-                amqpAdmin.declareBinding(b)
-            }
-    }
-
-    @RabbitListener(queuesToDeclare = [Queue("nyse")])
-    @Throws(InterruptedException::class)
-    fun receive1(msg: String?) {
-        //Declare listener to queue
-        val d = destinationsConfig.getQueues()["IBOV"]
-        if (msg != null && d != null) {
-            log.info("Message received:", msg.toString())
-            amqpTemplate.convertAndSend(
-                d.exchange,
-                d.routingKey,
-                "Hello from Factory"
-            )
-        }
-    }
-
-    @Suppress("UNUSED_PARAMETER")
-    suspend fun sendToMessageBus(request: ServerRequest): ServerResponse {
-        //Send message to queue
-        val d = destinationsConfig.getQueues()["NYSE"]
-
-        return if (d == null) {
-            ServerResponse
-                .notFound()
-                .buildAndAwait()
-        } else {
-            val response = Mono.fromCallable {
-                amqpTemplate.convertAndSend(
-                    d.exchange,
-                    d.routingKey,
-                    "Send Message from factory get-route"
-                )
-                ResponseEntity.accepted().build<Any?>()
-            }.asFlow()
-            log.info("sendMessage")
-            return ok().contentType(APPLICATION_JSON).bodyAndAwait(response)
-        }
+//        //Setup of the quueues defined in application.properties
+//        destinationsConfig.getQueues()
+//            .forEach { (key: String?, destination: DestinationsConfig.DestinationInfo) ->
+//                log.info(
+//                    "[I54] Creating directExchange: key={}, name={}, routingKey={}",
+//                    key,
+//                    destination.exchange,
+//                    destination.routingKey
+//                )
+//                val ex: Exchange = ExchangeBuilder.directExchange(
+//                    destination.exchange
+//                )
+//                    .durable(true)
+//                    .build()
+//                amqpAdmin.declareExchange(ex)
+//                val q = QueueBuilder.durable(
+//                    destination.routingKey
+//                )
+//                    .build()
+//                amqpAdmin.declareQueue(q)
+//                val b = BindingBuilder.bind(q)
+//                    .to(ex)
+//                    .with(destination.routingKey)
+//                    .noargs()
+//                amqpAdmin.declareBinding(b)
+//            }
     }
 
     @Suppress("UNUSED_PARAMETER")
@@ -144,11 +101,11 @@ class ProductOrderHandler(
         var productOrder = productOrderFlow.toList().first();
         val products = productOrder.products.toMutableList();
 
-        var neededParts : MutableMap<UUID, Number> = HashMap()
+        var neededParts: MutableMap<UUID, Number> = HashMap()
 
         products.forEach { product ->
             product.parts.forEach { part ->
-                if(neededParts.containsKey(part.partId)) {
+                if (neededParts.containsKey(part.partId)) {
                     neededParts.set(part.partId, neededParts.getValue(part.partId).toInt() + part.count.toInt());
                 } else {
                     neededParts.set(part.partId, part.count);
@@ -168,7 +125,7 @@ class ProductOrderHandler(
 
         neededParts.keys.forEach { partId ->
             val supplierId: UUID = this.getSuitableSupplier(partId);
-            if(partOrdersMap.containsKey(supplierId)) {
+            if (partOrdersMap.containsKey(supplierId)) {
                 var partOrder: PartOrder = partOrdersMap.get(supplierId)!!;
                 //partOrder.positions
             } else {

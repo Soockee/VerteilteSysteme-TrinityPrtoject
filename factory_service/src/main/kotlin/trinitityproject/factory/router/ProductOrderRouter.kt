@@ -1,6 +1,5 @@
 package trinitityproject.factory.router
 
-import io.swagger.v3.oas.annotations.Parameter
 import org.springdoc.core.annotations.RouterOperation
 import org.springdoc.core.annotations.RouterOperations
 import org.springframework.context.annotation.Bean
@@ -41,9 +40,6 @@ class ProductOrderRouter {
             "/productOrder".nest {
                 GET("/{id}", accept(APPLICATION_JSON), handler::getProductOrderService)
                 POST("/", accept(APPLICATION_JSON), handler::createProductOrderService)
-            }
-            "/sendMessage".nest {
-                GET("/", accept(APPLICATION_JSON), handler::sendToMessageBus)
             }
         }
     }
