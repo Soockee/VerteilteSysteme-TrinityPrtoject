@@ -51,7 +51,7 @@ class OrderService(
         return orderRepository
             .save(orderRaw)
             .flatMap { ord ->
-                logger.info("Save Order: order_id:" + ord.order_id + " begin: " + ord.begin_order + " customer_id: " + ord.customer_id + " status " + ord.status)
+                logger.debug("Save Order: order_id:" + ord.order_id + " begin: " + ord.begin_order + " customer_id: " + ord.customer_id + " status " + ord.status)
                 orderRequest.products.forEach { orderProductRequest ->
                     orderProductRepository.save(
                         OrderProduct(
@@ -61,7 +61,7 @@ class OrderService(
                             orderProductRequest.count
                         )
                     ).subscribe { e ->
-                        logger.info("Save OrderProduct: order_product_id: " + e.order_product_id + " product_id:" + e.product_id + " order_id:" + e.order_id)
+                        logger.debug("Save OrderProduct: order_product_id: " + e.order_product_id + " product_id:" + e.product_id + " order_id:" + e.order_id)
                     }
                 }
                 Mono.just(ord)

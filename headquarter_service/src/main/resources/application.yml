@@ -30,3 +30,7 @@ microservice:
     exchange:   headquarter.exchange
     routingkey: headquarter.routing
 
+springfox:
+  documentation:
+    swagger-ui:
+      base-url: /documentation
