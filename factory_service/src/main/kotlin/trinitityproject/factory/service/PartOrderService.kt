@@ -3,11 +3,14 @@ package trinitityproject.factory.service
 import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactive.asFlow
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Example
 import org.springframework.data.domain.ExampleMatcher
 import org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers.exact
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Mono
+import trinitityproject.factory.handler.ProductOrderHandler
 import trinitityproject.factory.model.*
 import trinitityproject.factory.repository.ProductOrderRepository
 import java.util.*
@@ -103,15 +106,21 @@ class PartOrderService(
     fun getUnfinishedProductOrder(): Mono<ProductOrder> {
         return repository.findOne(
             Example.of(
+
                 ProductOrder(
-                    customerId = UUID.randomUUID(),
+                    customerId = UUID.fromString("cf9ae254-c466-11eb-8529-0242ac130003"),
                     status = Status.OPEN,
                     products = listOf()
                 ),
                 ExampleMatcher
-                    .matching()
-                    .withMatcher("status", exact())
-                    .withIgnorePaths("customerId")
+                    .matchingAny()
+                    .withIgnorePaths(
+                        "productOrderId",
+                        "customerId",
+                        "receptionTime",
+                        "products",
+                        "partOrders"
+                    )
             )
         )
     }

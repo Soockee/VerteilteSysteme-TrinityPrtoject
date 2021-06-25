@@ -6,7 +6,7 @@ import java.util.*
 
 
 @Service
-class TimeService(private val dayInSeconds: Int) {
+class TimeService(private val dayInSeconds: Int = 5) {
 
     /**
      * Compares a given date to the current date by converting each into a virtual date with shorter time

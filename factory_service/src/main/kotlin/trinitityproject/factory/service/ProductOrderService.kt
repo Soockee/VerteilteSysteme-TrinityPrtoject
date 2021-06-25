@@ -14,7 +14,7 @@ class ProductOrderService(
     private val log: Logger = LoggerFactory.getLogger(ProductOrderHandler::class.java)
 
     fun createOrder(order: ProductOrder) {
-        repository.save(order)
+        repository.save(order).block()
         log.info("Saved to order to database: $order")
     }
 
