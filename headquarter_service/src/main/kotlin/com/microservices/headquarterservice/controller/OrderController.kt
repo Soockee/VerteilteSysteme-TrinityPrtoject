@@ -20,8 +20,8 @@ class OrderController (
     @PostMapping("/order/")
     fun create(
         @RequestBody orderRequest: OrderRequest
-    ): Mono<Order> {
-       return orderService.createOrder(orderRequest)
+    ): Mono<String> {
+       return orderService.createCustomerOrder(orderRequest)
     }
 
     @GetMapping( "/orders/")

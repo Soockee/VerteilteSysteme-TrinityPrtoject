@@ -1,5 +1,6 @@
 package com.microservices.headquarterservice.service
 
+import com.microservices.headquarterservice.exception.BadRequestException
 import com.microservices.headquarterservice.model.*
 import com.microservices.headquarterservice.persistence.OrderProductRepository
 import com.microservices.headquarterservice.persistence.OrderRepository
@@ -45,16 +46,39 @@ class OrderService(
     }
      */
     fun createOrder(orderRequest: OrderRequest): Mono<Order> {
-        var order = Order(null, orderRequest.customer_id, Instant.now(), "uncomplete")
-        return orderRepository.save(order).flatMap { ord ->
-            logger.info("Save Order: order_id:" + ord.order_id + " begin: " + ord.begin_order + " customer_id: " + ord.customer_id + " status " + ord.status)
-            orderRequest.products.forEach { orderProductRequest ->
-                orderProductRepository.save(OrderProduct(null, ord.order_id, orderProductRequest.product_id, orderProductRequest.count)).subscribe{
-                    e -> logger.info("Save OrderProduct: order_product_id: " + e.order_product_id + " product_id:" + e.product_id + " order_id:" + e.order_id)
+        var order_raw = Order(null, orderRequest.customer_id, Instant.now(), "uncomplete")
+
+        var order = orderRepository
+            .save(order_raw)
+            .flatMap { ord ->
+                logger.info("Save Order: order_id:" + ord.order_id + " begin: " + ord.begin_order + " customer_id: " + ord.customer_id + " status " + ord.status)
+                orderRequest.products.forEach { orderProductRequest ->
+                    orderProductRepository.save(
+                        OrderProduct(
+                            null,
+                            ord.order_id,
+                            orderProductRequest.product_id,
+                            orderProductRequest.count
+                        )
+                    ).subscribe { e ->
+                        logger.info("Save OrderProduct: order_product_id: " + e.order_product_id + " product_id:" + e.product_id + " order_id:" + e.order_id)
+                    }
                 }
+                Mono.just(ord)
             }
-            Mono.just(ord)
-        }
+        return order
+    }
+
+    fun createCustomerOrder(orderRequest: OrderRequest): Mono<String> {
+        return createOrder(orderRequest)
+            .flatMap { order ->
+            getOrderProductsByOrderId(order.order_id!!)
+                .collectList()
+                .doOnNext { orderProductList ->
+                    send(OrderResponse(order.customer_id, orderProductList))
+                }.subscribe()
+            Mono.just("Order successful with order_id: " + order.order_id)
+        }.switchIfEmpty(Mono.error(BadRequestException("Order unsuccessful")))
     }
 
     fun getAllOrders(): Flux<Order> {
@@ -64,13 +88,14 @@ class OrderService(
     fun getAllOrderProducts(): Flux<OrderProduct> {
         return orderProductRepository.findAll()
     }
+
     fun getOrderById(orderId: UUID): Mono<Order> {
         return orderRepository.findById(orderId)
     }
+
     fun getStatusById(orderId: UUID): Mono<String> {
         return orderRepository.findById(orderId).map { order -> order.status }
     }
-
 
 
     fun getOrderProductsByOrderId(orderId: UUID): Flux<OrderProduct> {
@@ -78,27 +103,11 @@ class OrderService(
     }
 
 
-    fun sendOrder(order: Order) {
-        /**
-         * order: {
-        customerId: UUID
-        products:[{
-        productId: UUID
-        count: Number (1-n)
-        productionTime: Number (1-n seconds)
-        parts: [
-        partId: UUID
-        count: Number (1-n)
-        ]
-        }
-        ]
-        }
-
-
-
+    fun send(orderResponse: OrderResponse) {
         rabbitTemplate.convertAndSend(
-        headquarterExchangeName,
-        headquarterRoutingKey,
-        Json.encodeToString(orderResponse))*/
+            headquarterExchangeName, headquarterRoutingKey, Json.encodeToString(orderResponse)
+        )
+        logger.info("Send msg = " + orderResponse)
+
     }
 }
