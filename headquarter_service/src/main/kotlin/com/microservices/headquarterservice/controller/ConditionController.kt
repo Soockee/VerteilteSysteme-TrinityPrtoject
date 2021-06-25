@@ -23,10 +23,7 @@ class ConditionController(
     }
     @PostMapping("/condition/")
     fun create(@RequestBody condition: Condition): Mono<Condition> {
-        val conditionResult: Mono<Condition> = conditionService.create(condition)
-        // val conditionResponse = ConditionResponse(condition.conditionsId)
-        // conditionService.send(conditionResponse)
-        return conditionResult
+        return conditionService.createConditionAndUpdate(condition)
     }
 
     @GetMapping("/condition/")

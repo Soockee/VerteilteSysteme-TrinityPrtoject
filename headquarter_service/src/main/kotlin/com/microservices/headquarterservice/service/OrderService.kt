@@ -12,7 +12,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import java.sql.Timestamp
+import reactor.core.scheduler.Schedulers
 import java.time.Instant
 import java.util.*
 
@@ -46,10 +46,10 @@ class OrderService(
     }
      */
     fun createOrder(orderRequest: OrderRequest): Mono<Order> {
-        var order_raw = Order(null, orderRequest.customer_id, Instant.now(), "uncomplete")
+        var orderRaw = Order(null, orderRequest.customer_id, Instant.now(), "uncomplete")
 
-        var order = orderRepository
-            .save(order_raw)
+        return orderRepository
+            .save(orderRaw)
             .flatMap { ord ->
                 logger.info("Save Order: order_id:" + ord.order_id + " begin: " + ord.begin_order + " customer_id: " + ord.customer_id + " status " + ord.status)
                 orderRequest.products.forEach { orderProductRequest ->
@@ -66,17 +66,17 @@ class OrderService(
                 }
                 Mono.just(ord)
             }
-        return order
     }
 
     fun createCustomerOrder(orderRequest: OrderRequest): Mono<String> {
         return createOrder(orderRequest)
             .flatMap { order ->
             getOrderProductsByOrderId(order.order_id!!)
+                .publishOn(Schedulers.boundedElastic())
                 .collectList()
                 .doOnNext { orderProductList ->
                     send(OrderResponse(order.customer_id, orderProductList))
-                }.subscribe()
+                }.toFuture()
             Mono.just("Order successful with order_id: " + order.order_id)
         }.switchIfEmpty(Mono.error(BadRequestException("Order unsuccessful")))
     }
