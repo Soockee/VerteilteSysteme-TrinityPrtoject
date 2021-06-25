@@ -29,4 +29,10 @@ class OrderController (
     ): Flux<Order> {
         return orderService.getAllOrders()
     }
+
+    @GetMapping( "/order-products/")
+    fun getAllOrderProducts(
+    ): Flux<OrderProduct> {
+        return orderService.getAllOrderProducts()
+    }
 }

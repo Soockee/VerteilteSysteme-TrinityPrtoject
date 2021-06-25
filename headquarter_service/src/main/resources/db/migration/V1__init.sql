@@ -49,7 +49,7 @@ CREATE TABLE supplier (
     PRIMARY KEY(supplier_id)
 );
 
-CREATE TABLE "order" (
+CREATE TABLE orders (
     order_id UUID NOT NULL DEFAULT uuid_generate_v1 (),
     customer_id UUID NOT NULL DEFAULT uuid_generate_v1 (), -- TODO: Need Customer Managment
     begin_order TIMESTAMP NOT NULL DEFAULT now(),

@@ -14,6 +14,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import java.time.Instant
 
 @Service
 class ConditionService(
@@ -30,9 +31,7 @@ class ConditionService(
     }
 
     fun create(condition: Condition): Mono<Condition> {
-        // supplier_id where does it come from
-        // condition.supplier_id = ???
-        condition.negotiation_timestamp = Timestamp(System.currentTimeMillis())
+        condition.negotiation_timestamp = Instant.now()
         return repository.save(condition)
     }
 

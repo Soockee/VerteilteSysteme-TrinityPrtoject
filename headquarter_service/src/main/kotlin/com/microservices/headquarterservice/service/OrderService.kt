@@ -11,6 +11,8 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import java.sql.Timestamp
+import java.time.Instant
 import java.util.*
 
 @Service
@@ -43,18 +45,16 @@ class OrderService(
     }
      */
     fun createOrder(orderRequest: OrderRequest): Mono<Order> {
-        logger.warn("Customer ID: " + orderRequest.customer_id)
-        var order = Order(null, orderRequest.customer_id, null, "uncomplete")
-        logger.warn(order.toString())
-
-        return orderRepository.save(order)
-
-        /*return orderRepository.save(order).flatMap { e ->
-            orderRequest.products.forEach { orderProduct ->
-                orderProductRepository.save(OrderProduct(null, e.order_id, orderProduct.product_id, orderProduct.count))
+        var order = Order(null, orderRequest.customer_id, Instant.now(), "uncomplete")
+        return orderRepository.save(order).flatMap { ord ->
+            logger.info("Save Order: order_id:" + ord.order_id + " begin: " + ord.begin_order + " customer_id: " + ord.customer_id + " status " + ord.status)
+            orderRequest.products.forEach { orderProductRequest ->
+                orderProductRepository.save(OrderProduct(null, ord.order_id, orderProductRequest.product_id, orderProductRequest.count)).subscribe{
+                    e -> logger.info("Save OrderProduct: order_product_id: " + e.order_product_id + " product_id:" + e.product_id + " order_id:" + e.order_id)
+                }
             }
-            Mono.just(e)
-        }*/
+            Mono.just(ord)
+        }
     }
 
     fun getAllOrders(): Flux<Order> {
