@@ -118,7 +118,7 @@ class PartOrderService(
         return UUID.randomUUID();
     }
 
-    fun getRequiredParts(order: ProductOrder): List<Pair<UUID, Int>> {
+    fun getRequiredParts(order: ProductOrder): Map<UUID, Int> {
         return order.products
             .map { product ->
                 product
@@ -131,13 +131,12 @@ class PartOrderService(
             .groupingBy {
                 it.first
             }
-            .aggregate { key, acc: Pair<UUID, Int>?, element, first ->
+            .aggregate { _, acc: Int?, element, first ->
                 if (first)
-                    Pair(key, element.second)
+                    element.second
                 else
-                    Pair(key, acc!!.second + element.second)
+                    acc!! + element.second
             }
-            .map { it.value }
     }
 
 }

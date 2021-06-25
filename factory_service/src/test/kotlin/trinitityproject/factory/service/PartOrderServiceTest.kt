@@ -49,15 +49,14 @@ internal class PartOrderServiceTest {
                 )
             )
         )
-        partOrderService.getRequiredParts(input)
-//        assertEquals(
-//            partOrderService.getRequiredParts(input),
-//            listOf(
-//                Pair(UUID.fromString("d94e7dac-e97e-4b3d-9207-610e4eaa3f80"), 10),
-//                Pair(UUID.fromString("273b659a-7fa7-4029-bf92-421fff457ddf"), 4),
-//                Pair(UUID.fromString("cf9ae254-c466-11eb-8529-0242ac130003"), 1)
-//            )
-//        )
+        assertEquals(
+            partOrderService.getRequiredParts(input),
+            mapOf(
+                Pair(UUID.fromString("d94e7dac-e97e-4b3d-9207-610e4eaa3f80"), 10),
+                Pair(UUID.fromString("273b659a-7fa7-4029-bf92-421fff457ddf"), 4),
+                Pair(UUID.fromString("cf9ae254-c466-11eb-8529-0242ac130003"), 1)
+            )
+        )
 
     }
 }
