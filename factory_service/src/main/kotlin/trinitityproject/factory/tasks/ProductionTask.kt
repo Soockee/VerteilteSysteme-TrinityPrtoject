@@ -9,13 +9,12 @@ import trinitityproject.factory.repository.ProductOrderRepository
 
 @Component
 class ProductionTask(
-    private val repository: ProductOrderRepository
 ) {
     private val log: Logger = LoggerFactory.getLogger(ProductOrderHandler::class.java)
 
     @Scheduled(fixedRate = 1000)
     fun scheduleTaskWithFixedRate() {
-        repository
+
     }
 
 }
