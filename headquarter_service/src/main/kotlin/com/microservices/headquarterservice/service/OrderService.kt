@@ -64,6 +64,14 @@ class OrderService(
     fun getAllOrderProducts(): Flux<OrderProduct> {
         return orderProductRepository.findAll()
     }
+    fun getOrderById(orderId: UUID): Mono<Order> {
+        return orderRepository.findById(orderId)
+    }
+    fun getStatusById(orderId: UUID): Mono<String> {
+        return orderRepository.findById(orderId).map { order -> order.status }
+    }
+
+
 
     fun getOrderProductsByOrderId(orderId: UUID): Flux<OrderProduct> {
         return orderProductRepository.findAll().filter { elem -> elem.order_id == orderId }

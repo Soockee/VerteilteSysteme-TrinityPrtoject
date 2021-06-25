@@ -30,6 +30,13 @@ class OrderController (
         return orderService.getAllOrders()
     }
 
+    @GetMapping( "/order/status/")
+    fun getStatusByOrderId(
+        @RequestParam orderId: String
+    ): Mono<String> {
+        return orderService.getStatusById(UUID.fromString(orderId))
+    }
+
     @GetMapping( "/order-products/")
     fun getAllOrderProducts(
     ): Flux<OrderProduct> {
