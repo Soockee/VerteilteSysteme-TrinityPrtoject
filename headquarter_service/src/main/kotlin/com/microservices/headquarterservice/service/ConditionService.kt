@@ -18,13 +18,13 @@ import java.time.Instant
 
 @Service
 class ConditionService(
-        private val repository: ConditionRepository,
-        private val partService: PartService,
-        private val supplierService: SupplierService,
-        private val rabbitTemplate: AmqpTemplate,
-        @Value("\${microservice.rabbitmq.routingkey}") val headquarterRoutingKey: String,
-        @Value("\${microservice.rabbitmq.queue}") val headquarterQueueName: String,
-        @Value("\${microservice.rabbitmq.exchange}") val headquarterExchangeName: String,
+    private val repository: ConditionRepository,
+    private val partService: PartService,
+    private val supplierService: SupplierService,
+    private val rabbitTemplate: AmqpTemplate,
+    @Value("\${microservice.rabbitmq.routingkey}") val headquarterRoutingKey: String,
+    @Value("\${microservice.rabbitmq.queue}") val headquarterQueueName: String,
+    @Value("\${microservice.rabbitmq.exchange}") val headquarterExchangeName: String,
 ) {
     companion object {
         val logger = LoggerFactory.getLogger(ConditionService::class.java)
@@ -41,26 +41,25 @@ class ConditionService(
     }
 
     fun getByPartId(partId: String): Flux<Condition> {
-        var condition: Flux<Condition> =
-                repository.findAll().filter { elem ->
-                    elem.part_id.toString().equals(partId)
-                }
-        
-        var conditionResponse = ConditionResponse(UUID.fromString(partId), mutableListOf())
-        var conditionList: MutableList<Condition>? = condition.collectList().block()
-        if (!conditionList.isNullOrEmpty()) {
-            conditionResponse.conditions = conditionList
-            rabbitTemplate.convertAndSend(
-                    headquarterExchangeName,
-                    headquarterRoutingKey,
-                    Json.encodeToString(conditionResponse))
-        }
+        var condition = repository.findAll()
+            .filter { elem ->
+                elem.part_id.toString().equals(partId)
+            }
+            .replay()
+            .autoConnect()
+        condition
+            .collectList()
+            .doOnNext{
+                    conditionList -> send(ConditionResponse(UUID.fromString(partId), conditionList))
+            }
+            .subscribe()
         return condition
     }
 
     fun send(condition: ConditionResponse) {
         rabbitTemplate.convertAndSend(
-                headquarterExchangeName, headquarterRoutingKey, Json.encodeToString(condition))
-        logger.debug("Send msg = " + condition)
+            headquarterExchangeName, headquarterRoutingKey, Json.encodeToString(condition)
+        )
+        logger.info("Send msg = " + condition)
     }
 }
