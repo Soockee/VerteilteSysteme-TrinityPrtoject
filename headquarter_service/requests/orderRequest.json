@@ -1,0 +1,16 @@
+{
+	"customer_id": "999ded14-d4ff-11eb-b8bc-0242ac130003",
+	"products": [{
+			"product_id": "7174a632-d4e3-11eb-b8bc-0242ac130003",
+			"count": 2
+		},
+		{
+			"product_id": "82a637fe-d4e3-11eb-b8bc-0242ac130003",
+			"count": 1
+		},
+		{
+			"product_id": "8664853a-d4e3-11eb-b8bc-0242ac130003",
+			"count": 1
+		}
+	]
+}

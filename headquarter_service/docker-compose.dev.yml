@@ -11,5 +11,23 @@ services:
     volumes:
       - rabbitmq_data:/data
 
+
+  adminer:
+    image: adminer:latest
+    environment:
+      ADMINER_DEFAULT_SERVER: headquarter_service_db
+      ADMINER_DEFAULT_DB_NAME: headquarterservice
+    ports:
+      - 9000:8080
+
+  db:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: headquarterservice123
+      POSTGRES_USER: headquarterservice
+      POSTGRES_DB: headquarterservice
+    ports:
+      - 5432:5432
+
 volumes:
   rabbitmq_data:

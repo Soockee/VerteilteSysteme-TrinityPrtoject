@@ -6,12 +6,12 @@ services:
   db:
     image: postgres
     environment:
-      POSTGRES_PASSWORD: centralservice123
-      POSTGRES_USER: centralservice
-      POSTGRES_DB: centralservice
+      POSTGRES_PASSWORD: headquarterservice123
+      POSTGRES_USER: headquarterservice
+      POSTGRES_DB: headquarterservice
     
-  app:
-    image: zentralen_service
-    build: .
-    ports:
-      - 8080:8080
+  #app:
+  #  image: headquarter_service
+  #  build: .
+  #  ports:
+  #    - 8080:8080
