@@ -15,8 +15,12 @@ class ProductionTask(
 
     @Scheduled(fixedRate = 4000)
     fun scheduleTaskWithFixedRate() {
-        log.info(partOrderService.getUnfinishedProductOrder().block().toString())
-
+        val productOrder = partOrderService.getUnfinishedProductOrder()
+        if (productOrder != null) {
+            log.info(productOrder.toString())
+        } else {
+            log.warn("No suitable product order found")
+        }
     }
 
 }
