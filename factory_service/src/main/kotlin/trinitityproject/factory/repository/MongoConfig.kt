@@ -54,5 +54,4 @@ class MongoConfig : AbstractReactiveMongoConfiguration() {
         mongoConverter: MappingMongoConverter
     ): ReactiveMongoTemplate = ReactiveMongoTemplate(mongoClient(), databaseName)
 
-
 }
