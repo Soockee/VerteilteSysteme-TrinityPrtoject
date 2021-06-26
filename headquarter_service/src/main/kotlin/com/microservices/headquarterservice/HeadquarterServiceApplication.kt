@@ -1,5 +1,8 @@
 package com.microservices.headquarterservice
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.module.kotlin.KotlinModule
+import com.microservices.headquarterservice.model.ConditionRequest
 import org.springframework.amqp.core.Binding
 import org.springframework.amqp.core.BindingBuilder
 import org.springframework.amqp.core.Queue
@@ -15,23 +18,22 @@ import org.springframework.context.annotation.Bean
 import org.springframework.data.r2dbc.repository.config.EnableR2dbcRepositories
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.amqp.rabbit.annotation.RabbitListener
+import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory
+import org.springframework.amqp.rabbit.listener.RabbitListenerContainerFactory
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter
+import org.springframework.messaging.handler.annotation.Payload
 
 @SpringBootApplication
 @EnableR2dbcRepositories
 @ConfigurationPropertiesScan("com.microservices.headquarterservice.config")
 class HeadquarterServiceApplication(
-        @Value("\${microservice.rabbitmq.routingkey}") val headquarterRoutingKey: String,
-        @Value("\${microservice.rabbitmq.queue}") val headquarterQueueName: String,
-        @Value("\${microservice.rabbitmq.exchange}") val headquarterExchangeName: String,
+    @Value("\${microservice.rabbitmq.routingkey}") val headquarterRoutingKey: String,
+    @Value("\${microservice.rabbitmq.queue}") val headquarterQueueName: String,
+    @Value("\${microservice.rabbitmq.exchange}") val headquarterExchangeName: String,
 ) {
     companion object {
         val logger = LoggerFactory.getLogger(HeadquarterServiceApplication::class.java)
-    }
-
-    @Bean
-    fun queue(): Queue {
-        // logger.warn(headquarterQueueName)
-        return Queue(headquarterQueueName, false)
     }
 
     @Bean
@@ -44,22 +46,23 @@ class HeadquarterServiceApplication(
         return BindingBuilder.bind(queue).to(exchange).with(headquarterRoutingKey)
     }
 
+
     @Bean
-    fun container(
-            connectionFactory: ConnectionFactory,
-            listenerAdapter: MessageListenerAdapter
-    ): SimpleMessageListenerContainer {
-        var container: SimpleMessageListenerContainer = SimpleMessageListenerContainer()
-        container.setConnectionFactory(connectionFactory)
-        container.setQueueNames(headquarterQueueName)
-        container.setMessageListener(listenerAdapter)
-        return container
+    fun rabbitListenerContainerFactory(connectionFactory: ConnectionFactory): RabbitListenerContainerFactory<*>? {
+        val factory = SimpleRabbitListenerContainerFactory()
+        factory.setConnectionFactory(connectionFactory)
+        // A custom objectMapper is needed, so the default values are set by kotlin
+        val mapper = ObjectMapper()
+            .registerModule(KotlinModule())
+        factory.setMessageConverter(Jackson2JsonMessageConverter(mapper))
+        return factory
     }
 
     @Bean
     fun listenerAdapter(receiver: Receiver): MessageListenerAdapter {
         return MessageListenerAdapter(receiver, "receiveMessage")
     }
+
 }
 
 fun main(args: Array<String>) {

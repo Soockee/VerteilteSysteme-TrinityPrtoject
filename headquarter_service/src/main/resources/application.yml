@@ -17,8 +17,8 @@ spring:
     password: headquarterservice123
     url: r2dbc:postgresql://${spring.r2dbc.host}:${spring.r2dbc.port}/${spring.r2dbc.database}
     #url: r2dbc:postgresql://${spring.r2dbc.host}/${spring.r2dbc.database}
-      
-      
+
+
   flyway:
     url: jdbc:postgresql://${spring.r2dbc.host}:${spring.r2dbc.port}/${spring.r2dbc.database}
     user: ${spring.r2dbc.username}
@@ -26,8 +26,8 @@ spring:
 
 microservice:
   rabbitmq:
-    queue: headquarter.queue
-    exchange:   headquarter.exchange
+    queue: conditionRequests
+    exchange: headquarter.exchange
     routingkey: headquarter.routing
 
 springfox:

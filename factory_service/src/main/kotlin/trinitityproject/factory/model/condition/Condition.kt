@@ -4,17 +4,20 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import java.util.*
 
 data class Condition(
-    @JsonProperty("conditionsId")
-    val conditionsId: UUID,
+    @JsonProperty("conditions_id")
+    val conditions_id: UUID,
 
-    @JsonProperty("conditionsId")
-    val supplierId: UUID,
+    @JsonProperty("supplier_id")
+    val supplier_id: UUID,
 
-    @JsonProperty("value")
+    @JsonProperty("part_id")
+    val part_id: UUID, //foreign ID of the part at the supplier
+
+    @JsonProperty("price")
     val price: Number, //better approach would be  price: {Number, currency: enum{euro}}
 
-    @JsonProperty("partSupplierId")
-    val partSupplierId: UUID, //foreign ID of the part at the supplier
+    @JsonProperty("currency")
+    val currency: String,
 
     @JsonProperty("negotiationTimestamp")
     val negotiationTimestamp: Long
