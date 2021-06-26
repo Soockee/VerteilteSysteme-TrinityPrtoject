@@ -10,7 +10,7 @@ data class Product(
     val productId: UUID = UUID.randomUUID(),
 
     @JsonProperty("count")
-    val count: Number,
+    val count: Int,
 
     @JsonProperty("productionTime")
     val productionTime: Long,

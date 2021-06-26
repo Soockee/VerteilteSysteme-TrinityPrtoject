@@ -3,10 +3,16 @@ package trinitityproject.factory.service
 import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactive.asFlow
+import kotlinx.coroutines.reactive.awaitFirst
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
+import org.springframework.data.domain.Example
+import org.springframework.data.domain.ExampleMatcher
+import org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers.exact
 import org.springframework.stereotype.Service
-import trinitityproject.factory.model.PartOrder
-import trinitityproject.factory.model.Position
-import trinitityproject.factory.model.Status
+import reactor.core.publisher.Mono
+import trinitityproject.factory.handler.ProductOrderHandler
+import trinitityproject.factory.model.*
 import trinitityproject.factory.repository.ProductOrderRepository
 import java.util.*
 
@@ -14,34 +20,15 @@ import java.util.*
 class PartOrderService(
     private val repository: ProductOrderRepository
 ) {
+
+
     /**
      * Creates the partOrders for a given productOrder
      *
      * @param productOrderId Id of the ProductOrder for which the PartOrders are to be created
      */
-    suspend fun createPartOrders(productOrderId: UUID) {
-        val productOrderFlow = repository.findById(productOrderId).asFlow();
-
-        if (productOrderFlow.count() < 1) {
-            return;
-        }
-
-        var productOrder = productOrderFlow.toList().first();
-        val products = productOrder.products.toMutableList();
-
-        var neededParts : MutableMap<UUID, Number> = HashMap()
-
-        products.forEach { product ->
-            product.parts.forEach { part ->
-                if(neededParts.containsKey(part.partId)) {
-                    neededParts.set(part.partId, neededParts.getValue(part.partId).toInt() + part.count.toInt());
-                } else {
-                    neededParts.set(part.partId, part.count);
-                }
-            };
-        };
-
-        productOrder.partOrders = this.toPartOrders(neededParts);
+    fun createPartOrders(productOrder: ProductOrder) {
+        val neededParts = getRequiredParts(productOrder)
 
         // TODO(Fabian): Submit PartOrders to corresponding Supplier
     }
@@ -95,7 +82,7 @@ class PartOrderService(
 
         neededParts.keys.forEach { partId ->
             val supplierId: UUID = this.getSuitableSupplier(partId);
-            if(partOrdersMap.containsKey(supplierId)) {
+            if (partOrdersMap.containsKey(supplierId)) {
                 var partOrder: PartOrder = partOrdersMap.get(supplierId)!!;
                 //partOrder.positions
             } else {
@@ -116,4 +103,47 @@ class PartOrderService(
     fun getSuitableSupplier(partId: UUID): UUID {
         return UUID.randomUUID();
     }
+
+    fun getUnfinishedProductOrder(): ProductOrder? {
+        return repository.findAll(
+            Example.of(
+                ProductOrder(
+                    customerId = UUID.fromString("cf9ae254-c466-11eb-8529-0242ac130003"),
+                    status = Status.OPEN,
+                    products = listOf()
+                ),
+                ExampleMatcher
+                    .matchingAny()
+                    .withIgnorePaths(
+                        "productOrderId",
+                        "customerId",
+                        "receptionTime",
+                        "products",
+                        "partOrders"
+                    )
+            )
+        ).blockFirst()
+    }
+
+    fun getRequiredParts(order: ProductOrder): Map<UUID, Int> {
+        return order.products
+            .map { product ->
+                product
+                    .parts
+                    .map { part ->
+                        Pair(part.partId, (part.count * product.count))
+                    }
+            }
+            .flatten()
+            .groupingBy {
+                it.first
+            }
+            .aggregate { _, acc: Int?, element, first ->
+                if (first)
+                    element.second
+                else
+                    acc!! + element.second
+            }
+    }
+
 }
