@@ -1,9 +1,10 @@
 package com.microservices.headquarterservice.controller
 
-import com.microservices.headquarterservice.model.*
+import com.microservices.headquarterservice.model.headquarter.Order
+import com.microservices.headquarterservice.model.headquarter.OrderProduct
+import com.microservices.headquarterservice.model.headquarter.OrderRequest
 import com.microservices.headquarterservice.service.ConditionService
 import com.microservices.headquarterservice.service.OrderService
-import com.microservices.headquarterservice.service.ProductService
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux

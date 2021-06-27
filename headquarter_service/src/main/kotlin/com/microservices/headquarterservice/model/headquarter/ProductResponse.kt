@@ -1,13 +1,10 @@
 
-package com.microservices.headquarterservice.model
+package com.microservices.headquarterservice.model.headquarter
 
-import com.microservices.headquarterservice.serializer.UUIDSerializer
 import kotlinx.serialization.*
 import kotlinx.serialization.builtins.ListSerializer
-import kotlinx.serialization.builtins.MapSerializer
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
-import java.util.*
 
 @Serializable(with = ProductResponseSerializer::class)
 data class ProductResponse(

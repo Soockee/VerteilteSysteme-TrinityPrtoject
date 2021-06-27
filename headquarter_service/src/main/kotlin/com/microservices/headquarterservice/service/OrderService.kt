@@ -1,7 +1,10 @@
 package com.microservices.headquarterservice.service
 
 import com.microservices.headquarterservice.exception.BadRequestException
-import com.microservices.headquarterservice.model.*
+import com.microservices.headquarterservice.model.headquarter.Order
+import com.microservices.headquarterservice.model.headquarter.OrderProduct
+import com.microservices.headquarterservice.model.headquarter.OrderRequest
+import com.microservices.headquarterservice.model.headquarter.OrderResponse
 import com.microservices.headquarterservice.persistence.OrderProductRepository
 import com.microservices.headquarterservice.persistence.OrderRepository
 import kotlinx.serialization.encodeToString
@@ -21,8 +24,7 @@ class OrderService(
     private val orderRepository: OrderRepository,
     private val orderProductRepository: OrderProductRepository,
     private val rabbitTemplate: AmqpTemplate,
-    @Value("\${microservice.rabbitmq.routingkey_order}") val headquarterRoutingKey: String,
-    @Value("\${microservice.rabbitmq.exchange}") val headquarterExchangeName: String,
+    @Value("\${microservice.rabbitmq.queueOrderRequests}") val headquarterOrderQueue: String,
 ) {
 
     companion object {
@@ -104,7 +106,7 @@ class OrderService(
 
     fun send(orderResponse: OrderResponse) {
         rabbitTemplate.convertAndSend(
-            headquarterExchangeName, headquarterRoutingKey, Json.encodeToString(orderResponse)
+            headquarterOrderQueue, Json.encodeToString(orderResponse)
         )
         logger.info("Send msg = " + orderResponse)
 

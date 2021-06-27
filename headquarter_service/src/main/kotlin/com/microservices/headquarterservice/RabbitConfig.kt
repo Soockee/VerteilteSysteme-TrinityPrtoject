@@ -1,5 +1,8 @@
 package com.microservices.headquarterservice
 
+import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
+import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.slf4j.LoggerFactory
 import org.springframework.amqp.core.*
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory
@@ -8,6 +11,7 @@ import org.springframework.amqp.rabbit.connection.ConnectionFactory
 import org.springframework.amqp.rabbit.core.RabbitAdmin
 import org.springframework.amqp.rabbit.listener.RabbitListenerContainerFactory
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter
+import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -22,7 +26,6 @@ class RabbitConfig(
     @Value("\${microservice.rabbitmq.queueKIPRequests}") val queueKIP: String,
     @Value("\${microservice.rabbitmq.queueOrderRequests}") val queueOrderRequests: String,
     @Value("\${microservice.rabbitmq.exchange}") val headquarterExchangeName: String,
-    private val rabbitTemplate: AmqpTemplate,
     private val connectionFactory: ConnectionFactory
 ) {
     companion object {
@@ -57,16 +60,28 @@ class RabbitConfig(
     fun amqpAdmin(): AmqpAdmin? {
         return RabbitAdmin(connectionFactory)
     }
+    @Bean
+    fun rabbitListenerContainerFactory(connectionFactory: ConnectionFactory): RabbitListenerContainerFactory<*>? {
+        val factory = SimpleRabbitListenerContainerFactory()
+        factory.setConnectionFactory(connectionFactory)
+        // A custom objectMapper is needed, so the default values are set by kotlin
+        val mapper = ObjectMapper()
+            .registerModules(
+                KotlinModule(),
+                JavaTimeModule(),
+            )
+//        val mapper = JsonMapper.builder()
+//            .findAndAddModules()
+//            .build()
+        factory.setMessageConverter(Jackson2JsonMessageConverter(mapper))
+        return factory
+    }
 
     @Component
     class ReceiverConfig(
-        @Value("\${microservice.rabbitmq.routingkey_order}") val routingkey_order: String,
-        @Value("\${microservice.rabbitmq.routingkey_kip}") val routingkey_kip: String,
-        @Value("\${microservice.rabbitmq.routingkey_condition}") val routingkey_condition: String,
         private val queueKIP: Queue,
         private val queueOrder: Queue,
         private val queueCondition: Queue,
-        private val exchange: TopicExchange,
         private val amqpAdmin: AmqpAdmin,
     ) {
         @PostConstruct
@@ -74,19 +89,9 @@ class RabbitConfig(
             amqpAdmin!!.declareQueue(queueKIP)
             amqpAdmin!!.declareQueue(queueOrder)
             amqpAdmin!!.declareQueue(queueCondition)
-            bindQueuesToKey()
+           // bindQueuesToKey()
         }
 
-        fun bindQueuesToKey() {
-            amqpAdmin.declareBinding(bind(queueOrder, exchange, routingkey_order))
-            amqpAdmin.declareBinding(bind(queueCondition, exchange, routingkey_condition))
-            amqpAdmin.declareBinding(bind(queueKIP, exchange, routingkey_kip))
-        }
-
-        fun bind(queueOrder: Queue, exchange: TopicExchange, key: String): Binding {
-            return BindingBuilder.bind(queueOrder).to(exchange).with(key)
-        }
     }
-
 }
 

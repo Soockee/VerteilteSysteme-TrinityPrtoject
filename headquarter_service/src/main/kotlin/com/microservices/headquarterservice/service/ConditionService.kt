@@ -1,9 +1,8 @@
 package com.microservices.headquarterservice.service
 
-import com.microservices.headquarterservice.model.Condition
-import com.microservices.headquarterservice.model.ConditionResponse
+import com.microservices.headquarterservice.model.headquarter.Condition
+import com.microservices.headquarterservice.model.headquarter.ConditionResponse
 import com.microservices.headquarterservice.persistence.ConditionRepository
-import java.util.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
@@ -21,8 +20,7 @@ class ConditionService(
     private val partService: PartService,
     private val supplierService: SupplierService,
     private val rabbitTemplate: AmqpTemplate,
-    @Value("\${microservice.rabbitmq.routingkey_condition}") val headquarterRoutingKey: String,
-    @Value("\${microservice.rabbitmq.exchange}") val headquarterExchangeName: String,
+    @Value("\${microservice.rabbitmq.queueConditionRequests}") val headquarterConditionQueue: String,
 ) {
     companion object {
         val logger = LoggerFactory.getLogger(ConditionService::class.java)
@@ -54,19 +52,19 @@ class ConditionService(
             }
             .replay()
             .autoConnect()
-        condition
-            .publishOn(Schedulers.boundedElastic())
-            .collectList()
-            .doOnNext { conditionList ->
-                send(ConditionResponse(UUID.fromString(partId), conditionList))
-            }
-            .toFuture()
+//        condition
+//            .publishOn(Schedulers.boundedElastic())
+//            .collectList()
+//            .doOnNext { conditionList ->
+//                send(ConditionResponse(UUID.fromString(partId), conditionList))
+//            }
+//            .toFuture()
         return condition
     }
 
     fun send(condition: ConditionResponse) {
         rabbitTemplate.convertAndSend(
-            headquarterExchangeName, headquarterRoutingKey, Json.encodeToString(condition)
+            headquarterConditionQueue, Json.encodeToString(condition)
         )
         logger.info("Send msg = " + condition)
     }

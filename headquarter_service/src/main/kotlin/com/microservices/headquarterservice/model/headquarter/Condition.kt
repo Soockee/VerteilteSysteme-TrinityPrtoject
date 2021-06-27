@@ -1,7 +1,8 @@
 @file:UseSerializers(UUIDSerializer::class, BigDecimalSerializer::class, InstantSerializer::class)
 
-package com.microservices.headquarterservice.model
+package com.microservices.headquarterservice.model.headquarter
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.microservices.headquarterservice.serializer.*
 import java.math.BigDecimal
 import java.util.UUID
@@ -18,5 +19,7 @@ class Condition(
     var part_id: UUID,
     var price: BigDecimal,
     var currency: String,
+    //@JsonProperty("negotiation_timestamp")
     var negotiation_timestamp: Instant?,
+
 )

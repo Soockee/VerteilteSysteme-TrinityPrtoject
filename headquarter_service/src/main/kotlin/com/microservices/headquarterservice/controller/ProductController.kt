@@ -1,9 +1,7 @@
 package com.microservices.headquarterservice.controller
 
-import com.microservices.headquarterservice.model.Condition
-import com.microservices.headquarterservice.model.Product
-import com.microservices.headquarterservice.model.ProductPart
-import com.microservices.headquarterservice.model.ProductResponse
+import com.microservices.headquarterservice.model.headquarter.Product
+import com.microservices.headquarterservice.model.headquarter.ProductPart
 import com.microservices.headquarterservice.service.ProductService
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux

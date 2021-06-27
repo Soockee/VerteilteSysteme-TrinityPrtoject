@@ -1,14 +1,10 @@
 package com.microservices.headquarterservice.controller
 
-import com.microservices.headquarterservice.model.Condition
-import com.microservices.headquarterservice.model.ConditionResponse
+import com.microservices.headquarterservice.model.headquarter.Condition
 import com.microservices.headquarterservice.service.ConditionService
-import java.util.UUID
-import org.springframework.http.MediaType
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import kotlinx.serialization.*

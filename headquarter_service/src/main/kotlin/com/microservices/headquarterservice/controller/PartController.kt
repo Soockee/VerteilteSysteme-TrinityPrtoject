@@ -1,6 +1,6 @@
 package com.microservices.headquarterservice.controller
 
-import com.microservices.headquarterservice.model.Part
+import com.microservices.headquarterservice.model.common.Part
 import com.microservices.headquarterservice.service.PartService
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
