@@ -59,8 +59,7 @@ class PartOrderService(
      * @param supplierId Id of the supplier with whom the order is to be placed
      * @param positions List of the positions to be ordered
      */
-    suspend fun addPartOrder(productOrderId: UUID, supplierId: UUID, positions: List<Position>) {
-        val partOrder = PartOrder(UUID.randomUUID(), Status.OPEN, supplierId, positions);
+     fun addPartOrder(productOrderId: UUID, partOrder: PartOrder) {
 
         val productOrderFlow = repository.findById(productOrderId).asFlow();
 

@@ -7,6 +7,6 @@ data class PartOrder(
     @Id val partOrderId: UUID,
     var status: Status = Status.OPEN,
     val supplierId: UUID,
-    val orderId: UUID?,
+    var orderId: UUID?,
     val positions: List<Position>
 )

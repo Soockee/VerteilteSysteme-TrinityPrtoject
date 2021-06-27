@@ -7,7 +7,9 @@ import org.springframework.core.ParameterizedTypeReference
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import trinitityproject.factory.handler.ProductOrderHandler
+import trinitityproject.factory.model.PartOrder
 import trinitityproject.factory.model.Position
+import trinitityproject.factory.model.Status
 import trinitityproject.factory.model.condition.Condition
 import trinitityproject.factory.model.condition.ConditionRequest
 import trinitityproject.factory.model.condition.PartCondition
@@ -31,8 +33,25 @@ class ProductionTask(
 
             val outcome = partOrderService
                 .getRequiredParts(productOrder)
-                .map { conditionService.getBestCondition(it.key) }
-                .groupBy { it.supplier_id }
+                .map { Pair(conditionService.getBestCondition(it.key), it.value) }
+                .groupBy { it.first.supplier_id } //All
+                .map { supplierConditionMap ->
+                    PartOrder(
+                        UUID.randomUUID(),
+                        Status.OPEN,
+                        supplierConditionMap.key,
+                        null,
+                        supplierConditionMap.value.map {
+                            Position(
+                                it.first.part_id,
+                                it.second,
+                                it.first.conditions_id
+                            )
+                        }
+                    )
+                }.onEach {
+                    partOrderService.addPartOrder(productOrder.productOrderId, it)
+                }
         }
 
 //        if (productOrder != null) {
