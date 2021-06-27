@@ -21,8 +21,7 @@ class OrderService(
     private val orderRepository: OrderRepository,
     private val orderProductRepository: OrderProductRepository,
     private val rabbitTemplate: AmqpTemplate,
-    @Value("\${microservice.rabbitmq.routingkey}") val headquarterRoutingKey: String,
-    @Value("\${microservice.rabbitmq.queue}") val headquarterQueueName: String,
+    @Value("\${microservice.rabbitmq.routingkey_order}") val headquarterRoutingKey: String,
     @Value("\${microservice.rabbitmq.exchange}") val headquarterExchangeName: String,
 ) {
 

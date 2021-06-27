@@ -1,34 +1,39 @@
 package com.microservices.headquarterservice
 
-import com.microservices.headquarterservice.model.Condition
-import com.microservices.headquarterservice.model.ConditionRequest
-import org.springframework.stereotype.Component;
-import org.slf4j.Logger
+import com.microservices.headquarterservice.service.ConditionService
 import org.slf4j.LoggerFactory
-import org.springframework.amqp.rabbit.annotation.Queue
+import org.springframework.amqp.core.*
 import org.springframework.amqp.rabbit.annotation.RabbitListener
+import org.springframework.amqp.rabbit.core.RabbitAdmin
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.context.annotation.Bean
 import org.springframework.messaging.handler.annotation.Payload
-import java.math.BigDecimal
-import java.time.Instant
-import java.util.*
+import org.springframework.stereotype.Component
+import javax.annotation.PostConstruct
+
 
 @Component
-class Receiver {
+class Receiver{
     companion object {
         val logger = LoggerFactory.getLogger(Receiver::class.java)
     }
 
-    @RabbitListener(queuesToDeclare = [Queue(name = "\${microservice.rabbitmq.queue}", durable = "true")])
-    fun receiveOrder(@Payload request: ConditionRequest):Condition {
-        logger.warn("Received <$request>");
-         return Condition(
-            conditions_id = UUID.randomUUID(),
-            supplier_id = UUID.randomUUID(),
-            part_id = UUID.randomUUID(),
-            price = BigDecimal(400),
-            currency = "EURO",
-            negotiation_timestamp = Instant.now()
-        )
+
+    @RabbitListener(queues = ["\${microservice.rabbitmq.queueOrderRequests}"])
+    fun receiveOrder(@Payload request: String) {
+        logger.warn("receiveOrder: " + request)
+        //  conditionService.getByPartId(request.partId.toString())
+    }
+
+    @RabbitListener(queues = ["\${microservice.rabbitmq.queueKIPRequests}"])
+    fun receiveKip(@Payload request: String) {
+        logger.warn("receiveKip: " + request)
+        //  conditionService.getByPartId(request.partId.toString())
+    }
+
+    @RabbitListener(queues = ["\${microservice.rabbitmq.queueConditionRequests}"])
+    fun receiveCondition(@Payload request: String) {
+        logger.warn("receiveCondition: " + request)
+        //  conditionService.getByPartId(request.partId.toString())
     }
 }

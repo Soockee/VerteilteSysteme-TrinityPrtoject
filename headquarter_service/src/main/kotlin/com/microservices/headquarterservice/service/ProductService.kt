@@ -20,8 +20,7 @@ class ProductService(
     private val productRepository: ProductRepository,
     private val productPartRepository: ProductPartRepository,
     private val rabbitTemplate: AmqpTemplate,
-    @Value("\${microservice.rabbitmq.routingkey}") val headquarterRoutingKey: String,
-    @Value("\${microservice.rabbitmq.queue}") val headquarterQueueName: String,
+    @Value("\${microservice.rabbitmq.routingkey_condition}") val headquarterRoutingKey: String,
     @Value("\${microservice.rabbitmq.exchange}") val headquarterExchangeName: String,
     ){
 

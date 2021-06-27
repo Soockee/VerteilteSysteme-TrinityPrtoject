@@ -27,42 +27,10 @@ import org.springframework.messaging.handler.annotation.Payload
 @SpringBootApplication
 @EnableR2dbcRepositories
 @ConfigurationPropertiesScan("com.microservices.headquarterservice.config")
-class HeadquarterServiceApplication(
-    @Value("\${microservice.rabbitmq.routingkey}") val headquarterRoutingKey: String,
-    @Value("\${microservice.rabbitmq.queue}") val headquarterQueueName: String,
-    @Value("\${microservice.rabbitmq.exchange}") val headquarterExchangeName: String,
-) {
+class HeadquarterServiceApplication{
     companion object {
         val logger = LoggerFactory.getLogger(HeadquarterServiceApplication::class.java)
     }
-
-    @Bean
-    fun exchange(): TopicExchange {
-        return TopicExchange(headquarterExchangeName)
-    }
-
-    @Bean
-    fun binding(queue: Queue, exchange: TopicExchange): Binding {
-        return BindingBuilder.bind(queue).to(exchange).with(headquarterRoutingKey)
-    }
-
-
-    @Bean
-    fun rabbitListenerContainerFactory(connectionFactory: ConnectionFactory): RabbitListenerContainerFactory<*>? {
-        val factory = SimpleRabbitListenerContainerFactory()
-        factory.setConnectionFactory(connectionFactory)
-        // A custom objectMapper is needed, so the default values are set by kotlin
-        val mapper = ObjectMapper()
-            .registerModule(KotlinModule())
-        factory.setMessageConverter(Jackson2JsonMessageConverter(mapper))
-        return factory
-    }
-
-    @Bean
-    fun listenerAdapter(receiver: Receiver): MessageListenerAdapter {
-        return MessageListenerAdapter(receiver, "receiveMessage")
-    }
-
 }
 
 fun main(args: Array<String>) {
