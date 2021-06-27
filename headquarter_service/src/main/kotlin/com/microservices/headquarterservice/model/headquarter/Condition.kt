@@ -19,7 +19,6 @@ class Condition(
     var part_id: UUID,
     var price: BigDecimal,
     var currency: String,
-    //@JsonProperty("negotiation_timestamp")
     var negotiation_timestamp: Instant?,
 
 )

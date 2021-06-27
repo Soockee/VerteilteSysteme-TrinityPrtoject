@@ -13,6 +13,7 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
 import java.time.Instant
+import java.util.*
 
 @Service
 class ConditionService(
@@ -31,7 +32,7 @@ class ConditionService(
         return repository.save(condition)
     }
 
-    fun createConditionAndUpdate(condition: Condition): Mono<Condition> {
+    fun createConditionAndSend(condition: Condition): Mono<Condition> {
         val savedCondition = create(condition)
         savedCondition.publishOn(Schedulers.boundedElastic())
             .map { conditionItem ->
@@ -52,13 +53,13 @@ class ConditionService(
             }
             .replay()
             .autoConnect()
-//        condition
-//            .publishOn(Schedulers.boundedElastic())
-//            .collectList()
-//            .doOnNext { conditionList ->
-//                send(ConditionResponse(UUID.fromString(partId), conditionList))
-//            }
-//            .toFuture()
+        condition
+            .publishOn(Schedulers.boundedElastic())
+            .collectList()
+            .doOnNext { conditionList ->
+                send(ConditionResponse(UUID.fromString(partId), conditionList))
+            }
+            .toFuture()
         return condition
     }
 

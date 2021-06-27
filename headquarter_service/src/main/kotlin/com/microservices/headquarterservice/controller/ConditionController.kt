@@ -19,14 +19,14 @@ class ConditionController(
     }
     @PostMapping("/condition/")
     fun create(@RequestBody condition: Condition): Mono<Condition> {
-        return conditionService.createConditionAndUpdate(condition)
+        return conditionService.createConditionAndSend(condition)
     }
 
     @GetMapping("/condition/")
     fun get(@RequestParam partId: String): Flux<Condition> {
         val conditions = conditionService.getByPartId(partId)
 
-        conditions.subscribe(this::printCondition)
+       // conditions.subscribe(this::printCondition)
         return conditions
     }
 
