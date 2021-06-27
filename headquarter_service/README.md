@@ -29,7 +29,7 @@ Headquarter defines queues:
 
 `reply_to : supplierResponse`
 
-#### Queue Message
+#### Queue Message in supplierResponse
 
 ```json
 {
@@ -65,7 +65,7 @@ Headquarter defines queues:
 
 `reply_to : supplierStatusResponse`
 
-#### Queue Message
+#### Queue Message in supplierStatusResponse
 
 ```json
 {
