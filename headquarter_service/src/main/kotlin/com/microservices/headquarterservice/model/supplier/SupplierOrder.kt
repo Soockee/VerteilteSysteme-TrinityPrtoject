@@ -7,7 +7,7 @@ import java.time.Instant
 
 @Table("supplier_order")
 class SupplierOrder(
-    @Id var order_id: UUID,
+    @Id var order_id: UUID?,
     var supplier_id: UUID,
     var factory_id: UUID,
     var begin_order: Instant?,

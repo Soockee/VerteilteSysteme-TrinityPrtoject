@@ -26,13 +26,13 @@ spring:
 
 microservice:
   rabbitmq:
-    queueConditionRequests: condition
-    queueKIPRequests: kip
-    queueOrderRequests: order
-    routingkey_condition: headquarter.routing.condition
-    routingkey_kip: headquarter.routing.kip
-    routingkey_order: headquarter.routing.order
-    exchange: headquarter.exchange
+    queueCondition: condition
+    queueKIP: kip
+    queueOrder: order
+    queueSupplier: supplier
+    queueSupplierResponse: supplierResponse
+    queueSupplierStatus: supplierStatus
+    queueSupplierStatusResponse: supplierStatusResponse
 
 springfox:
   documentation:

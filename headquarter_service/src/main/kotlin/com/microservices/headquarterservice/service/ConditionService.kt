@@ -20,7 +20,7 @@ class ConditionService(
     private val partService: PartService,
     private val supplierService: SupplierService,
     private val rabbitTemplate: AmqpTemplate,
-    @Value("\${microservice.rabbitmq.queueConditionRequests}") val headquarterConditionQueue: String,
+    @Value("\${microservice.rabbitmq.queueCondition}") val headquarterConditionQueue: String,
 ) {
     companion object {
         val logger = LoggerFactory.getLogger(ConditionService::class.java)

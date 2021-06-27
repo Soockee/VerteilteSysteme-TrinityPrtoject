@@ -1,31 +1,33 @@
 package com.microservices.headquarterservice.service
 
 
-import com.microservices.headquarterservice.model.headquarter.ConditionResponse
 import com.microservices.headquarterservice.model.headquarter.Supplier
-import com.microservices.headquarterservice.model.supplier.SupplierOrder
-import com.microservices.headquarterservice.model.supplier.SupplierOrderResponse
+import com.microservices.headquarterservice.model.supplier.*
 import com.microservices.headquarterservice.persistence.SupplierOrderPartRepository
 import com.microservices.headquarterservice.persistence.SupplierOrderRepository
 import com.microservices.headquarterservice.persistence.SupplierRepository
-import kotlinx.serialization.encodeToString
-import kotlinx.serialization.json.Json
+import org.slf4j.LoggerFactory
 import org.springframework.amqp.core.AmqpTemplate
-import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
 import java.time.Instant
+import java.util.*
 
 @Service
 class SupplierService(
     private val repository: SupplierRepository,
     private val orderRepository: SupplierOrderRepository,
-    private val orderPartrepository: SupplierOrderPartRepository,
+    private val orderPartRepository: SupplierOrderPartRepository,
     private val rabbitTemplate: AmqpTemplate,
-    @Value("\${microservice.rabbitmq.queueConditionRequests}") val headquarterSupplierQueue: String,
-){
+) {
+    companion object {
+        var supplierId: UUID = UUID.randomUUID()
+        val logger = LoggerFactory.getLogger(ConditionService::class.java)
+
+    }
+
     fun create(supplier: Supplier): Mono<Supplier> {
         return repository.save(supplier)
     }
@@ -34,27 +36,46 @@ class SupplierService(
         return repository.findAll()
     }
 
-    fun create(order: SupplierOrder): Mono<SupplierOrder> {
-        order.begin_order = Instant.now()
-        return orderRepository.save(order)
+    fun getAllOrders(): Flux<SupplierOrder> {
+        return orderRepository.findAll()
     }
 
-    fun createOrderAndUpdate(order: SupplierOrder): Mono<SupplierOrder> {
-        val savedOrder = create(order)
-        savedOrder.publishOn(Schedulers.boundedElastic())
-            .map { conditionItem ->
-                send(SupplierOrderResponse(order.order_id)) }
-            .toFuture()
-        return savedOrder
-    }
-
-
-
-    fun send(orderResponse: SupplierOrderResponse) {
-        rabbitTemplate.convertAndSend(
-            headquarterSupplierQueue, Json.encodeToString(orderResponse)
+    fun create(): Mono<SupplierOrder> {
+        val supplierOrder = SupplierOrder(
+            null,
+            supplierId,
+            UUID.randomUUID(), // factory id
+            Instant.now(),
+            Instant.now(), // negotiation timestamp
+            "uncomplete"
         )
-        ConditionService.logger.info("Send msg = " + orderResponse)
+        return orderRepository.save(supplierOrder)
     }
 
+    fun createSupplierOrderPart(part_id: UUID, count: Int, supplier_order_id: UUID): Mono<SupplierOrderPart> {
+        val supplierOrderPart = SupplierOrderPart(
+            null,
+            supplier_order_id, // get order id
+            part_id,
+            count
+        )
+        return orderPartRepository.save(supplierOrderPart)
+    }
+
+    fun createOrderByRequest(order: SupplierOrderRequest): Mono<SupplierOrderResponse> {
+        val savedOrder = create()
+        savedOrder
+            .publishOn(Schedulers.boundedElastic())
+            .map { savedOrderItem ->
+                for (productOrderPartRequest in order.supplierOrders) {
+                    createSupplierOrderPart(productOrderPartRequest.part_id, productOrderPartRequest.count, savedOrderItem.order_id!!)
+                }
+            }
+            .toFuture()
+        savedOrder.flatMap { e -> Mono.just(e.order_id!!) }
+        return savedOrder.flatMap { e -> Mono.just(SupplierOrderResponse(e.order_id!!)) }
+    }
+    fun getOrderStatus(supplier_order: UUID): Mono<SupplierOrderStatusResponse> {
+        return orderRepository.findById(supplier_order).map { e -> SupplierOrderStatusResponse(e.status) }
+    }
 }

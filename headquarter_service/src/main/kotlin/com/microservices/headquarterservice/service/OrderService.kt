@@ -24,7 +24,7 @@ class OrderService(
     private val orderRepository: OrderRepository,
     private val orderProductRepository: OrderProductRepository,
     private val rabbitTemplate: AmqpTemplate,
-    @Value("\${microservice.rabbitmq.queueOrderRequests}") val headquarterOrderQueue: String,
+    @Value("\${microservice.rabbitmq.queueOrder}") val headquarterOrderQueue: String,
 ) {
 
     companion object {

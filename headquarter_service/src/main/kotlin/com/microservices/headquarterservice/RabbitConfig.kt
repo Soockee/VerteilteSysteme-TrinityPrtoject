@@ -22,10 +22,14 @@ import javax.annotation.PostConstruct
 
 @Configuration
 class RabbitConfig(
-    @Value("\${microservice.rabbitmq.queueConditionRequests}") val queueConditionRequests: String,
-    @Value("\${microservice.rabbitmq.queueKIPRequests}") val queueKIP: String,
-    @Value("\${microservice.rabbitmq.queueOrderRequests}") val queueOrderRequests: String,
-    @Value("\${microservice.rabbitmq.exchange}") val headquarterExchangeName: String,
+    @Value("\${microservice.rabbitmq.queueCondition}") val queueCondition: String,
+    @Value("\${microservice.rabbitmq.queueKIP}") val queueKIP: String,
+    @Value("\${microservice.rabbitmq.queueOrder}") val queueOrder: String,
+    @Value("\${microservice.rabbitmq.queueSupplier}") val queueSupplier: String,
+    @Value("\${microservice.rabbitmq.queueSupplierResponse}") val queueSupplierResponse: String,
+    @Value("\${microservice.rabbitmq.queueSupplierStatus}") val queueSupplierStatus: String,
+    @Value("\${microservice.rabbitmq.queueSupplierStatusResponse}") val queueSupplierStatusResponse: String,
+
     private val connectionFactory: ConnectionFactory
 ) {
     companion object {
@@ -33,14 +37,9 @@ class RabbitConfig(
     }
 
     @Bean
-    fun exchange(): TopicExchange {
-        return TopicExchange(headquarterExchangeName)
-    }
-
-    @Bean
     fun queueOrder(): Queue {
         // logger.warn(headquarterQueueName)
-        return Queue(queueOrderRequests, true)
+        return Queue(queueOrder, true)
     }
 
     @Bean
@@ -52,13 +51,53 @@ class RabbitConfig(
     @Bean
     fun queueCondition(): Queue {
         // logger.warn(headquarterQueueName)
-        return Queue(queueConditionRequests, true)
+        return Queue(queueCondition, true)
     }
 
+    @Bean
+    fun queueSupplier(): Queue {
+        // logger.warn(headquarterQueueName)
+        return Queue(queueSupplier, true)
+    }
 
     @Bean
-    fun amqpAdmin(): AmqpAdmin? {
-        return RabbitAdmin(connectionFactory)
+    fun queueSupplierResponse(): Queue {
+        // logger.warn(headquarterQueueName)
+        return Queue(queueSupplierResponse, true)
+    }
+
+    @Bean
+    fun queueSupplierStatus(): Queue {
+        // logger.warn(headquarterQueueName)
+        return Queue(queueSupplierStatus, true)
+    }
+
+    @Bean
+    fun queueSupplierStatusResponse(): Queue {
+        // logger.warn(headquarterQueueName)
+        return Queue(queueSupplierStatusResponse, true)
+    }
+
+    @Bean
+    fun amqpAdmin(): AmqpAdmin {
+        val amqpAdmin = RabbitAdmin(connectionFactory)
+        amqpAdmin.initialize()
+        return amqpAdmin
+    }
+
+    @Bean
+    fun createReceiverConfig() : ReceiverConfig{
+        return ReceiverConfig(
+            queueKIP(),
+            queueOrder(),
+            queueCondition(),
+            queueSupplier(),
+            queueSupplierResponse(),
+            queueSupplierStatus(),
+            queueSupplierStatusResponse(),
+            amqpAdmin(),
+
+        )
     }
     @Bean
     fun rabbitListenerContainerFactory(connectionFactory: ConnectionFactory): RabbitListenerContainerFactory<*>? {
@@ -70,9 +109,6 @@ class RabbitConfig(
                 KotlinModule(),
                 JavaTimeModule(),
             )
-//        val mapper = JsonMapper.builder()
-//            .findAndAddModules()
-//            .build()
         factory.setMessageConverter(Jackson2JsonMessageConverter(mapper))
         return factory
     }
@@ -82,14 +118,22 @@ class RabbitConfig(
         private val queueKIP: Queue,
         private val queueOrder: Queue,
         private val queueCondition: Queue,
+        private val queueSupplier: Queue,
+        private val queueSupplierResponse: Queue,
+        private val queueSupplierStatus: Queue,
+        private val queueSupplierStatusResponse: Queue,
         private val amqpAdmin: AmqpAdmin,
     ) {
         @PostConstruct
         fun createQueues() {
-            amqpAdmin!!.declareQueue(queueKIP)
-            amqpAdmin!!.declareQueue(queueOrder)
-            amqpAdmin!!.declareQueue(queueCondition)
-           // bindQueuesToKey()
+            logger.info("Initialize AMQP")
+            amqpAdmin.declareQueue(queueKIP)
+            amqpAdmin.declareQueue(queueOrder)
+            amqpAdmin.declareQueue(queueCondition)
+            amqpAdmin.declareQueue(queueSupplier)
+            amqpAdmin.declareQueue(queueSupplierResponse)
+            amqpAdmin.declareQueue(queueSupplierStatus)
+            amqpAdmin.declareQueue(queueSupplierStatusResponse)
         }
 
     }
