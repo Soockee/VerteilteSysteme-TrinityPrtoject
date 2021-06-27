@@ -7,8 +7,11 @@ import org.springframework.core.ParameterizedTypeReference
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import trinitityproject.factory.handler.ProductOrderHandler
+import trinitityproject.factory.model.Position
 import trinitityproject.factory.model.condition.Condition
 import trinitityproject.factory.model.condition.ConditionRequest
+import trinitityproject.factory.model.condition.PartCondition
+import trinitityproject.factory.service.ConditionService
 import trinitityproject.factory.service.PartOrderService
 import java.util.*
 
@@ -16,7 +19,7 @@ import java.util.*
 @Component
 class ProductionTask(
     private val partOrderService: PartOrderService,
-    private val template: RabbitTemplate,
+    private val conditionService: ConditionService
 ) {
     private val log: Logger = LoggerFactory.getLogger(ProductOrderHandler::class.java)
 
@@ -25,19 +28,27 @@ class ProductionTask(
     fun scheduleTaskWithFixedRate() {
         val productOrder = partOrderService.getUnfinishedProductOrder()
         if (productOrder != null) {
-            val conditionId = UUID.randomUUID()
-            log.info("send request for$conditionId")
 
-            val requiredParts = partOrderService.getRequiredParts(productOrder)
-            val sk = template.convertSendAndReceiveAsType(
-                "conditionRequests",
-                ConditionRequest(conditionId),
-                object : ParameterizedTypeReference<Condition>() {}
-            )
-            log.info(sk.toString())
-        } else {
-            log.warn("No suitable product order found")
+            val outcome = partOrderService
+                .getRequiredParts(productOrder)
+                .map { conditionService.getBestCondition(it.key) }
+                .groupBy { it.supplier_id }
         }
+
+//        if (productOrder != null) {
+//            val conditionId = UUID.randomUUID()
+//            log.info("send request for$conditionId")
+//
+//
+//            val sk = template.convertSendAndReceiveAsType(R
+//                "conditionRequests",
+//                ConditionRequest(conditionId),
+//                object : ParameterizedTypeReference<Condition>() {}
+//            )
+//            log.info(sk.toString())
+//        } else {
+//            log.warn("No suitable product order found")
+//        }
     }
 
 }

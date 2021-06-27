@@ -9,6 +9,7 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration
 class RabbitMqConfig {
+
     @Bean
     fun queue(): Queue {
         return Queue("conditionRequests")
