@@ -11,7 +11,7 @@ spring:
 #    password: supportservice123
     url: r2dbc:postgresql://${spring.r2dbc.host}:${spring.r2dbc.port}/${spring.r2dbc.database}
   rabbitmq:
-      host: trinity-rabbit_mq
+      host: rabbit_mq
       #host: localhost
       port: 5672
       #username: msCloudBois

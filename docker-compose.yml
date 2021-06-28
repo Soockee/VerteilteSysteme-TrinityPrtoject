@@ -40,7 +40,7 @@ services:
      - db
   
   support:
-    image: headquarter_service
+    image: support_service
     restart: always
     build: 
       context: ./support_service
