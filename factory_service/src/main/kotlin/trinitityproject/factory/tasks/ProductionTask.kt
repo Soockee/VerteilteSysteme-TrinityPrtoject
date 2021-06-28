@@ -27,7 +27,9 @@ class ProductionTask(
             val productOrder = partOrderService.getUnfinishedProductOrder()
             val res = partOrderService
                 .getRequiredParts(productOrder)
-                .map { Pair(conditionService.getBestCondition(it.key), it.value) }
+                .map {
+                    Pair(conditionService.getBestCondition(it.key), it.value)
+                }
                 .groupBy { it.first.supplier_id } //All
                 .map { supplierConditionMap ->
                     PartOrder(
@@ -39,7 +41,7 @@ class ProductionTask(
                             Position(
                                 it.first.part_id,
                                 it.second,
-                                it.first.conditions_id
+                                it.first
                             )
                         }
                     )
