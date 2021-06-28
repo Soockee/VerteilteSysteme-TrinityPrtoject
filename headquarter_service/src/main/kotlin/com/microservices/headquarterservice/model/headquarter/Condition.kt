@@ -20,5 +20,4 @@ class Condition(
     var price: BigDecimal,
     var currency: String,
     var negotiation_timestamp: Instant?,
-
 )

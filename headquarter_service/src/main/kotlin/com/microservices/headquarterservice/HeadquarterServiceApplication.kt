@@ -5,9 +5,11 @@ import org.springframework.boot.context.properties.ConfigurationPropertiesScan
 import org.springframework.boot.runApplication
 import org.springframework.data.r2dbc.repository.config.EnableR2dbcRepositories
 import org.slf4j.LoggerFactory;
+import org.springframework.scheduling.annotation.EnableScheduling
 
 @SpringBootApplication
 @EnableR2dbcRepositories
+@EnableScheduling
 @ConfigurationPropertiesScan("com.microservices.headquarterservice.config")
 class HeadquarterServiceApplication{
     companion object {

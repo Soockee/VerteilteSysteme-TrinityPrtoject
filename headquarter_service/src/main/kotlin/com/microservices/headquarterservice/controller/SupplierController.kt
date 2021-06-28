@@ -1,5 +1,6 @@
 package com.microservices.headquarterservice.controller
 
+import com.microservices.headquarterservice.model.headquarter.Condition
 import com.microservices.headquarterservice.model.headquarter.Product
 import com.microservices.headquarterservice.model.headquarter.ProductPart
 import com.microservices.headquarterservice.model.headquarter.Supplier
@@ -22,6 +23,12 @@ class SupplierController (
     fun getAll(
     ): Flux<Supplier> {
         return supplierService.getAll()
+    }
+    @PostMapping( "/supplier")
+    fun createOrder(
+        @RequestBody supplierOrderRequest: SupplierOrderRequest
+    ): Mono<SupplierOrderResponse> {
+        return supplierService.createOrderByRequest(supplierOrderRequest)
     }
     @GetMapping( "/supplier-orders/")
     fun getAllSupplierOrder(

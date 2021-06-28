@@ -1,13 +1,18 @@
 package com.microservices.headquarterservice.service
 
 
+import com.microservices.headquarterservice.exception.BadRequestException
+import com.microservices.headquarterservice.model.headquarter.ConditionResponse
 import com.microservices.headquarterservice.model.headquarter.Supplier
 import com.microservices.headquarterservice.model.supplier.*
 import com.microservices.headquarterservice.persistence.SupplierOrderPartRepository
 import com.microservices.headquarterservice.persistence.SupplierOrderRepository
 import com.microservices.headquarterservice.persistence.SupplierRepository
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
 import org.springframework.amqp.core.AmqpTemplate
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -21,7 +26,9 @@ class SupplierService(
     private val orderRepository: SupplierOrderRepository,
     private val orderPartRepository: SupplierOrderPartRepository,
     private val rabbitTemplate: AmqpTemplate,
-) {
+    @Value("\${microservice.rabbitmq.queueSupplierResponse}") val headquarterSupplierResponseQueue: String,
+
+    ) {
     companion object {
         var supplierId: UUID = UUID.randomUUID()
         val logger = LoggerFactory.getLogger(ConditionService::class.java)
@@ -75,7 +82,27 @@ class SupplierService(
         savedOrder.flatMap { e -> Mono.just(e.order_id!!) }
         return savedOrder.flatMap { e -> Mono.just(SupplierOrderResponse(e.order_id!!)) }
     }
+    fun createOrderByRequestAndSend(order: SupplierOrderRequest): Mono<String> {
+        createOrderByRequest(order)
+            .switchIfEmpty(Mono.error(BadRequestException("Order unsuccessful")))
+            .publishOn(Schedulers.boundedElastic())
+            .map { e-> send(e) }
+            .toFuture()
+        return Mono.just("Supplier Order successful")
+    }
     fun getOrderStatus(supplier_order: UUID): Mono<SupplierOrderStatusResponse> {
         return orderRepository.findById(supplier_order).map { e -> SupplierOrderStatusResponse(e.status) }
     }
+    fun send(supplierOrderResponse: SupplierOrderResponse) {
+        rabbitTemplate.convertAndSend(
+            headquarterSupplierResponseQueue, Json.encodeToString(supplierOrderResponse)
+        )
+        ConditionService.logger.info("Send msg = " + supplierOrderResponse)
+    }
+    /**
+     * Fixed Delay after Creation:
+     * 1) Update Status
+     * 2) Report Status to MQ
+     */
+
 }
