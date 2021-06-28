@@ -1,6 +1,7 @@
 package trinitityproject.factory.service
 
 import kotlinx.coroutines.flow.count
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactive.asFlow
 import kotlinx.coroutines.reactive.awaitFirst
@@ -59,7 +60,7 @@ class PartOrderService(
      * @param supplierId Id of the supplier with whom the order is to be placed
      * @param positions List of the positions to be ordered
      */
-     fun addPartOrder(productOrderId: UUID, partOrder: PartOrder) {
+    suspend fun addPartOrder(productOrderId: UUID, partOrder: PartOrder) {
 
         val productOrderFlow = repository.findById(productOrderId).asFlow();
 
@@ -103,25 +104,29 @@ class PartOrderService(
         return UUID.randomUUID();
     }
 
-    fun getUnfinishedProductOrder(): ProductOrder? {
-        return repository.findAll(
-            Example.of(
-                ProductOrder(
-                    customerId = UUID.fromString("cf9ae254-c466-11eb-8529-0242ac130003"),
-                    status = Status.OPEN,
-                    products = listOf()
-                ),
-                ExampleMatcher
-                    .matchingAny()
-                    .withIgnorePaths(
-                        "productOrderId",
-                        "customerId",
-                        "receptionTime",
-                        "products",
-                        "partOrders"
-                    )
+
+    suspend fun getUnfinishedProductOrder(): ProductOrder {
+        return repository
+            .findAll(
+                Example.of(
+                    ProductOrder(
+                        customerId = UUID.fromString("cf9ae254-c466-11eb-8529-0242ac130003"),
+                        status = Status.OPEN,
+                        products = listOf()
+                    ),
+                    ExampleMatcher
+                        .matchingAny()
+                        .withIgnorePaths(
+                            "productOrderId",
+                            "customerId",
+                            "receptionTime",
+                            "products",
+                            "partOrders"
+                        )
+                )
             )
-        ).blockFirst()
+            .asFlow()
+            .first()
     }
 
     fun getRequiredParts(order: ProductOrder): Map<UUID, Int> {

@@ -1,5 +1,6 @@
 package trinitityproject.factory.tasks
 
+import kotlinx.coroutines.runBlocking
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.amqp.rabbit.core.RabbitTemplate
@@ -28,10 +29,9 @@ class ProductionTask(
 
     @Scheduled(fixedRate = 4000)
     fun scheduleTaskWithFixedRate() {
-        val productOrder = partOrderService.getUnfinishedProductOrder()
-        if (productOrder != null) {
-
-            val outcome = partOrderService
+        runBlocking {
+            val productOrder = partOrderService.getUnfinishedProductOrder()
+            val res = partOrderService
                 .getRequiredParts(productOrder)
                 .map { Pair(conditionService.getBestCondition(it.key), it.value) }
                 .groupBy { it.first.supplier_id } //All
@@ -52,22 +52,10 @@ class ProductionTask(
                 }.onEach {
                     partOrderService.addPartOrder(productOrder.productOrderId, it)
                 }
+            log.info(res.toString())
         }
-
-//        if (productOrder != null) {
-//            val conditionId = UUID.randomUUID()
-//            log.info("send request for$conditionId")
-//
-//
-//            val sk = template.convertSendAndReceiveAsType(R
-//                "conditionRequests",
-//                ConditionRequest(conditionId),
-//                object : ParameterizedTypeReference<Condition>() {}
-//            )
-//            log.info(sk.toString())
-//        } else {
-//            log.warn("No suitable product order found")
-//        }
     }
-
+    
 }
+
+

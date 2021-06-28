@@ -1,4 +1,4 @@
-package trinitityproject.factory.rabbitmq_listener
+package trinitityproject.factory.config
 
 import org.springframework.amqp.core.Queue
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter
@@ -19,4 +19,5 @@ class RabbitMqConfig {
     fun jackson2MessageConverter(): MessageConverter {
         return Jackson2JsonMessageConverter()
     }
+
 }
