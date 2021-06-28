@@ -31,8 +31,7 @@ services:
   headquarter:
    image: headquarter_service
    restart: always
-   build: 
-    context: ./headquarter_service
+   build: ./headquarter_service
    ports:
      - 8080:8080
    depends_on: 
@@ -42,8 +41,7 @@ services:
   support:
     image: support_service
     restart: always
-    build: 
-      context: ./support_service
+    build: ./support_service
     ports:
       - 8081:8080
     depends_on: 
