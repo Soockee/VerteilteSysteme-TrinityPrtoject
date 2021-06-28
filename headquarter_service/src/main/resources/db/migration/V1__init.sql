@@ -79,10 +79,8 @@ CREATE TABLE supplier_order_part (
 CREATE TABLE supplier_order (
     order_id UUID NOT NULL DEFAULT uuid_generate_v1 (),
     supplier_id UUID NOT NULL DEFAULT uuid_generate_v1 (),
-    factory_id UUID NOT NULL DEFAULT uuid_generate_v1 (),
     begin_order  TIMESTAMP NOT NULL DEFAULT now(),
     status character varying(255) NOT NULL,
-    negotiation_timestamp TIMESTAMP DEFAULT now(),
     PRIMARY KEY(order_id)
 );
 
@@ -129,15 +127,27 @@ VALUES ('7174a632-d4e3-11eb-b8bc-0242ac130003', 'fa67191c-d4e2-11eb-b8bc-0242ac1
 
 INSERT INTO condition (supplier_id,part_id,price,currency)
 VALUES('8a34a8fe-d419-11eb-b8bc-0242ac130003','7f58be62-d418-11eb-b8bc-0242ac130003', 0.001 ,'Euro');
-
 INSERT INTO condition (supplier_id,part_id,price,currency)
 VALUES('8a34a8fe-d419-11eb-b8bc-0242ac130003','7f58bc28-d418-11eb-b8bc-0242ac130003', 110.5,'Euro');
 
 INSERT INTO condition (supplier_id,part_id,price,currency)
 VALUES('8d017b98-d419-11eb-b8bc-0242ac130003','7f58bfe8-d418-11eb-b8bc-0242ac130003', 1.55,'USD');
+
 INSERT INTO condition (supplier_id,part_id,price,currency)
 VALUES('8a34a8fe-d419-11eb-b8bc-0242ac130003','7f58bfe8-d418-11eb-b8bc-0242ac130003', 1.70,'USD');
 INSERT INTO condition (supplier_id,part_id,price,currency)
 VALUES('8d017b98-d419-11eb-b8bc-0242ac130003','93338fb6-d418-11eb-b8bc-0242ac130003', 20.0,'USD');
+INSERT INTO condition (supplier_id,part_id,price,currency)
+VALUES('8a34a8fe-d419-11eb-b8bc-0242ac130003','fa671a02-d4e2-11eb-b8bc-0242ac130003', 8888.8,'Euro');
+
+
+
+
+-- INSERT INTO condition (supplier_id,part_id,price,currency)
+-- VALUES('8a34a8fe-d419-11eb-b8bc-0242ac130003','fa671aca-d4e2-11eb-b8bc-0242ac130003', 0.001 ,'Euro');
+INSERT INTO condition (supplier_id,part_id,price,currency)
+VALUES('8a34a8fe-d419-11eb-b8bc-0242ac130003','fa67191c-d4e2-11eb-b8bc-0242ac130003', 6666.6,'USD');
+INSERT INTO condition (supplier_id,part_id,price,currency)
+VALUES('8d017b98-d419-11eb-b8bc-0242ac130003','93338fb6-d418-11eb-b8bc-0242ac130003', 5555.5,'USD');
 
 

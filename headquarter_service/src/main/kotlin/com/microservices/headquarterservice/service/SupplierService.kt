@@ -5,9 +5,7 @@ import com.microservices.headquarterservice.exception.BadRequestException
 import com.microservices.headquarterservice.model.headquarter.ConditionResponse
 import com.microservices.headquarterservice.model.headquarter.Supplier
 import com.microservices.headquarterservice.model.supplier.*
-import com.microservices.headquarterservice.persistence.SupplierOrderPartRepository
-import com.microservices.headquarterservice.persistence.SupplierOrderRepository
-import com.microservices.headquarterservice.persistence.SupplierRepository
+import com.microservices.headquarterservice.persistence.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
@@ -24,6 +22,8 @@ import java.util.*
 class SupplierService(
     private val repository: SupplierRepository,
     private val orderRepository: SupplierOrderRepository,
+    private val partRepository: PartRepository,
+    private val conditionRepository: ConditionRepository,
     private val orderPartRepository: SupplierOrderPartRepository,
     private val rabbitTemplate: AmqpTemplate,
     @Value("\${microservice.rabbitmq.queueSupplierResponse}") val headquarterSupplierResponseQueue: String,
@@ -51,9 +51,7 @@ class SupplierService(
         val supplierOrder = SupplierOrder(
             null,
             supplierId,
-            UUID.randomUUID(), // factory id
             Instant.now(),
-            Instant.now(), // negotiation timestamp
             "uncomplete"
         )
         return orderRepository.save(supplierOrder)
@@ -70,29 +68,48 @@ class SupplierService(
     }
 
     fun createOrderByRequest(order: SupplierOrderRequest): Mono<SupplierOrderResponse> {
-        val savedOrder = create()
-        savedOrder
-            .publishOn(Schedulers.boundedElastic())
-            .map { savedOrderItem ->
+        val savedOrder = create().block()!!
+        var isError = false
+        for (productOrderPartRequest in order.supplierOrders) {
+            var part = partRepository.findById(productOrderPartRequest.part_id).block()!!
+            var condition_per_part = conditionRepository.findAll().filter { e -> e.part_id == part.part_id }.collectList().block()!!
+            if (condition_per_part.isEmpty()) {
+                logger.warn("BAD Part_ID IN create Supplier order: ${productOrderPartRequest.part_id}")
+                isError = true
+                break;
+            }
+            else{
                 for (productOrderPartRequest in order.supplierOrders) {
-                    createSupplierOrderPart(productOrderPartRequest.part_id, productOrderPartRequest.count, savedOrderItem.order_id!!)
+                    createSupplierOrderPart(
+                        productOrderPartRequest.part_id,
+                        productOrderPartRequest.count,
+                        savedOrder.order_id!!
+                    )
                 }
             }
-            .toFuture()
-        savedOrder.flatMap { e -> Mono.just(e.order_id!!) }
-        return savedOrder.flatMap { e -> Mono.just(SupplierOrderResponse(e.order_id!!)) }
+        }
+        if(isError){
+            orderRepository.delete(savedOrder)
+            return Mono.error(BadRequestException("Supplier Order does contain invalid parts"))
+        }
+        else{
+            return Mono.just(SupplierOrderResponse(savedOrder.order_id!!))
+        }
     }
+
     fun createOrderByRequestAndSend(order: SupplierOrderRequest): Mono<String> {
         createOrderByRequest(order)
             .switchIfEmpty(Mono.error(BadRequestException("Order unsuccessful")))
             .publishOn(Schedulers.boundedElastic())
-            .map { e-> send(e) }
+            .map { e -> send(e) }
             .toFuture()
         return Mono.just("Supplier Order successful")
     }
+
     fun getOrderStatus(supplier_order: UUID): Mono<SupplierOrderStatusResponse> {
         return orderRepository.findById(supplier_order).map { e -> SupplierOrderStatusResponse(e.status) }
     }
+
     fun send(supplierOrderResponse: SupplierOrderResponse) {
         rabbitTemplate.convertAndSend(
             headquarterSupplierResponseQueue, Json.encodeToString(supplierOrderResponse)

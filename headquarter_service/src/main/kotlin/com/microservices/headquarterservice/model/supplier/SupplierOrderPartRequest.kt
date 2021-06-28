@@ -13,5 +13,4 @@ import java.util.*
 class SupplierOrderPartRequest(
     var part_id: UUID,
     var count: Int,
-    var negotiationTimestamp: Instant?
 )

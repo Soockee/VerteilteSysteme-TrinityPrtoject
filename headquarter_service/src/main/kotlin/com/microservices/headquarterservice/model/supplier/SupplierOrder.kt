@@ -9,8 +9,6 @@ import java.time.Instant
 class SupplierOrder(
     @Id var order_id: UUID?,
     var supplier_id: UUID,
-    var factory_id: UUID,
     var begin_order: Instant?,
-    var negotiation_timestamp: Instant?,
     var status: String,
 )
