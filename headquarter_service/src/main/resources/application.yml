@@ -23,21 +23,6 @@ spring:
     user: ${spring.r2dbc.username}
     password: ${spring.r2dbc.password}
 
-  r2dbc_support:
-    #host: db
-    host: localhost
-    port: 5432
-    database: headquarterservice
-    username: headquarterservice
-    password: headquarterservice123
-    url: r2dbc:postgresql://${spring.r2dbc_support.host}:${spring.r2dbc_support.port}/${spring.r2dbc_support.database}
-    #url: r2dbc:postgresql://${spring.r2dbc.host}/${spring.r2dbc.database}
-
-  flyway_support:
-    url: jdbc:postgresql://${spring.r2dbc_support.host}:${spring.r2dbc_support.port}/${spring.r2dbc_support.database}
-    user: ${spring.r2dbc_support.username}
-    password: ${spring.r2dbc_support.password}
-
 microservice:
   rabbitmq:
     queueCondition: condition
