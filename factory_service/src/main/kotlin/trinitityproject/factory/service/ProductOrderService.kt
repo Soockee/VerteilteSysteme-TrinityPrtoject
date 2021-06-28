@@ -1,21 +1,33 @@
 package trinitityproject.factory.service
 
+import kotlinx.coroutines.flow.filterNotNull
+import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.reactive.asFlow
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import trinitityproject.factory.handler.ProductOrderHandler
 import trinitityproject.factory.model.ProductOrder
 import trinitityproject.factory.repository.ProductOrderRepository
+import java.util.*
 
 @Component
 class ProductOrderService(
-    private val repository: ProductOrderRepository,
+    private val repository: ProductOrderRepository
 ) {
     private val log: Logger = LoggerFactory.getLogger(ProductOrderHandler::class.java)
 
     fun createOrder(order: ProductOrder) {
-        repository.save(order).block()
-        log.info("Saved to order to database: $order")
+        val submitedOrder = repository.insert(order).block()
+        log.info("Saved to order to database: $submitedOrder")
+    }
+
+    suspend fun getOrder(uuid: UUID): ProductOrder {
+        return repository
+            .findById(uuid)
+            .asFlow()
+            .filterNotNull()
+            .first()
     }
 
 }
