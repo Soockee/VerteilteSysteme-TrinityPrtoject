@@ -61,15 +61,9 @@ class ProductionTask(
                     productOrder = productOrderService.getOrder(productOrder.productOrderId)
                 }
 
-                val notSubmitedPartOrders = productOrder.partOrders
-                    .filter {
-                        it.orderId == null
-                    }
+                val orderHasPendingSupplierRequests = productOrder.partOrders.filter { it.status. }
 
-                if (notSubmitedPartOrders.isNotEmpty()) {
-                    notSubmitedPartOrders.map {
-                        
-                    }
+                if () {
                 }
             } catch (e: Exception) {
                 log.error("Production got interrupted: " + e.stackTrace.toString())
