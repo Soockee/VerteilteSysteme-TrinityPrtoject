@@ -11,8 +11,8 @@ import org.springframework.data.annotation.Id
 
 @Serializable
 data class OrderProduct(
-        @Transient  @Id var order_product_id: UUID? = null,
-        @Transient var order_id: UUID? = null,
-        var product_id: UUID,
-        var count: Int,
+    @Transient @Id var order_product_id: UUID? = null,
+    @Transient var order_id: UUID? = null,
+    var product_id: UUID,
+    var count: Int
 )
