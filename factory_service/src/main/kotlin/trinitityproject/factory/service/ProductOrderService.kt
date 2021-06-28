@@ -6,7 +6,6 @@ import kotlinx.coroutines.reactive.asFlow
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
-import trinitityproject.factory.handler.ProductOrderHandler
 import trinitityproject.factory.model.ProductOrder
 import trinitityproject.factory.repository.ProductOrderRepository
 import java.util.*
@@ -15,7 +14,7 @@ import java.util.*
 class ProductOrderService(
     private val repository: ProductOrderRepository
 ) {
-    private val log: Logger = LoggerFactory.getLogger(ProductOrderHandler::class.java)
+    private val log: Logger = LoggerFactory.getLogger(ProductOrderService::class.java)
 
     fun createOrder(order: ProductOrder) {
         val submitedOrder = repository.insert(order).block()

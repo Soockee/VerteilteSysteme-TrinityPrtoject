@@ -5,15 +5,12 @@ import org.springframework.data.annotation.Id
 import java.util.*
 
 data class Product(
-    @Id
-    @JsonProperty("productId")
-    val productId: UUID = UUID.randomUUID(),
+
+    @JsonProperty("product")
+    val productData: ProductData,
 
     @JsonProperty("count")
     val count: Int,
-
-    @JsonProperty("productionTime")
-    val productionTime: Long,
 
     @JsonProperty("parts")
     val parts: List<Part>,

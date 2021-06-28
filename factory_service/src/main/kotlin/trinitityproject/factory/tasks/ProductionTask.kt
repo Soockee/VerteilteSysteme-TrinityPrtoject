@@ -5,7 +5,6 @@ import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
-import trinitityproject.factory.handler.ProductOrderHandler
 import trinitityproject.factory.model.PartOrder
 import trinitityproject.factory.model.Position
 import trinitityproject.factory.model.Status
@@ -21,7 +20,7 @@ class ProductionTask(
     private val conditionService: ConditionService,
     private val productOrderService: ProductOrderService
 ) {
-    private val log: Logger = LoggerFactory.getLogger(ProductOrderHandler::class.java)
+    private val log: Logger = LoggerFactory.getLogger(ProductionTask::class.java)
 
     @Scheduled(fixedRate = 4000)
     fun scheduleTaskWithFixedRate() {
@@ -29,7 +28,7 @@ class ProductionTask(
             try {
                 var productOrder = partOrderService.getUnfinishedProductOrder()
                 if (productOrder.partOrders.isEmpty()) {
-                    partOrderService
+                    val ll = partOrderService
                         .getRequiredParts(productOrder)
                         .map {
                             Pair(conditionService.getBestCondition(it.key), it.value)
@@ -50,14 +49,15 @@ class ProductionTask(
                                 }
                             )
                         }
-                    
+                    log.info("Created: $ll")
+
                     productOrder = productOrderService.getOrder(productOrder.productOrderId)
                 }
 
-                val orderHasPendingSupplierRequests = productOrder.partOrders.filter { it.status. }
+//                val orderHasPendingSupplierRequests = productOrder.partOrders.filter { it.status. }
 
             } catch (e: Exception) {
-                log.error("Production got interrupted: " + e.stackTrace.toString())
+                log.error("Production got interrupted: " + e.printStackTrace())
             }
         }
     }

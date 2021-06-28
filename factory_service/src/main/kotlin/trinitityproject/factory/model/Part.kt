@@ -6,7 +6,7 @@ import java.util.*
 
 data class Part(
     @Id
-    @JsonProperty("partId")
+    @JsonProperty("part_id")
     val partId: UUID,
 
     @JsonProperty("count")

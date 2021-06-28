@@ -28,7 +28,7 @@ class ConditionService(
             conditionCache[partId]
         } else {
             val newCondition = template.convertSendAndReceiveAsType(
-                "conditionRequests",
+                "condition",
                 ConditionRequest(partId),
                 object : ParameterizedTypeReference<PartCondition>() {}
             )

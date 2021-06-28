@@ -5,15 +5,9 @@ import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactive.asFlow
-import kotlinx.coroutines.reactive.awaitFirst
-import org.slf4j.Logger
-import org.slf4j.LoggerFactory
 import org.springframework.data.domain.Example
 import org.springframework.data.domain.ExampleMatcher
-import org.springframework.data.domain.ExampleMatcher.GenericPropertyMatchers.exact
 import org.springframework.stereotype.Service
-import reactor.core.publisher.Mono
-import trinitityproject.factory.handler.ProductOrderHandler
 import trinitityproject.factory.model.*
 import trinitityproject.factory.repository.ProductOrderRepository
 import java.util.*
