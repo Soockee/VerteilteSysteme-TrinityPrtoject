@@ -1,4 +1,4 @@
-package trinitityproject.support.service
+package trinityproject.support.service
 
 import org.apache.commons.lang3.time.DateUtils
 import org.springframework.stereotype.Service

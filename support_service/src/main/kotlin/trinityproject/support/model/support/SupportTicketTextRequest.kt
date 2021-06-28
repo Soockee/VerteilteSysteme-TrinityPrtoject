@@ -1,13 +1,10 @@
-package trinitityproject.support.model.ticket
+package trinityproject.support.model.support
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import org.springframework.data.annotation.Id
-import org.springframework.data.mongodb.core.mapping.Document
-import trinitityproject.support.model.Status
 import java.util.*
 
-@Document
-data class SupportTicketTextRequest (
+data class SupportTicketTextRequest(
     @Id
     @JsonProperty("supportTicketId")
     val supportTicketId: UUID,

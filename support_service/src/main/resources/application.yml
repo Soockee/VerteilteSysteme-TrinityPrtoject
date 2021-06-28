@@ -1,0 +1,19 @@
+spring:
+
+  r2dbc:
+    host: localhost
+    #port: 5433
+    port: 5432
+    database: headquarterservice
+    username: headquarterservice
+    password: headquarterservice123
+#    database: supportservice
+#    username: supportservice
+#    password: supportservice123
+    url: r2dbc:postgresql://${spring.r2dbc.host}:${spring.r2dbc.port}/${spring.r2dbc.database}
+
+  flyway:
+    url: jdbc:postgresql://${spring.r2dbc.host}:${spring.r2dbc.port}/${spring.r2dbc.database}
+    user: ${spring.r2dbc.username}
+    password: ${spring.r2dbc.password}
+

@@ -67,6 +67,24 @@ CREATE TABLE order_product (
     PRIMARY KEY(order_product_id)
 );
 
+CREATE TABLE support_ticket (
+    support_ticket_id UUID NOT NULL DEFAULT uuid_generate_v1 (),
+    customer_id UUID NOT NULL,
+    status character varying(255) NOT NULL,
+    create_time TIMESTAMP NOT NULL DEFAULT now(),
+
+    PRIMARY KEY(support_ticket_id)
+);
+
+CREATE TABLE support_ticket_text (
+    support_ticket_text_id UUID NOT NULL DEFAULT uuid_generate_v1 (),
+    support_ticket_id UUID NOT NULL,
+    text character varying(255) NOT NULL,
+    change_time TIMESTAMP NOT NULL DEFAULT now(),
+
+    PRIMARY KEY (support_ticket_text_id)
+);
+
 
 
 INSERT INTO supplier (supplier_id,name)

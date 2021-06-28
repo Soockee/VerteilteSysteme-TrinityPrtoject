@@ -1,0 +1,37 @@
+# Use postgres/example user/password credentials
+version: "3.1"
+
+services:
+  db:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: headquarterservice123
+      POSTGRES_USER: headquarterservice
+      POSTGRES_DB: headquarterservice
+    ports:
+      - 5432:5432
+
+#  rabbit_mq:
+#    image: rabbitmq:3-management
+#    ports:
+#      - 5672:5672
+#      - 15672:15672
+#    volumes:
+#      - rabbitmq_data:/data
+
+  adminer:
+    image: adminer:latest
+    environment:
+      ADMINER_DEFAULT_SERVER: headquarter_service_db
+      ADMINER_DEFAULT_DB_NAME: headquarterservice
+    ports:
+      - 9000:8080
+
+  support-db:
+    image: postgres
+    environment:
+      POSTGRES_PASSWORD: supportservice123
+      POSTGRES_USER: supportservice
+      POSTGRES_DB: supportservice
+    ports:
+      - 5433:5432

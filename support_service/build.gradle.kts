@@ -22,7 +22,6 @@ repositories {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-data-mongodb-reactive")
     implementation("org.springframework.boot:spring-boot-starter-webflux")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
@@ -33,13 +32,16 @@ dependencies {
     implementation("org.springdoc:springdoc-openapi-webflux-ui:1.5.9")
     implementation("org.springdoc:springdoc-openapi-webflux-core:1.5.9")
     implementation("org.springdoc:springdoc-openapi-kotlin:1.5.9")
-    implementation("org.springframework.boot:spring-boot-starter-amqp")
     implementation("junit:junit:4.13.1")
     compileOnly("javax.servlet:javax.servlet-api")
     compileOnly("org.projectlombok:lombok")
     annotationProcessor("org.projectlombok:lombok")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.projectreactor:reactor-test")
+    compileOnly("org.flywaydb:flyway-core:7.10.0")
+    implementation("org.springframework.boot:spring-boot-starter-data-r2dbc")
+    runtimeOnly("io.r2dbc:r2dbc-postgresql")
+    runtimeOnly("org.postgresql:postgresql")
 }
 
 tasks.withType<KotlinCompile> {

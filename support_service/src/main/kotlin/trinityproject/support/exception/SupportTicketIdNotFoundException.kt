@@ -1,4 +1,4 @@
-package trinitityproject.support.exception
+package trinityproject.support.exception
 
 import org.springframework.http.HttpStatus
 import org.springframework.web.server.ResponseStatusException
