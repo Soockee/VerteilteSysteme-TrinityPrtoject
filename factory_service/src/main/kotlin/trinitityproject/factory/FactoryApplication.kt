@@ -27,3 +27,8 @@ fun myQueue(): Queue {
 fun processMessage(content: String?) {
 
 }
+
+@Bean
+fun queue(): Queue {
+	return Queue("kpi")
+}

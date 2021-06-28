@@ -6,13 +6,15 @@ import trinitityproject.factory.repository.ProductOrderRepository
 import java.time.Duration
 import java.util.*
 import org.slf4j.LoggerFactory
+import org.springframework.amqp.rabbit.core.RabbitTemplate
+import org.springframework.core.ParameterizedTypeReference
 import trinitityproject.factory.model.*
 
 
 @Service
 class ReportService(
     private val repository: ProductOrderRepository,
-    private val timeService: TimeService
+    private val timeService: TimeService,
 ) {
     private val logger: Logger = LoggerFactory.getLogger(ReportService::class.java)
 
@@ -39,8 +41,9 @@ class ReportService(
             finishedProductsCosts.size,
             calculateCosts(finishedProductsCosts));
 
-        logger.info("New report created at " +
-                "${timeService.getVirtualCurrentLocalTime(System.currentTimeMillis()).toString()}")
+        logger.info("new report created at " +
+                "${timeService.getVirtualCurrentLocalTime(System.currentTimeMillis())}: " +
+                "${report.toString()}")
 
         return report;
     }
