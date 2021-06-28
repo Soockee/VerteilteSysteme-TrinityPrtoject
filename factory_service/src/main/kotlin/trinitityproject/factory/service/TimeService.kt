@@ -49,7 +49,7 @@ class TimeService(private val dayInMillis: Long = 10000, private val timeZone: S
         return calendar
     }
 
-    fun getDelay(): Long {
+    fun getReportDelay(): Long {
         return dayInMillis / 2;
     }
 }

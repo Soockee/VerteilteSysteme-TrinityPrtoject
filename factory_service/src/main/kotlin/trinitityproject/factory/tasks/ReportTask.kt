@@ -37,7 +37,7 @@ class ReportTask(
 
         taskRegistrar.addFixedRateTask({
             sendReport()
-        }, timeService.getDelay())
+        }, timeService.getReportDelay())
     }
 
     /**
