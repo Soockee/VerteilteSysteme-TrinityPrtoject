@@ -1,12 +1,9 @@
 package com.microservices.headquarterservice.service
 
-import com.microservices.headquarterservice.exception.BadRequestException
-import com.microservices.headquarterservice.model.headquarter.Order
-import com.microservices.headquarterservice.model.headquarter.OrderProduct
-import com.microservices.headquarterservice.model.headquarter.OrderRequest
-import com.microservices.headquarterservice.model.headquarter.OrderResponse
-import com.microservices.headquarterservice.persistence.OrderProductRepository
-import com.microservices.headquarterservice.persistence.OrderRepository
+import com.microservices.headquarterservice.model.headquarter.order.*
+import com.microservices.headquarterservice.model.headquarter.Product
+import com.microservices.headquarterservice.model.headquarter.ProductPart
+import com.microservices.headquarterservice.persistence.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
@@ -15,7 +12,6 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
-import reactor.core.scheduler.Schedulers
 import java.time.Instant
 import java.util.*
 
@@ -23,6 +19,9 @@ import java.util.*
 class OrderService(
     private val orderRepository: OrderRepository,
     private val orderProductRepository: OrderProductRepository,
+    private val productRepository: ProductRepository,
+    private val productPartsRepository: ProductPartRepository,
+    private val partRepository: PartRepository,
     private val rabbitTemplate: AmqpTemplate,
     @Value("\${microservice.rabbitmq.queueOrder}") val headquarterOrderQueue: String,
 ) {
@@ -46,40 +45,61 @@ class OrderService(
         ]
     }
      */
-    fun createOrder(orderRequest: OrderRequest): Mono<Order> {
+    fun createOrder(orderRequest: OrderRequest): Order {
         var orderRaw = Order(null, orderRequest.customer_id, Instant.now(), "uncomplete")
+        val order = orderRepository.save(orderRaw).block()!!
+        logger.warn("create:::: order  ${order.order_id} ---  ${order.customer_id}")
+        val orderProductList = mutableListOf<OrderProduct>()
+        for (product in orderRequest.products) {
 
-        return orderRepository
-            .save(orderRaw)
-            .flatMap { ord ->
-                logger.debug("Save Order: order_id:" + ord.order_id + " begin: " + ord.begin_order + " customer_id: " + ord.customer_id + " status " + ord.status)
-                orderRequest.products.forEach { orderProductRequest ->
-                    orderProductRepository.save(
-                        OrderProduct(
-                            null,
-                            ord.order_id,
-                            orderProductRequest.product_id,
-                            orderProductRequest.count
-                        )
-                    ).subscribe { e ->
-                        logger.debug("Save OrderProduct: order_product_id: " + e.order_product_id + " product_id:" + e.product_id + " order_id:" + e.order_id)
-                    }
-                }
-                Mono.just(ord)
-            }
+            orderProductList.add(
+                orderProductRepository.save(
+                    OrderProduct(
+                        null,
+                        order.order_id,
+                        product.product_id,
+                        product.count
+                    )
+                ).block()!!
+            )
+            logger.warn("saving some stuff :::: order  ${order.order_id} ---  ${order.customer_id}")
+        }
+        sendCustomerOrder(order, orderProductList)
+        return order
     }
 
-    fun createCustomerOrder(orderRequest: OrderRequest): Mono<String> {
-        return createOrder(orderRequest)
-            .flatMap { order ->
-            getOrderProductsByOrderId(order.order_id!!)
-                .publishOn(Schedulers.boundedElastic())
-                .collectList()
-                .doOnNext { orderProductList ->
-                    send(OrderResponse(order.customer_id, orderProductList))
-                }.toFuture()
-            Mono.just("Order successful with order_id: " + order.order_id)
-        }.switchIfEmpty(Mono.error(BadRequestException("Order unsuccessful")))
+    fun sendCustomerOrder(order: Order, orderProducts: MutableList<OrderProduct>) {
+        var products: MutableList<Product> = mutableListOf()
+        var productParts: MutableList<ProductPart> = mutableListOf()
+        logger.warn("order  ${order.order_id} ---  ${order.customer_id}")
+
+        products.addAll(
+            productRepository.findAll().collectList().block()!!
+        )
+
+        productParts.addAll(
+            productPartsRepository.findAll().collectList().block()!!
+        )
+
+        // build responses
+        var orderProductResponses: MutableList<OrderProductResponse> = mutableListOf()
+
+        for (orderProduct in orderProducts) {
+            for (product in products.filter { e -> e.product_id == orderProduct.product_id }) {
+                var productPartsResponse: MutableList<ProductPart> = mutableListOf()
+                for (productPart in productParts.filter { e -> e.product_id == product.product_id }) {
+                    productPartsResponse.add(productPart)
+                }
+                orderProductResponses.add(
+                    OrderProductResponse(
+                        product,
+                        orderProduct.count,
+                        productPartsResponse
+                    )
+                )
+            }
+        }
+        send(OrderResponse(order.customer_id, orderProductResponses))
     }
 
     fun getAllOrders(): Flux<Order> {

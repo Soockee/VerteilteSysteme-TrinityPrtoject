@@ -1,7 +1,7 @@
 // package com.microservices.headquarterservice.controller
 
 // import com.microservices.headquarterservice.model.Headquarter
-// import com.microservices.headquarterservice.model.headquarter.ConditionResponse
+// import com.microservices.headquarterservice.model.headquarter.condition.ConditionResponse
 // import com.microservices.headquarterservice.service.HeadquarterService
 // import com.microservices.headquarterservice.service.ConditionService
 // import org.springframework.amqp.core.Queue

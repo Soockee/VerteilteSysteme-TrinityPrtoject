@@ -123,6 +123,30 @@ INSERT INTO product_part (product_id, part_id, count)
 VALUES ('7174a632-d4e3-11eb-b8bc-0242ac130003', 'fa67191c-d4e2-11eb-b8bc-0242ac130003', 10); -- Schraube 3x16
 
 
+-- Add Product_Part
+-- Kühlschrank Größe M 150x60x60
+INSERT INTO product_part (product_id, part_id, count)
+VALUES ('82a637fe-d4e3-11eb-b8bc-0242ac130003', 'fa671aca-d4e2-11eb-b8bc-0242ac130003', 2); -- Korpus
+INSERT INTO product_part (product_id, part_id, count)
+VALUES ('82a637fe-d4e3-11eb-b8bc-0242ac130003', 'fa671a02-d4e2-11eb-b8bc-0242ac130003', 2); -- Tür
+INSERT INTO product_part (product_id, part_id, count)
+VALUES ('82a637fe-d4e3-11eb-b8bc-0242ac130003', '7f58bfe8-d418-11eb-b8bc-0242ac130003', 2); -- Kühlmotor
+INSERT INTO product_part (product_id, part_id, count)
+VALUES ('82a637fe-d4e3-11eb-b8bc-0242ac130003', 'fa67191c-d4e2-11eb-b8bc-0242ac130003', 20); -- Schraube 3x16
+
+-- Add Product_Part
+-- Kühlschrank Größe L 200x60x60 Modell: Aus dem Weg Kleinverdiener
+INSERT INTO product_part (product_id, part_id, count)
+VALUES ('8664853a-d4e3-11eb-b8bc-0242ac130003', 'fa671aca-d4e2-11eb-b8bc-0242ac130003', 30); -- Korpus
+INSERT INTO product_part (product_id, part_id, count)
+VALUES ('8664853a-d4e3-11eb-b8bc-0242ac130003', 'fa671a02-d4e2-11eb-b8bc-0242ac130003', 30); -- Tür
+INSERT INTO product_part (product_id, part_id, count)
+VALUES ('8664853a-d4e3-11eb-b8bc-0242ac130003', '7f58bfe8-d418-11eb-b8bc-0242ac130003', 30); -- Kühlmotor
+INSERT INTO product_part (product_id, part_id, count)
+VALUES ('8664853a-d4e3-11eb-b8bc-0242ac130003', 'fa67191c-d4e2-11eb-b8bc-0242ac130003', 300); -- Schraube 3x16
+
+
+
 -- Add Condition
 
 INSERT INTO condition (supplier_id,part_id,price,currency)

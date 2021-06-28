@@ -2,7 +2,6 @@ package com.microservices.headquarterservice.service
 
 
 import com.microservices.headquarterservice.exception.BadRequestException
-import com.microservices.headquarterservice.model.headquarter.ConditionResponse
 import com.microservices.headquarterservice.model.headquarter.Supplier
 import com.microservices.headquarterservice.model.supplier.*
 import com.microservices.headquarterservice.persistence.*

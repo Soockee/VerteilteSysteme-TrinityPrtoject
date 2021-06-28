@@ -1,4 +1,4 @@
-package com.microservices.headquarterservice.model.headquarter
+package com.microservices.headquarterservice.model.headquarter.order
 
 import java.util.*
 import org.springframework.data.annotation.Id

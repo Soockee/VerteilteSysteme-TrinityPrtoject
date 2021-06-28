@@ -1,6 +1,6 @@
 package com.microservices.headquarterservice.persistence
 
-import com.microservices.headquarterservice.model.headquarter.OrderProduct
+import com.microservices.headquarterservice.model.headquarter.order.OrderProduct
 import org.springframework.data.repository.reactive.ReactiveCrudRepository
 import org.springframework.stereotype.Repository
 import java.util.*
