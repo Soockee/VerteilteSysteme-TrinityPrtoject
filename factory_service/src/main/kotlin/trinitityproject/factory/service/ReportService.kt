@@ -1,19 +1,23 @@
 package trinitityproject.factory.service
 
+import org.slf4j.Logger
 import org.springframework.stereotype.Service
-import trinitityproject.factory.model.Product
-import trinitityproject.factory.model.ProductOrder
-import trinitityproject.factory.model.Report
-import trinitityproject.factory.model.Status
 import trinitityproject.factory.repository.ProductOrderRepository
 import java.time.Duration
 import java.util.*
+import org.slf4j.LoggerFactory
+import org.springframework.amqp.rabbit.core.RabbitTemplate
+import org.springframework.core.ParameterizedTypeReference
+import trinitityproject.factory.model.*
+
 
 @Service
 class ReportService(
     private val repository: ProductOrderRepository,
-    private val timeService: TimeService
+    private val timeService: TimeService,
 ) {
+    private val logger: Logger = LoggerFactory.getLogger(ReportService::class.java)
+
     private val costPerHour = 1
 
     /**
@@ -30,14 +34,16 @@ class ReportService(
         val productOrders: List<ProductOrder> =
             productOrdersMono.block(Duration.ofMillis(1000)) as List<ProductOrder>;
 
-        val productOrdersToday = this.getProductOrdersToday(productOrders);
-
-        val finishedProducts: List<Product> = this.getFinishedProductsToday(productOrders);
+        val finishedProductsCosts: Map<Product, Double> = getFinishedProductsCostsToday(productOrders);
 
         val report = Report(
-            productOrdersToday.size,
-            finishedProducts.size,
-            this.calculateCosts(finishedProducts));
+            getProductOrdersToday(productOrders).size,
+            finishedProductsCosts.size,
+            calculateCosts(finishedProductsCosts));
+
+        logger.info("new report created at " +
+                "${timeService.getVirtualCurrentLocalTime(System.currentTimeMillis())}: " +
+                "${report.toString()}")
 
         return report;
     }
@@ -47,17 +53,16 @@ class ReportService(
      *
      * @return Cost of finished goods
      */
-    fun calculateCosts(products: List<Product>): Number {
-        var partCosts: Double = 0.0
-        var productionTime: Double = 0.0
+    fun calculateCosts(productsCost: Map<Product, Double>): Number {
+        var partCosts = 0.0
+        var productionTime = 0.0
 
-        products.forEach { product ->
-            // TODO(Fabian): Get Part costs from part conditions
-
+        productsCost.keys.forEach { product ->
+            partCosts += productsCost[product]!!
             productionTime += product.productionTime
         }
 
-        return partCosts + productionTime * this.costPerHour;
+        return partCosts + productionTime * costPerHour;
     }
 
     /**
@@ -66,7 +71,7 @@ class ReportService(
      * @return Orders received since midnight
      */
     fun getProductOrdersToday(productOrders: List<ProductOrder>): List<ProductOrder> {
-        return productOrders.filter { productOrder -> timeService.isToday(productOrder.receptionTime) }
+        return productOrders.filter { productOrder -> timeService.isSameVirtualLocalDate(productOrder.receptionTime) }
     }
 
     /**
@@ -74,17 +79,26 @@ class ReportService(
      *
      * @return Finished goods since midnight
      */
-    fun getFinishedProductsToday(productOrders: List<ProductOrder>): List<Product> {
-        var finishedProducts: MutableList<Product> = ArrayList()
+    fun getFinishedProductsCostsToday(productOrders: List<ProductOrder>): Map<Product, Double> {
+        var finishedProductsCosts: MutableMap<Product, Double> = HashMap()
 
         productOrders.forEach { productOrder ->
             productOrder.products.forEach { product ->
-                if(product.status == Status.DONE && this.timeService.isToday(product.completionTime)) {
-                    finishedProducts.add(product)
+                if(product.status == Status.DONE && timeService.isSameVirtualLocalDate(product.completionTime)) {
+                    var productPartCosts = 0.0
+                    product.parts.forEach { part ->
+                        productOrder.partOrders.forEach { partOrder ->
+                            var position = partOrder.positions.find {
+                                    position -> position.partSupplierId == part.partId
+                            }
+                            if(position != null) productPartCosts += position!!.condition.price.toDouble()
+                        }
+                    }
+                    finishedProductsCosts[product] = productPartCosts
                 }
             }
         }
 
-        return finishedProducts
+        return finishedProductsCosts
     }
 }
