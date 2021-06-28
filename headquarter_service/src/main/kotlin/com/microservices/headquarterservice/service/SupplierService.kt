@@ -5,6 +5,7 @@ import com.microservices.headquarterservice.exception.BadRequestException
 import com.microservices.headquarterservice.model.headquarter.Supplier
 import com.microservices.headquarterservice.model.supplier.*
 import com.microservices.headquarterservice.persistence.*
+import com.microservices.headquarterservice.tasks.SupplierPartTask
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
@@ -25,6 +26,7 @@ class SupplierService(
     private val conditionRepository: ConditionRepository,
     private val orderPartRepository: SupplierOrderPartRepository,
     private val rabbitTemplate: AmqpTemplate,
+    private val supplierPartTaks: SupplierPartTask,
     @Value("\${microservice.rabbitmq.queueSupplierResponse}") val headquarterSupplierResponseQueue: String,
 
     ) {
@@ -45,6 +47,10 @@ class SupplierService(
     fun getAllOrders(): Flux<SupplierOrder> {
         return orderRepository.findAll()
     }
+    fun getAllOrderParts(): Flux<SupplierOrderPart> {
+        return orderPartRepository.findAll()
+    }
+
 
     fun create(): Mono<SupplierOrder> {
         val supplierOrder = SupplierOrder(
@@ -83,7 +89,7 @@ class SupplierService(
                         productOrderPartRequest.part_id,
                         productOrderPartRequest.count,
                         savedOrder.order_id!!
-                    )
+                    ).block()!!
                 }
             }
         }
@@ -92,6 +98,8 @@ class SupplierService(
             return Mono.error(BadRequestException("Supplier Order does contain invalid parts"))
         }
         else{
+            // Task for status update
+            supplierPartTaks.scheduleTaskWithDelay(savedOrder)
             return Mono.just(SupplierOrderResponse(savedOrder.order_id!!))
         }
     }

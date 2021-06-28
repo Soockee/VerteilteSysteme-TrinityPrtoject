@@ -70,8 +70,8 @@ CREATE TABLE order_product (
 
 CREATE TABLE supplier_order_part (
      supplier_order_part_id UUID NOT NULL DEFAULT uuid_generate_v1 (),
-     supplier_order_id UUID NOT NULL DEFAULT uuid_generate_v1 (),
-     part_id UUID NOT NULL DEFAULT uuid_generate_v1 (),
+     supplier_order_id UUID NOT NULL ,
+     part_id UUID NOT NULL,
      count INTEGER NOT NULL,
      PRIMARY KEY (supplier_order_part_id)
 );
