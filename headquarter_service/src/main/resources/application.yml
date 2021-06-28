@@ -44,6 +44,7 @@ microservice:
     queueKIP: kip
     queueOrder: order
     queueSupplier: supplier
+    queueSupport: support
     queueSupplierResponse: supplierResponse
     queueSupplierStatus: supplierStatus
     queueSupplierStatusResponse: supplierStatusResponse

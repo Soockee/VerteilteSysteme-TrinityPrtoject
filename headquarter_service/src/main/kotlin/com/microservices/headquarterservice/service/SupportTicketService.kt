@@ -1,13 +1,18 @@
 package com.microservices.headquarterservice.service
 
+import com.microservices.headquarterservice.model.supplier.SupplierOrderResponse
 import com.microservices.headquarterservice.model.support.SupportTicket
 import com.microservices.headquarterservice.model.support.SupportTicketRequest
 import com.microservices.headquarterservice.model.support.SupportTicketResponse
 import com.microservices.headquarterservice.model.support.SupportTicketText
 import com.microservices.headquarterservice.persistence.support.SupportTicketRepository
 import com.microservices.headquarterservice.persistence.support.SupportTicketTextRepository
+import kotlinx.serialization.encodeToString
+import kotlinx.serialization.json.Json
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.amqp.core.AmqpTemplate
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
 
@@ -15,7 +20,11 @@ import reactor.core.publisher.Mono
 class SupportTicketService(
     private val supportTicketRepository: SupportTicketRepository,
     private val supportTicketTextRepository: SupportTicketTextRepository,
-) {
+    private val rabbitTemplate: AmqpTemplate,
+    @Value("\${microservice.rabbitmq.queueSupport}") val headquarterSupportQueue: String,
+
+
+    ) {
     private val logger: Logger = LoggerFactory.getLogger(SupportTicketService::class.java)
 
     /**
@@ -45,7 +54,13 @@ class SupportTicketService(
         supportTicketResponse.supportTicketText.add(supportTicketTextCreated)
 
         logger.info("Support ticket response was created: $supportTicketResponse")
-
+        send(supportTicketResponse)
         return Mono.just(supportTicketResponse)
+    }
+    fun send(ticket: SupportTicketResponse) {
+        rabbitTemplate.convertAndSend(
+            headquarterSupportQueue, Json.encodeToString(ticket)
+        )
+        ConditionService.logger.info("Send msg = " + ticket)
     }
 }

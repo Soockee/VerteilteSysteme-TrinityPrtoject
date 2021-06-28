@@ -12,6 +12,7 @@ import org.springframework.amqp.rabbit.core.RabbitAdmin
 import org.springframework.amqp.rabbit.listener.RabbitListenerContainerFactory
 import org.springframework.amqp.rabbit.listener.adapter.MessageListenerAdapter
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter
+import org.springframework.beans.factory.annotation.Qualifier
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
@@ -26,6 +27,7 @@ class RabbitConfig(
     @Value("\${microservice.rabbitmq.queueKIP}") val queueKIP: String,
     @Value("\${microservice.rabbitmq.queueOrder}") val queueOrder: String,
     @Value("\${microservice.rabbitmq.queueSupplier}") val queueSupplier: String,
+    @Value("\${microservice.rabbitmq.queueSupport}") val queueSupport: String,
     @Value("\${microservice.rabbitmq.queueSupplierResponse}") val queueSupplierResponse: String,
     @Value("\${microservice.rabbitmq.queueSupplierStatus}") val queueSupplierStatus: String,
     @Value("\${microservice.rabbitmq.queueSupplierStatusResponse}") val queueSupplierStatusResponse: String,
@@ -52,6 +54,11 @@ class RabbitConfig(
     fun queueCondition(): Queue {
         // logger.warn(headquarterQueueName)
         return Queue(queueCondition, true)
+    }
+    @Bean
+    fun queueSupport(): Queue {
+        // logger.warn(headquarterQueueName)
+        return Queue(queueSupport, true)
     }
 
     @Bean
@@ -92,11 +99,11 @@ class RabbitConfig(
             queueOrder(),
             queueCondition(),
             queueSupplier(),
+            queueSupport(),
             queueSupplierResponse(),
             queueSupplierStatus(),
             queueSupplierStatusResponse(),
             amqpAdmin(),
-
         )
     }
     @Bean
@@ -119,6 +126,7 @@ class RabbitConfig(
         private val queueOrder: Queue,
         private val queueCondition: Queue,
         private val queueSupplier: Queue,
+        private val queueSupport: Queue,
         private val queueSupplierResponse: Queue,
         private val queueSupplierStatus: Queue,
         private val queueSupplierStatusResponse: Queue,
@@ -130,6 +138,7 @@ class RabbitConfig(
             amqpAdmin.declareQueue(queueKIP)
             amqpAdmin.declareQueue(queueOrder)
             amqpAdmin.declareQueue(queueCondition)
+            amqpAdmin.declareQueue(queueSupport)
             amqpAdmin.declareQueue(queueSupplier)
             amqpAdmin.declareQueue(queueSupplierResponse)
             amqpAdmin.declareQueue(queueSupplierStatus)
