@@ -2,6 +2,7 @@ package com.microservices.headquarterservice.controller
 
 import com.microservices.headquarterservice.model.headquarter.Supplier
 import com.microservices.headquarterservice.model.supplier.SupplierOrder
+import com.microservices.headquarterservice.model.supplier.SupplierOrderPart
 import com.microservices.headquarterservice.model.supplier.SupplierOrderRequest
 import com.microservices.headquarterservice.model.supplier.SupplierOrderResponse
 import com.microservices.headquarterservice.service.SupplierService
@@ -29,5 +30,10 @@ class SupplierController (
     fun getAllSupplierOrder(
     ): Flux<SupplierOrder> {
         return supplierService.getAllOrders()
+    }
+    @GetMapping( "/supplier-orders-parts/")
+    fun getAllSupplierOrderParts(
+    ): Flux<SupplierOrderPart> {
+        return supplierService.getAllOrderParts()
     }
 }
