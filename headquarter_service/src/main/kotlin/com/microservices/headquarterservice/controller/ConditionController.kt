@@ -1,6 +1,6 @@
 package com.microservices.headquarterservice.controller
 
-import com.microservices.headquarterservice.model.headquarter.Condition
+import com.microservices.headquarterservice.model.headquarter.condition.Condition
 import com.microservices.headquarterservice.service.ConditionService
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux

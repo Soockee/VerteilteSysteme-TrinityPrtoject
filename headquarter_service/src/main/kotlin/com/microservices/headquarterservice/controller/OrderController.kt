@@ -1,8 +1,8 @@
 package com.microservices.headquarterservice.controller
 
-import com.microservices.headquarterservice.model.headquarter.Order
-import com.microservices.headquarterservice.model.headquarter.OrderProduct
-import com.microservices.headquarterservice.model.headquarter.OrderRequest
+import com.microservices.headquarterservice.model.headquarter.order.Order
+import com.microservices.headquarterservice.model.headquarter.order.OrderProduct
+import com.microservices.headquarterservice.model.headquarter.order.OrderRequest
 import com.microservices.headquarterservice.service.ConditionService
 import com.microservices.headquarterservice.service.OrderService
 import org.slf4j.LoggerFactory
@@ -21,8 +21,8 @@ class OrderController (
     @PostMapping("/order/")
     fun create(
         @RequestBody orderRequest: OrderRequest
-    ): Mono<String> {
-       return orderService.createCustomerOrder(orderRequest)
+    ): Order {
+       return orderService.createOrder(orderRequest)
     }
 
     @GetMapping( "/orders/")

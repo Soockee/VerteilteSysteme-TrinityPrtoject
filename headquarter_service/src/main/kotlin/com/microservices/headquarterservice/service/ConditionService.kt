@@ -1,7 +1,7 @@
 package com.microservices.headquarterservice.service
 
-import com.microservices.headquarterservice.model.headquarter.Condition
-import com.microservices.headquarterservice.model.headquarter.ConditionResponse
+import com.microservices.headquarterservice.model.headquarter.condition.Condition
+import com.microservices.headquarterservice.model.headquarter.condition.ConditionResponse
 import com.microservices.headquarterservice.persistence.ConditionRepository
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json

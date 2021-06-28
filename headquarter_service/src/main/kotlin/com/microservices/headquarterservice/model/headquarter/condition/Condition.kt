@@ -1,6 +1,6 @@
 @file:UseSerializers(UUIDSerializer::class, BigDecimalSerializer::class, InstantSerializer::class)
 
-package com.microservices.headquarterservice.model.headquarter
+package com.microservices.headquarterservice.model.headquarter.condition
 
 import com.fasterxml.jackson.annotation.JsonProperty
 import com.microservices.headquarterservice.serializer.*
