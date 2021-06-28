@@ -1,5 +1,5 @@
 // @file:UseSerializers(UUIDSerializer::class)
-package com.microservices.headquarterservice.model
+package com.microservices.headquarterservice.model.headquarter.condition
 
 import java.util.*
 import kotlinx.serialization.*

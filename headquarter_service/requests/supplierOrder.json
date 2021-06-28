@@ -1,0 +1,17 @@
+{
+  "supplierOrders":
+  [
+    {
+      "part_id": "fa671a02-d4e2-11eb-b8bc-0242ac130003",
+      "count": 1
+    },
+    {
+      "part_id": "7f58bfe8-d418-11eb-b8bc-0242ac130003",
+      "count": 1
+    },
+    {
+      "part_id": "fa67191c-d4e2-11eb-b8bc-0242ac130003",
+      "count": 10
+    }
+  ]
+}

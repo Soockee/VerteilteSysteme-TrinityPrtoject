@@ -1,9 +1,10 @@
 package com.microservices.headquarterservice.controller
 
-import com.microservices.headquarterservice.model.*
+import com.microservices.headquarterservice.model.headquarter.order.Order
+import com.microservices.headquarterservice.model.headquarter.order.OrderProduct
+import com.microservices.headquarterservice.model.headquarter.order.OrderRequest
 import com.microservices.headquarterservice.service.ConditionService
 import com.microservices.headquarterservice.service.OrderService
-import com.microservices.headquarterservice.service.ProductService
 import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
@@ -20,8 +21,8 @@ class OrderController (
     @PostMapping("/order/")
     fun create(
         @RequestBody orderRequest: OrderRequest
-    ): Mono<String> {
-       return orderService.createCustomerOrder(orderRequest)
+    ): Order {
+       return orderService.createOrder(orderRequest)
     }
 
     @GetMapping( "/orders/")

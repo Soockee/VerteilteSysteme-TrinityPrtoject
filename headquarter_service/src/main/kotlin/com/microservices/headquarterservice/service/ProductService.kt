@@ -1,8 +1,8 @@
 package com.microservices.headquarterservice.service
 
-import com.microservices.headquarterservice.model.Product
-import com.microservices.headquarterservice.model.ProductPart
-import com.microservices.headquarterservice.model.ProductResponse
+import com.microservices.headquarterservice.model.headquarter.Product
+import com.microservices.headquarterservice.model.headquarter.ProductPart
+import com.microservices.headquarterservice.model.headquarter.ProductResponse
 import com.microservices.headquarterservice.persistence.ProductPartRepository
 import com.microservices.headquarterservice.persistence.ProductRepository
 import kotlinx.serialization.encodeToString
@@ -20,9 +20,7 @@ class ProductService(
     private val productRepository: ProductRepository,
     private val productPartRepository: ProductPartRepository,
     private val rabbitTemplate: AmqpTemplate,
-    @Value("\${microservice.rabbitmq.routingkey}") val headquarterRoutingKey: String,
-    @Value("\${microservice.rabbitmq.queue}") val headquarterQueueName: String,
-    @Value("\${microservice.rabbitmq.exchange}") val headquarterExchangeName: String,
+    @Value("\${microservice.rabbitmq.queueOrder}") val headquarterOrderQueue: String,
     ){
 
     companion object {
@@ -58,8 +56,7 @@ class ProductService(
         var productResponse = ProductResponse(productObj,parts)
 
         rabbitTemplate.convertAndSend(
-            headquarterExchangeName,
-            headquarterRoutingKey,
+            headquarterOrderQueue,
             Json.encodeToString(productResponse))
     }
 

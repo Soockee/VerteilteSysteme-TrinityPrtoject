@@ -1,9 +1,8 @@
 package com.microservices.headquarterservice.service
 
-import com.microservices.headquarterservice.model.Condition
-import com.microservices.headquarterservice.model.ConditionResponse
+import com.microservices.headquarterservice.model.headquarter.condition.Condition
+import com.microservices.headquarterservice.model.headquarter.condition.ConditionResponse
 import com.microservices.headquarterservice.persistence.ConditionRepository
-import java.util.*
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
@@ -14,6 +13,7 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 import reactor.core.scheduler.Schedulers
 import java.time.Instant
+import java.util.*
 
 @Service
 class ConditionService(
@@ -21,9 +21,7 @@ class ConditionService(
     private val partService: PartService,
     private val supplierService: SupplierService,
     private val rabbitTemplate: AmqpTemplate,
-    @Value("\${microservice.rabbitmq.routingkey}") val headquarterRoutingKey: String,
-    @Value("\${microservice.rabbitmq.queue}") val headquarterQueueName: String,
-    @Value("\${microservice.rabbitmq.exchange}") val headquarterExchangeName: String,
+    @Value("\${microservice.rabbitmq.queueCondition}") val headquarterConditionQueue: String,
 ) {
     companion object {
         val logger = LoggerFactory.getLogger(ConditionService::class.java)
@@ -34,7 +32,7 @@ class ConditionService(
         return repository.save(condition)
     }
 
-    fun createConditionAndUpdate(condition: Condition): Mono<Condition> {
+    fun createConditionAndSend(condition: Condition): Mono<Condition> {
         val savedCondition = create(condition)
         savedCondition.publishOn(Schedulers.boundedElastic())
             .map { conditionItem ->
@@ -67,7 +65,7 @@ class ConditionService(
 
     fun send(condition: ConditionResponse) {
         rabbitTemplate.convertAndSend(
-            headquarterExchangeName, headquarterRoutingKey, Json.encodeToString(condition)
+            headquarterConditionQueue, Json.encodeToString(condition)
         )
         logger.info("Send msg = " + condition)
     }

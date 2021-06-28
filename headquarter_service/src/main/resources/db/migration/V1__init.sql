@@ -30,7 +30,7 @@ CREATE TABLE product (
 CREATE TABLE part (
     part_id UUID NOT NULL DEFAULT uuid_generate_v1 (),
     name character varying(255) NOT NULL,
-
+    delievery_time INTEGER NOT NULL,
     PRIMARY KEY(part_id)
 );
 
@@ -86,6 +86,23 @@ CREATE TABLE support_ticket_text (
 );
 
 
+CREATE TABLE supplier_order_part (
+     supplier_order_part_id UUID NOT NULL DEFAULT uuid_generate_v1 (),
+     supplier_order_id UUID NOT NULL ,
+     part_id UUID NOT NULL,
+     count INTEGER NOT NULL,
+     PRIMARY KEY (supplier_order_part_id)
+);
+
+CREATE TABLE supplier_order (
+    order_id UUID NOT NULL DEFAULT uuid_generate_v1 (),
+    supplier_id UUID NOT NULL DEFAULT uuid_generate_v1 (),
+    begin_order  TIMESTAMP NOT NULL DEFAULT now(),
+    status character varying(255) NOT NULL,
+    PRIMARY KEY(order_id)
+);
+
+
 
 INSERT INTO supplier (supplier_id,name)
 VALUES('8a34a8fe-d419-11eb-b8bc-0242ac130003', 'electroStuff.com');
@@ -93,16 +110,16 @@ INSERT INTO supplier (supplier_id,name)
 VALUES('8d017b98-d419-11eb-b8bc-0242ac130003', 'CoolMechanics.com');
 
 -- Add Parts
-INSERT INTO part (part_id,name)
-VALUES('fa67169c-d4e2-11eb-b8bc-0242ac130003','Schraube 3x18');
-INSERT INTO part (part_id,name)
-VALUES('fa67191c-d4e2-11eb-b8bc-0242ac130003','Schraube 3x16');
-INSERT INTO part (part_id,name)
-VALUES('fa671a02-d4e2-11eb-b8bc-0242ac130003','Tür 100x60');
-INSERT INTO part (part_id,name)
-VALUES('fa671aca-d4e2-11eb-b8bc-0242ac130003','Korpus 100x60x55');
-INSERT INTO part (part_id,name)
-VALUES('7f58bfe8-d418-11eb-b8bc-0242ac130003','Kühlmotor');
+INSERT INTO part (part_id,name,delievery_time)
+VALUES('fa67169c-d4e2-11eb-b8bc-0242ac130003','Schraube 3x18',10);
+INSERT INTO part (part_id,name,delievery_time)
+VALUES('fa67191c-d4e2-11eb-b8bc-0242ac130003','Schraube 3x16',5);
+INSERT INTO part (part_id,name,delievery_time)
+VALUES('fa671a02-d4e2-11eb-b8bc-0242ac130003','Tür 100x60',40);
+INSERT INTO part (part_id,name,delievery_time)
+VALUES('fa671aca-d4e2-11eb-b8bc-0242ac130003','Korpus 100x60x55',50);
+INSERT INTO part (part_id,name,delievery_time)
+VALUES('7f58bfe8-d418-11eb-b8bc-0242ac130003','Kühlmotor',100);
 
 -- Add Product
 INSERT INTO product (product_id, name, production_time)
@@ -124,17 +141,55 @@ INSERT INTO product_part (product_id, part_id, count)
 VALUES ('7174a632-d4e3-11eb-b8bc-0242ac130003', 'fa67191c-d4e2-11eb-b8bc-0242ac130003', 10); -- Schraube 3x16
 
 
+-- Add Product_Part
+-- Kühlschrank Größe M 150x60x60
+INSERT INTO product_part (product_id, part_id, count)
+VALUES ('82a637fe-d4e3-11eb-b8bc-0242ac130003', 'fa671aca-d4e2-11eb-b8bc-0242ac130003', 2); -- Korpus
+INSERT INTO product_part (product_id, part_id, count)
+VALUES ('82a637fe-d4e3-11eb-b8bc-0242ac130003', 'fa671a02-d4e2-11eb-b8bc-0242ac130003', 2); -- Tür
+INSERT INTO product_part (product_id, part_id, count)
+VALUES ('82a637fe-d4e3-11eb-b8bc-0242ac130003', '7f58bfe8-d418-11eb-b8bc-0242ac130003', 2); -- Kühlmotor
+INSERT INTO product_part (product_id, part_id, count)
+VALUES ('82a637fe-d4e3-11eb-b8bc-0242ac130003', 'fa67191c-d4e2-11eb-b8bc-0242ac130003', 20); -- Schraube 3x16
+
+-- Add Product_Part
+-- Kühlschrank Größe L 200x60x60 Modell: Aus dem Weg Kleinverdiener
+INSERT INTO product_part (product_id, part_id, count)
+VALUES ('8664853a-d4e3-11eb-b8bc-0242ac130003', 'fa671aca-d4e2-11eb-b8bc-0242ac130003', 30); -- Korpus
+INSERT INTO product_part (product_id, part_id, count)
+VALUES ('8664853a-d4e3-11eb-b8bc-0242ac130003', 'fa671a02-d4e2-11eb-b8bc-0242ac130003', 30); -- Tür
+INSERT INTO product_part (product_id, part_id, count)
+VALUES ('8664853a-d4e3-11eb-b8bc-0242ac130003', '7f58bfe8-d418-11eb-b8bc-0242ac130003', 30); -- Kühlmotor
+INSERT INTO product_part (product_id, part_id, count)
+VALUES ('8664853a-d4e3-11eb-b8bc-0242ac130003', 'fa67191c-d4e2-11eb-b8bc-0242ac130003', 300); -- Schraube 3x16
+
+
+
 -- Add Condition
 
 INSERT INTO condition (supplier_id,part_id,price,currency)
 VALUES('8a34a8fe-d419-11eb-b8bc-0242ac130003','7f58be62-d418-11eb-b8bc-0242ac130003', 0.001 ,'Euro');
-
 INSERT INTO condition (supplier_id,part_id,price,currency)
 VALUES('8a34a8fe-d419-11eb-b8bc-0242ac130003','7f58bc28-d418-11eb-b8bc-0242ac130003', 110.5,'Euro');
 
 INSERT INTO condition (supplier_id,part_id,price,currency)
 VALUES('8d017b98-d419-11eb-b8bc-0242ac130003','7f58bfe8-d418-11eb-b8bc-0242ac130003', 1.55,'USD');
+
 INSERT INTO condition (supplier_id,part_id,price,currency)
 VALUES('8a34a8fe-d419-11eb-b8bc-0242ac130003','7f58bfe8-d418-11eb-b8bc-0242ac130003', 1.70,'USD');
 INSERT INTO condition (supplier_id,part_id,price,currency)
 VALUES('8d017b98-d419-11eb-b8bc-0242ac130003','93338fb6-d418-11eb-b8bc-0242ac130003', 20.0,'USD');
+INSERT INTO condition (supplier_id,part_id,price,currency)
+VALUES('8a34a8fe-d419-11eb-b8bc-0242ac130003','fa671a02-d4e2-11eb-b8bc-0242ac130003', 8888.8,'Euro');
+
+
+
+
+-- INSERT INTO condition (supplier_id,part_id,price,currency)
+-- VALUES('8a34a8fe-d419-11eb-b8bc-0242ac130003','fa671aca-d4e2-11eb-b8bc-0242ac130003', 0.001 ,'Euro');
+INSERT INTO condition (supplier_id,part_id,price,currency)
+VALUES('8a34a8fe-d419-11eb-b8bc-0242ac130003','fa67191c-d4e2-11eb-b8bc-0242ac130003', 6666.6,'USD');
+INSERT INTO condition (supplier_id,part_id,price,currency)
+VALUES('8d017b98-d419-11eb-b8bc-0242ac130003','93338fb6-d418-11eb-b8bc-0242ac130003', 5555.5,'USD');
+
+

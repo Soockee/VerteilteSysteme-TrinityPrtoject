@@ -1,19 +1,14 @@
 @file:UseSerializers(UUIDSerializer::class)
-
-
-package com.microservices.headquarterservice.model
+package com.microservices.headquarterservice.model.headquarter.order
 
 import com.microservices.headquarterservice.serializer.UUIDSerializer
 import kotlinx.serialization.Serializable
-import kotlinx.serialization.Transient
 import kotlinx.serialization.UseSerializers
 import org.springframework.data.annotation.Id
 import java.util.*
 
 @Serializable
-class ProductPart(
-    @Transient @Id var product_part_id: UUID? = null,
-    @Transient var product_id: UUID? = null,
-    var part_id: UUID,
-    var count: Int,
+class OrderResponse (
+    var customer_id: UUID,
+    var products: List<OrderProductResponse>
 )

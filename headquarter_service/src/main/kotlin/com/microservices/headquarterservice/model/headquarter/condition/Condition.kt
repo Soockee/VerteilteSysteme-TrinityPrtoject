@@ -1,7 +1,8 @@
 @file:UseSerializers(UUIDSerializer::class, BigDecimalSerializer::class, InstantSerializer::class)
 
-package com.microservices.headquarterservice.model
+package com.microservices.headquarterservice.model.headquarter.condition
 
+import com.fasterxml.jackson.annotation.JsonProperty
 import com.microservices.headquarterservice.serializer.*
 import java.math.BigDecimal
 import java.util.UUID

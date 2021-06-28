@@ -1,9 +1,9 @@
 package com.microservices.headquarterservice.persistence
 
-import com.microservices.headquarterservice.model.headquarter.order.OrderProduct
+import com.microservices.headquarterservice.model.supplier.SupplierOrder
 import org.springframework.data.repository.reactive.ReactiveCrudRepository
 import org.springframework.stereotype.Repository
 import java.util.*
 
 @Repository
-interface OrderProductRepository : ReactiveCrudRepository<OrderProduct, UUID>
+interface SupplierOrderRepository : ReactiveCrudRepository<SupplierOrder, UUID>

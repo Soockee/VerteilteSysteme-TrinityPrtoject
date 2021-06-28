@@ -1,5 +1,5 @@
 @file:UseSerializers(UUIDSerializer::class)
-package com.microservices.headquarterservice.model
+package com.microservices.headquarterservice.model.supplier
 
 import com.microservices.headquarterservice.serializer.UUIDSerializer
 import kotlinx.serialization.Serializable
@@ -8,7 +8,6 @@ import org.springframework.data.annotation.Id
 import java.util.*
 
 @Serializable
-class OrderResponse (
-    @Id var customer_id: UUID,
-    var products: List<OrderProduct>
+class SupplierOrderStatusResponse (
+    var status: String,
 )
