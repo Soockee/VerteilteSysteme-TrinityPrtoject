@@ -4,6 +4,6 @@ import com.fasterxml.jackson.annotation.JsonProperty
 import java.util.*
 
 data class ConditionRequest(
-    @JsonProperty("partId", access = JsonProperty.Access.READ_ONLY)
+    @JsonProperty("partId")
     val partId: UUID,
 )

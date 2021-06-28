@@ -39,11 +39,14 @@ class ReportService(
         val report = Report(
             getProductOrdersToday(productOrders).size,
             finishedProductsCosts.size,
-            calculateCosts(finishedProductsCosts));
+            calculateCosts(finishedProductsCosts)
+        );
 
-        logger.info("new report created at " +
-                "${timeService.getVirtualCurrentLocalTime(System.currentTimeMillis())}: " +
-                "${report.toString()}")
+        logger.info(
+            "new report created at " +
+                    "${timeService.getVirtualCurrentLocalTime(System.currentTimeMillis())}: " +
+                    "${report.toString()}"
+        )
 
         return report;
     }
@@ -59,7 +62,7 @@ class ReportService(
 
         productsCost.keys.forEach { product ->
             partCosts += productsCost[product]!!
-            productionTime += product.productionTime
+            productionTime += product.productData.productionTime
         }
 
         return partCosts + productionTime * costPerHour;
@@ -84,14 +87,14 @@ class ReportService(
 
         productOrders.forEach { productOrder ->
             productOrder.products.forEach { product ->
-                if(product.status == Status.DONE && timeService.isSameVirtualLocalDate(product.completionTime)) {
+                if (product.status == Status.DONE && timeService.isSameVirtualLocalDate(product.completionTime)) {
                     var productPartCosts = 0.0
                     product.parts.forEach { part ->
                         productOrder.partOrders.forEach { partOrder ->
-                            var position = partOrder.positions.find {
-                                    position -> position.partSupplierId == part.partId
+                            var position = partOrder.positions.find { position ->
+                                position.partSupplierId == part.partId
                             }
-                            if(position != null) productPartCosts += position!!.condition.price.toDouble()
+                            if (position != null) productPartCosts += position!!.condition.price.toDouble()
                         }
                     }
                     finishedProductsCosts[product] = productPartCosts

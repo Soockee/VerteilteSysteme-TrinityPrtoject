@@ -3,13 +3,13 @@ version: '3.1'
 
 services:
 
-  rabbit_mq:
-    image: rabbitmq:3-management
-    ports:
-      - 5672:5672
-      - 15672:15672
-    volumes:
-      - rabbitmq_data:/data
+#  rabbit_mq:
+#    image: rabbitmq:3-management
+#    ports:
+#      - 5672:5672
+#      - 15672:15672
+#    volumes:
+#      - rabbitmq_data:/data
 
 
   adminer:

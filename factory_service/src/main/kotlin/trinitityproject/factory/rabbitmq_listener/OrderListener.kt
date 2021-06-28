@@ -30,7 +30,7 @@ class OrderListener(
         return factory
     }
 
-    @RabbitListener(queuesToDeclare = [Queue(name = "orders")])
+    @RabbitListener(queuesToDeclare = [Queue(name = "order")])
     @Throws(InterruptedException::class)
     fun receiveOrder(@Payload order: ProductOrder) {
         productOrderService.createOrder(order)

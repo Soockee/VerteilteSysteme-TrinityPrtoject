@@ -8,6 +8,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
 import org.springframework.amqp.core.AmqpTemplate
+import org.springframework.amqp.core.MessagePostProcessor
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import reactor.core.publisher.Flux
@@ -125,10 +126,14 @@ class OrderService(
 
 
     fun send(orderResponse: OrderResponse) {
+        rabbitTemplate.convertAndSend(headquarterOrderQueue)
         rabbitTemplate.convertAndSend(
-            headquarterOrderQueue, Json.encodeToString(orderResponse)
-        )
-        logger.info("Send msg = " + orderResponse)
-
+            headquarterOrderQueue,
+            Json.encodeToString(orderResponse) as Any
+        ) { message ->
+            message.messageProperties.contentType = "application/json"
+            message
+        }
+        logger.info("Send msg = $orderResponse")
     }
 }

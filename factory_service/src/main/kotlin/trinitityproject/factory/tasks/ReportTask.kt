@@ -7,11 +7,8 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.scheduling.annotation.EnableScheduling
-import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.scheduling.annotation.SchedulingConfigurer
 import org.springframework.scheduling.config.ScheduledTaskRegistrar
-import org.springframework.stereotype.Component
-import trinitityproject.factory.handler.ProductOrderHandler
 import trinitityproject.factory.model.Report
 import trinitityproject.factory.service.ReportService
 import trinitityproject.factory.service.TimeService
@@ -25,7 +22,7 @@ class ReportTask(
     private val timeService: TimeService,
     private val template: RabbitTemplate,
 ) : SchedulingConfigurer {
-    private val logger: Logger = LoggerFactory.getLogger(ProductOrderHandler::class.java)
+    private val logger: Logger = LoggerFactory.getLogger(ReportTask::class.java)
 
     @Bean
     fun taskExecutor(): Executor {

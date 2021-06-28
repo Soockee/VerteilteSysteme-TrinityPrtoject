@@ -1,13 +1,11 @@
-package trinitityproject.factory.model
+package trinitityproject.factory.model.supplier
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import org.springframework.data.annotation.Id
 import java.util.*
 
-data class Part(
-    @Id
+data class SupplierOrders(
     @JsonProperty("part_id")
-    val partId: UUID,
+    val part_id: UUID,
 
     @JsonProperty("count")
     val count: Int

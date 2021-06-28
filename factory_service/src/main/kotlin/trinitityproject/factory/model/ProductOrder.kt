@@ -11,7 +11,7 @@ data class ProductOrder(
     @JsonProperty("productOrderId", access = JsonProperty.Access.READ_ONLY)
     val productOrderId: UUID = UUID.randomUUID(),
 
-    @JsonProperty("customerId")
+    @JsonProperty("customer_id")
     val customerId: UUID,
 
     @JsonProperty("receptionTime", access = JsonProperty.Access.READ_ONLY)
