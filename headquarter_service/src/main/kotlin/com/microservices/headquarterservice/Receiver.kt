@@ -19,29 +19,9 @@ import reactor.core.scheduler.Schedulers
 @Component
 class Receiver(
     private val conditionService: ConditionService,
-    private val supplierService: SupplierService,
     private val kpiService: KPIService
-    ) {
-    companion object {
-        val logger = LoggerFactory.getLogger(Receiver::class.java)
-    }
-
-
-//    @RabbitListener(queues = ["\${microservice.rabbitmq.queueOrder}"])
-//    fun receiveOrder(@Payload request: ConditionResponse) {
-//        logger.warn("receiveOrder: \n" +  "partid: "+request.part_id  + "\n" + "order list: ")
-//        request.conditions.forEach{
-//            e ->
-//            logger.warn(
-//                "condition_id: " + e.conditions_id + "\n" +
-//                "part_id: " + e.part_id + "\n" +
-//                "supplier_id: " + e.supplier_id + "\n" +
-//                "price: " + e.price + "\n" +
-//                "currency" + e.currency + "\n" +
-//                "negotiation_timestamp: " + e.negotiation_timestamp+ "\n"
-//            )
-//        }
-//    }
+) {
+    val logger = LoggerFactory.getLogger(Receiver::class.java)
 
     @RabbitListener(queues = ["\${microservice.rabbitmq.queueKPI}"])
     fun receiveKPI(@Payload report: Report) {
@@ -49,30 +29,14 @@ class Receiver(
         kpiService.create(report).block()!!
     }
 
-    @RabbitListener(queues = ["\${microservice.rabbitmq.queueSupplier}"])
-    fun receiveSupplier(@Payload request: SupplierOrderRequest): SupplierOrderResponse {
-        request.supplierOrders.forEach{
-                e ->
-            logger.warn(
-                "order_id: " + e.part_id + "\n"
-            )
-        }
-        return supplierService.createOrderByRequest(request).block()!!
-    }
-
-    @RabbitListener(queues = ["\${microservice.rabbitmq.queueSupplierStatus}"])
-    fun receiveSupplierStatus(@Payload request: SupplierOrderStatusRequest): SupplierOrderStatusResponse {
-        return supplierService.getOrderStatus(request.order_id).block()!!
-    }
-
     @RabbitListener(queues = ["\${microservice.rabbitmq.queueCondition}"])
     fun receiveCondition(@Payload request: ConditionRequest): ConditionResponse {
         logger.warn("receiveCondition: " + request)
         return conditionService.getByPartId(request.partId.toString())
-        .publishOn(Schedulers.boundedElastic())
-        .collectList()
-        .flatMap { conditionList ->
-            Mono.just(ConditionResponse(request.partId, conditionList))
-        }.block()!!
+            .publishOn(Schedulers.boundedElastic())
+            .collectList()
+            .flatMap { conditionList ->
+                Mono.just(ConditionResponse(request.partId, conditionList))
+            }.block()!!
     }
 }

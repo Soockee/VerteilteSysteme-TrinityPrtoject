@@ -10,9 +10,8 @@ import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
 
 @RestController("PartController")
-class PartController (
-private val partService: PartService,
-
+class PartController(
+    private val partService: PartService,
 ) {
     @PostMapping("/part/")
     fun create(
@@ -21,7 +20,7 @@ private val partService: PartService,
         return partService.create(part)
     }
 
-    @GetMapping( "/parts/")
+    @GetMapping("/parts/")
     fun getAll(
     ): Flux<Part> {
         return partService.getAll()

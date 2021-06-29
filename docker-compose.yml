@@ -2,6 +2,13 @@
 version: "3.1"
 
 services:
+  factorydb:
+    image: mongo
+    container_name: factory
+    restart: always
+ #   ports:
+ #   - 27017:27017
+
   db:
     image: postgres
     environment:
@@ -42,5 +49,23 @@ services:
     depends_on: 
       - rabbit_mq
       - supportdb
+
+  factory-usa:
+    image: docker.io/library/factory:0.0.1-SNAPSHOT
+    restart: always
+    ports:
+      - 8082:8082
+    depends_on: 
+      - rabbit_mq
+      - factorydb 
+    environment: 
+      - MONGO_URI=mongodb://factorydb:27017/
+      - MONGO_DBNAME=factory
+      - SERVER_PORT=8082
+      - RABBITMQ_HOST=rabbit_mq
+      - RABBITMQ_PORT=5672
+      - SUPPLIER_HOST=headquarter
+      - SUPPLIER_HOST=8080
+      
 volumes:  
   rabbitmq_data:

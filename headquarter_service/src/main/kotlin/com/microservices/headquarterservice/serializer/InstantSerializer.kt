@@ -8,7 +8,9 @@ import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 import org.springframework.data.annotation.*
 import java.time.Instant
-
+/**
+ * Instant Serializer is used for classes which contain fields of type Instant
+ */
 object InstantSerializer : KSerializer<Instant> {
     override fun deserialize(decoder: Decoder): Instant {
         return Instant.parse(decoder.decodeString())

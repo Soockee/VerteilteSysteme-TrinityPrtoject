@@ -20,9 +20,3 @@ class HeadquarterServiceApplication{
 fun main(args: Array<String>) {
     runApplication<HeadquarterServiceApplication>(*args)
 }
-
-// class Receiver {
-//     fun receiveMessage(message: String) {
-//       System.out.println("Received <" + message + ">");
-//     }
-//   }

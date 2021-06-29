@@ -9,9 +9,9 @@ import reactor.core.publisher.Mono
 import java.util.*
 
 @RestController("ProductController")
-class ProductController (
+class ProductController(
     private val productService: ProductService,
-    ) {
+) {
     @PostMapping("/product/")
     fun create(
         @RequestBody product: Product
@@ -31,11 +31,11 @@ class ProductController (
     }
 
     @GetMapping("/product-parts/all/")
-    fun getAllProductParts():  Flux<ProductPart> {
+    fun getAllProductParts(): Flux<ProductPart> {
         return productService.getAllProductParts()
     }
 
-    @GetMapping( "/products/")
+    @GetMapping("/products/")
     fun getAll(
     ): Flux<Product> {
         return productService.getAll()
