@@ -1,4 +1,4 @@
-package trinityproject.support.rabbitmq_listener
+package trinityproject.support.config
 
 import org.springframework.amqp.core.Queue
 import org.springframework.amqp.support.converter.Jackson2JsonMessageConverter

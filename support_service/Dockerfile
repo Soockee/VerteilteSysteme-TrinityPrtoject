@@ -2,10 +2,10 @@
 # Build stage
 #
 # temp container to build using gradle
-FROM gradle:5.3.0-jdk-alpine AS TEMP_BUILD_IMAGE
-ENV APP_HOME=/home/app/
+FROM gradle:7.1.0-jdk11 AS TEMP_BUILD_IMAGE
+ENV APP_HOME=/usr/app/
 WORKDIR $APP_HOME
-COPY build.gradle settings.gradle $APP_HOME
+COPY build.gradle.kts settings.gradle.kts $APP_HOME
   
 COPY gradle $APP_HOME/gradle
 COPY --chown=gradle:gradle . /home/gradle/src
@@ -21,6 +21,9 @@ RUN gradle clean build
 # Package stage
 #
 FROM openjdk:11-jre-slim
-COPY --from=build /home/app/target/*.jar /usr/local/lib/app.jar
+ENV ARTIFACT_NAME=support-0.0.1-SNAPSHOT.jar
+ENV APP_HOME=/usr/app/
+WORKDIR $APP_HOME
+COPY --from=TEMP_BUILD_IMAGE $APP_HOME/build/libs/$ARTIFACT_NAME .
 EXPOSE 8080
-ENTRYPOINT ["java","-jar","/usr/local/lib/app.jar"]
+ENTRYPOINT exec java -jar ${ARTIFACT_NAME}

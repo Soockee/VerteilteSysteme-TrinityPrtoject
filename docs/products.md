@@ -2,7 +2,7 @@
 
 ```json
 {
-    "product_id" : "7174a632-d4e3-11eb-b8bc-0242ac130003",
+    "product_id" : "9e9383ca-d855-11eb-b8bc-0242ac130003",
     "name" : "Kühlbox 60cmx60cmx60cm - Modell: Die Studentenbox",
     "production_time" : 100,
     "parts" : 
