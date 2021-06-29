@@ -42,7 +42,7 @@ class RabbitConfig(
     private val connectionFactory: ConnectionFactory
 ) {
 
-    val logger = LoggerFactory.getLogger(HeadquarterServiceApplication::class.java)
+    val logger = LoggerFactory.getLogger(RabbitConfig::class.java)
 
 
     @Bean

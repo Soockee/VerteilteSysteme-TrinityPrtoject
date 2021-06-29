@@ -23,7 +23,7 @@ class SupplierPartTask(
     private val timeService: TimeService
 ) {
     companion object {
-        val logger = LoggerFactory.getLogger(ConditionService::class.java)
+        val logger = LoggerFactory.getLogger(SupplierPartTask::class.java)
     }
 
     fun scheduleTaskWithDelay(supplierOrder: SupplierOrder) {

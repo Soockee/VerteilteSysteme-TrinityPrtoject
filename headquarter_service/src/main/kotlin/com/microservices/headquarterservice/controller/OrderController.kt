@@ -16,7 +16,7 @@ import java.util.*
 class OrderController(
     private val orderService: OrderService,
 ) {
-    val logger: Logger = LoggerFactory.getLogger(ConditionService::class.java)
+    val logger: Logger = LoggerFactory.getLogger(OrderController::class.java)
 
     @PostMapping("/order/")
     fun create(

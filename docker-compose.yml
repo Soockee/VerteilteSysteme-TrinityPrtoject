@@ -66,6 +66,23 @@ services:
       - RABBITMQ_PORT=5672
       - SUPPLIER_HOST=headquarter
       - SUPPLIER_HOST=8080
+
+  factory-china:
+    image: docker.io/library/factory:0.0.1-SNAPSHOT
+    restart: always
+    ports:
+      - 8083:8083
+    depends_on: 
+      - rabbit_mq
+      - factorydb 
+    environment: 
+      - MONGO_URI=mongodb://factorydb:27017/
+      - MONGO_DBNAME=factory
+      - SERVER_PORT=8083
+      - RABBITMQ_HOST=rabbit_mq
+      - RABBITMQ_PORT=5672
+      - SUPPLIER_HOST=headquarter
+      - SUPPLIER_HOST=8080
       
 volumes:  
   rabbitmq_data:
