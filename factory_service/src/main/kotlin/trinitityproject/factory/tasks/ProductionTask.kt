@@ -1,16 +1,11 @@
 package trinitityproject.factory.tasks
 
-import com.fasterxml.jackson.databind.ObjectMapper
 import kotlinx.coroutines.runBlocking
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.MediaType
-import org.springframework.http.codec.ClientCodecConfigurer
-import org.springframework.http.codec.json.Jackson2JsonDecoder
-import org.springframework.http.codec.json.Jackson2JsonEncoder
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
-import org.springframework.web.reactive.function.client.ExchangeStrategies
 import org.springframework.web.reactive.function.client.WebClient
 import reactor.util.retry.Retry
 import trinitityproject.factory.model.PartOrder
@@ -30,27 +25,11 @@ class ProductionTask(
     private val partOrderService: PartOrderService,
     private val conditionService: ConditionService,
     private val productOrderService: ProductOrderService,
-    private val productService: ProductService
+    private val productService: ProductService,
+    private val jacksonWebClient: WebClient
 ) {
     private val log: Logger = LoggerFactory.getLogger(ProductionTask::class.java)
 
-
-    //The jackson serializer and deserializer is set for the webclient which sends the http requests
-    private val jacksonStrategies = ExchangeStrategies
-        .builder()
-        .codecs { clientDefaultCodecsConfigurer: ClientCodecConfigurer ->
-            clientDefaultCodecsConfigurer.defaultCodecs()
-                .jackson2JsonEncoder(Jackson2JsonEncoder(ObjectMapper(), MediaType.APPLICATION_JSON))
-            clientDefaultCodecsConfigurer.defaultCodecs()
-                .jackson2JsonDecoder(Jackson2JsonDecoder(ObjectMapper(), MediaType.APPLICATION_JSON))
-        }.build()
-
-    //The WebClient for the
-    private val client = WebClient
-        .builder()
-        .baseUrl("http://localhost:8080")
-        .exchangeStrategies(jacksonStrategies)
-        .build()
 
     @Scheduled(fixedRate = 3000)
     fun scheduleTaskWithFixedRate() {
@@ -95,7 +74,7 @@ class ProductionTask(
                             )
                             log.warn(supplierRequest.toString())
                             //If one order has not been accepted the current productOrder will be discarded and picked up later
-                            val res = client
+                            val res = jacksonWebClient
                                 .post()
                                 .uri("/supplier")
                                 .contentType(MediaType.APPLICATION_JSON)
@@ -125,7 +104,7 @@ class ProductionTask(
                             throw IllegalStateException("orderId must be set for ")
                         }
                         if (it.orderId != null) {
-                            val res = client
+                            val res = jacksonWebClient
                                 .get()
                                 .uri { uriBuilder ->
                                     uriBuilder
