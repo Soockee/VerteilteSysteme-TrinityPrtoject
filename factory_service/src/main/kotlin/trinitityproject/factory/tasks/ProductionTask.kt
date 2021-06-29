@@ -140,9 +140,9 @@ class ProductionTask(
                         // Wait for each product the given production-time
                         val startTime = System.currentTimeMillis()
                         log.info("")
-                        log.info("Started Production of ${product.productData.name} with the production-time ${product.productData.productionTime}: $startTime")
-                        Thread.sleep(product.productData.productionTime)
-                        log.info("Finished Production of ${product.productData.name} after: ${System.currentTimeMillis() - startTime}")
+                        log.info("Started Production of ${product.count} - ${product.productData.name} with the production-time ${product.productData.productionTime}: $startTime")
+                        Thread.sleep(product.productData.productionTime * product.count)
+                        log.info("Finished Production of ${product.count} - ${product.productData.name} after: ${System.currentTimeMillis() - startTime}")
                         productService.setProductStatus(
                             productOrder.productOrderId,
                             product.productData.productId,
