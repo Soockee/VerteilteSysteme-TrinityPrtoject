@@ -6,7 +6,7 @@ import java.util.*
 
 
 @Service
-class TimeService(private val dayInMillis: Long = 30000, private val timeZone: String = "CST") {
+class TimeService(private val dayInMillis: Long = 180000, private val timeZone: String = "CST") {
 
     /**
      * Compares a given date to the current date by converting each into a virtual date with shorter time
@@ -50,6 +50,6 @@ class TimeService(private val dayInMillis: Long = 30000, private val timeZone: S
     }
 
     fun getReportDelay(): Long {
-        return dayInMillis / 4;
+        return dayInMillis / 12
     }
 }

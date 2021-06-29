@@ -46,14 +46,14 @@ class PartOrderService(
     }
 
     /**
-     * A part-order will be added to a ProductOrder
+     * A List of part-order will be added to a ProductOrder
      *
      * @param productOrderId Id of the product order for which parts are to be ordered
-     * @param partOrder The part-order which will be added
+     * @param partOrders The part-order which will be added
      *
      * @return The updated ProductOrder
      */
-    suspend fun addPartOrder(productOrderId: UUID, partOrder: PartOrder): ProductOrder {
+    suspend fun addPartOrders(productOrderId: UUID, partOrders: List<PartOrder>): ProductOrder {
         val productOrder = repository
             .findById(productOrderId)
             .asFlow()
@@ -61,7 +61,7 @@ class PartOrderService(
             .toList()
             .first()
 
-        productOrder.partOrders.plus(listOf(partOrder)).also { productOrder.partOrders = it }
+        productOrder.partOrders = partOrders
 
         return repository
             .save(productOrder)
@@ -70,6 +70,9 @@ class PartOrderService(
             .first()
     }
 
+    /**
+     * Returns a product from the database which is not finished
+     */
     suspend fun getUnfinishedProductOrder(): ProductOrder {
         return repository
             .findAll(
@@ -94,6 +97,10 @@ class PartOrderService(
             .first()
     }
 
+
+    /**
+     * Aggregates the required parts over all products in a ProductOrder
+     */
     suspend fun getRequiredParts(order: ProductOrder): Map<UUID, Int> {
         return order.products
             .map { product ->

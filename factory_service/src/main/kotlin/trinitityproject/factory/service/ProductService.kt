@@ -14,6 +14,13 @@ import java.util.*
 class ProductService(
     private val repository: ProductOrderRepository
 ) {
+
+    /**
+     * Sets the Product with the given ID to the given status.
+     * A random product is picked since the index of a value could change.
+     *
+     * @return The updated ProductOrder
+     */
     suspend fun setProductStatus(productOrderId: UUID, productId: UUID, status: Status): ProductOrder {
         val updatedProductOrder = repository
             .findById(productOrderId)

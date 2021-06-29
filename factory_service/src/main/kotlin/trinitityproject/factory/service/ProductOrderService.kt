@@ -23,6 +23,10 @@ class ProductOrderService(
         log.info("Saved to order to database: $submitedOrder")
     }
 
+    /**
+     * Get an order for a specific ID
+     * @param uuid ProductOrder Id
+     */
     suspend fun getOrder(uuid: UUID): ProductOrder {
         return repository
             .findById(uuid)
@@ -31,6 +35,12 @@ class ProductOrderService(
             .first()
     }
 
+    /**
+     * Updates the status of a ProductOrder
+     * @param status The state which will be set
+     *
+     * @return The updated ProductOrder
+     */
     suspend fun updateProductOrderState(productOrderId: UUID, status: Status): ProductOrder {
         val productOrder = repository
             .findById(productOrderId)
