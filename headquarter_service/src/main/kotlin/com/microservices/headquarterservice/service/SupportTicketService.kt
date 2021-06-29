@@ -39,7 +39,6 @@ class SupportTicketService(
             UUID.randomUUID(),
             customerId = supportTicketRequest.customerId
         )
-        //    supportTicketRepository.save(SupportTicket(customerId = supportTicketRequest.customerId)).block()!!
 
 
         val supportTicketTextCreated: SupportTicketText =
