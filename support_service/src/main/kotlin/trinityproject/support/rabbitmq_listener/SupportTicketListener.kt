@@ -1,10 +1,9 @@
-package trinitityproject.factory.rabbitmq_listener
+package trinityproject.support.rabbitmq_listener
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import org.springframework.amqp.rabbit.annotation.Queue
 import org.springframework.amqp.rabbit.annotation.RabbitListener
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory
 import org.springframework.amqp.rabbit.connection.ConnectionFactory
@@ -34,7 +33,7 @@ class SupportTicketListener(
         return factory
     }
 
-    @RabbitListener(queuesToDeclare = [Queue(name = "support")])
+    @RabbitListener(queues = ["support"])
     @Throws(InterruptedException::class)
     fun receiveTicket(@Payload supportTicketResponse: SupportTicketResponse) {
         logger.warn("KEKW")

@@ -125,10 +125,14 @@ class OrderService(
 
 
     fun send(orderResponse: OrderResponse) {
+        rabbitTemplate.convertAndSend(headquarterOrderQueue)
         rabbitTemplate.convertAndSend(
-            headquarterOrderQueue, Json.encodeToString(orderResponse)
-        )
-        logger.info("Send msg = " + orderResponse)
-
+            headquarterOrderQueue,
+            Json.encodeToString(orderResponse) as Any
+        ) { message ->
+            message.messageProperties.contentType = "application/json"
+            message
+        }
+        logger.info("Send msg = $orderResponse")
     }
 }

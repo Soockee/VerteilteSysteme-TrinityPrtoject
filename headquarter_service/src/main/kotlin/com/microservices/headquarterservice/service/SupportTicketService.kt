@@ -59,8 +59,12 @@ class SupportTicketService(
     }
     fun send(ticket: SupportTicketResponse) {
         rabbitTemplate.convertAndSend(
-            headquarterSupportQueue, Json.encodeToString(ticket)
-        )
+            headquarterSupportQueue,
+            Json.encodeToString(ticket) as Any
+        ){ message ->
+            message.messageProperties.contentType = "application/json"
+            message
+        }
         ConditionService.logger.info("Send msg = " + ticket)
     }
 }
