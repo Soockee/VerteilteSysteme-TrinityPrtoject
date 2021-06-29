@@ -1,4 +1,4 @@
-package trinitityproject.factory.service
+package com.microservices.headquarterservice.service
 
 import org.apache.commons.lang3.time.DateUtils
 import org.springframework.stereotype.Service
@@ -22,9 +22,9 @@ class TimeService(private val dayInMillis: Long = 30000, private val timeZone: S
     }
 
     /**
-     * Return a timestamp representing a projection from the given real time to the virtual, faster time
+     * Return the hour of day for the given date by converting it into a virtual date with shorter time
      *
-     * @return Instant Object representing the virtual time
+     * @return The hour of day for the given date
      */
     fun getVirtualLocalTime(timestamp: Long): Instant {
         return this.getVirtualCalendar(timestamp).toInstant()
@@ -59,11 +59,6 @@ class TimeService(private val dayInMillis: Long = 30000, private val timeZone: S
         return calendar
     }
 
-    /**
-     * Return the delay in milliseconds between the reports
-     *
-     * @return Delay in milliseconds
-     */
     fun getReportDelay(): Long {
         return dayInMillis / 4;
     }

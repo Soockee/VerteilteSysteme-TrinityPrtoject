@@ -6,6 +6,7 @@ import com.microservices.headquarterservice.persistence.PartRepository
 import com.microservices.headquarterservice.persistence.SupplierOrderPartRepository
 import com.microservices.headquarterservice.persistence.SupplierOrderRepository
 import com.microservices.headquarterservice.service.ConditionService
+import com.microservices.headquarterservice.service.TimeService
 import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import java.util.*
@@ -19,6 +20,7 @@ class SupplierPartTask(
     private val supplierOrderRepository: SupplierOrderRepository,
     private val partRepository: PartRepository,
     private val supplierOrderPartRepository: SupplierOrderPartRepository,
+    private val timeService: TimeService
 ) {
     companion object {
         val logger = LoggerFactory.getLogger(ConditionService::class.java)
@@ -31,7 +33,8 @@ class SupplierPartTask(
         var minScheduleTime = Int.MIN_VALUE
         for (supplierOrderPart in supplierOrderParts.filter { supplierOrderPart -> supplierOrderPart.supplier_order_id == supplierOrder.order_id }) {
             for (part in parts.filter {  e -> e.part_id == supplierOrderPart.part_id  }){
-                val future = updateStatusTask(part,SupplierPartTimerTask(part),part.delievery_time.toLong())
+                val deliveryTimeMillis = part.delievery_time * 1000
+                val future = updateStatusTask(part,SupplierPartTimerTask(part), timeService.realtimeToVirtualTimeMillis(deliveryTimeMillis.toLong()))
                 partTimerList.add(future)
                 if(part.delievery_time > minScheduleTime){
                     minScheduleTime = part.delievery_time
@@ -46,11 +49,12 @@ class SupplierPartTask(
     fun updateStatusTask(part: Part,timer: TimerTask, delay: Long): FutureTask<*> {
         val futureTask: FutureTask<*> = FutureTask<Void?>(SupplierPartTimerTask(part), null)
         val scheduler = Executors.newScheduledThreadPool(1)
-        scheduler.schedule(futureTask, delay, TimeUnit.SECONDS);
+        scheduler.schedule(futureTask, delay, TimeUnit.MILLISECONDS)
         logger.info("SupplierOrderPart:  ${part.part_id}  is  Scheduled for ${part.delievery_time} seconds")
 
         return futureTask
     }
+
     fun checkAllSupplierPartTask(partTimerList: List<FutureTask<*>>, supplierOrder: SupplierOrder): TimerTask {
         return SupplierPartListCheck(partTimerList,supplierOrder, supplierOrderRepository)
     }

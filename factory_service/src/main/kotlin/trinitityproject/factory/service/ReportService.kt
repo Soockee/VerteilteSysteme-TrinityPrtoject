@@ -6,9 +6,8 @@ import trinitityproject.factory.repository.ProductOrderRepository
 import java.time.Duration
 import java.util.*
 import org.slf4j.LoggerFactory
-import org.springframework.amqp.rabbit.core.RabbitTemplate
-import org.springframework.core.ParameterizedTypeReference
 import trinitityproject.factory.model.*
+import java.time.temporal.ChronoUnit
 
 
 @Service
@@ -22,9 +21,14 @@ class ReportService(
 
     /**
      * Generates a report consisting of the following data:
+     *  The KPIs listed in the requirements document:
      *  - Number of orders since midnight until now
      *  - Number of goods produced since midnight until now
      *  - Cost of finished goods (cost of parts + production time)
+     *
+     *  Other performance indicators to determine which factory has a higher load:
+     *  - Number of open product orders
+     *  - Productivity of the factory (completed products / received products)
      *
      * @return report
      */
@@ -34,40 +38,30 @@ class ReportService(
         val productOrders: List<ProductOrder> =
             productOrdersMono.block(Duration.ofMillis(1000)) as List<ProductOrder>;
 
-        val finishedProductsCosts: Map<Product, Double> = getFinishedProductsCostsToday(productOrders);
+        val completedProductPartOrdersPairs = getCompletedProductPartOrdersPairs(productOrders);
+
+        val completedProductPartOrdersPairsToday = completedProductPartOrdersPairs.filter { productPartOrdersPair ->
+            timeService.isSameVirtualLocalDate(productPartOrdersPair.first.completionTime)
+        }
 
         val report = Report(
             null,
             getProductOrdersToday(productOrders).size,
-            finishedProductsCosts.size,
-            calculateCosts(finishedProductsCosts),
-            "china"
+            completedProductPartOrdersPairs.size,
+            getCompletedProductsCostsToday(completedProductPartOrdersPairsToday),
+            countOpenOrders(productOrders),
+            calculateFactoryProductivity(productOrders),
+            "china",
+            System.currentTimeMillis()
         );
 
         logger.info(
             "new report created at " +
-                    "${timeService.getVirtualCurrentLocalTime(System.currentTimeMillis())}: " +
+                    "${timeService.getVirtualLocalTime(System.currentTimeMillis())}: " +
                     "${report.toString()}"
         )
 
         return report;
-    }
-
-    /**
-     * Calculates the cost of finished goods (cost of parts + production time)
-     *
-     * @return Cost of finished goods
-     */
-    fun calculateCosts(productsCost: Map<Product, Double>): Number {
-        var partCosts = 0.0
-        var productionTime = 0.0
-
-        productsCost.keys.forEach { product ->
-            partCosts += productsCost[product]!!
-            productionTime += product.productData.productionTime
-        }
-
-        return partCosts + productionTime * costPerHour;
     }
 
     /**
@@ -80,30 +74,92 @@ class ReportService(
     }
 
     /**
-     * Gets the finished goods since midnight
+     * Calculates the cost of all products completed on this day consisting of:
+     * cost of the product parts + production time * production cost per hour
+     *
+     * @return Cost of products completed today
+     */
+    fun getCompletedProductsCostsToday(completedProductCostsToday: List<Pair<Product, List<PartOrder>>>): Double {
+        return completedProductCostsToday.sumOf { productPartOrdersPair ->
+            productPartOrdersPair.first.productData.productionTime * costPerHour +
+            getPartCostsForProduct(productPartOrdersPair.first, productPartOrdersPair.second)
+        }
+    }
+
+    /**
+     * Calculates the cost of a products parts according to the conditions for these parts at the time of production
      *
      * @return Finished goods since midnight
      */
-    fun getFinishedProductsCostsToday(productOrders: List<ProductOrder>): Map<Product, Double> {
-        var finishedProductsCosts: MutableMap<Product, Double> = HashMap()
-
-        productOrders.forEach { productOrder ->
-            productOrder.products.forEach { product ->
-                if (product.status == Status.DONE && timeService.isSameVirtualLocalDate(product.completionTime)) {
-                    var productPartCosts = 0.0
-                    product.parts.forEach { part ->
-                        productOrder.partOrders.forEach { partOrder ->
-                            var position = partOrder.positions.find { position ->
-                                position.partSupplierId == part.partId
-                            }
-                            if (position != null) productPartCosts += position!!.condition.price.toDouble()
-                        }
-                    }
-                    finishedProductsCosts[product] = productPartCosts
-                }
+    fun getPartCostsForProduct(product: Product, partOrders: List<PartOrder>): Double {
+        val positions = partOrders
+            .map { partOrder ->
+                partOrder.positions
             }
-        }
+            .flatten()
+            .toCollection(ArrayList())
 
-        return finishedProductsCosts
+        return product.parts.sumOf { part ->
+            positions
+                .find { position -> position.partSupplierId == part.partId }?.condition?.price?.toDouble()
+                ?.times(part.count)
+                ?: 0.0
+        }
+    }
+
+    /**
+     * Counts the number of currently open orders
+     *
+     * @return Number of open orders
+     */
+    fun countOpenOrders(productOrders: List<ProductOrder>): Number {
+        return productOrders.count { productOrder ->
+            productOrder.status === Status.OPEN
+        }
+    }
+
+    /**
+     * Calculates the productivity of the factory by counting the received and completed products
+     *
+     * @return Productivity = completed products / received products
+     */
+    fun calculateFactoryProductivity(productOrders: List<ProductOrder>): Number {
+        var completedLastDay = productOrders
+            .asSequence()
+            .map { productOrder -> productOrder.products }
+            .flatten()
+            .toCollection(ArrayList())
+            .filter { product ->
+                timeService.getVirtualLocalTime(product.completionTime).toEpochMilli() ==
+                    timeService.getVirtualLocalTime(System.currentTimeMillis())
+                        .minus(24, ChronoUnit.HOURS)
+                        .toEpochMilli()
+            }.count()
+
+        var receivedLastDay = productOrders
+            .filter { productOrder ->
+                timeService.getVirtualLocalTime(productOrder.receptionTime).toEpochMilli() ==
+                    timeService.getVirtualLocalTime(System.currentTimeMillis())
+                        .minus(24, ChronoUnit.HOURS)
+                        .toEpochMilli()
+            }
+            .count()
+
+        return completedLastDay / receivedLastDay
+    }
+
+    /**
+     * Checks which products have been completed and pairs them with the
+     * PartOrders from their respective ProductOrder to be able to calculate the products cost afterwards
+     *
+     * @return List of Pairs of Products and PartOrders
+     */
+    fun getCompletedProductPartOrdersPairs(productOrders: List<ProductOrder>): List<Pair<Product, List<PartOrder>>> {
+        return productOrders
+            .asSequence()
+            .map { productOrder -> productOrder.products.map { product -> Pair(product, productOrder.partOrders) } }
+            .flatten()
+            .toCollection(ArrayList())
+            .filter { productPartOrderPair -> productPartOrderPair.first.status == Status.DONE }
     }
 }
