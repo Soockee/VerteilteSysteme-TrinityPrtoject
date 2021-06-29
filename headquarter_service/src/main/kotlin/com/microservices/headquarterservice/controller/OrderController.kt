@@ -18,29 +18,21 @@ class OrderController(
 ) {
     val logger: Logger = LoggerFactory.getLogger(OrderController::class.java)
 
-    @PostMapping("/order/")
-    fun create(
-        @RequestBody orderRequest: OrderRequest
-    ): Order {
+    @PostMapping("/order")
+    fun create(@RequestBody orderRequest: OrderRequest): Order {
+        logger.info("POST Request: \"/order\": ${orderRequest}")
         return orderService.createOrder(orderRequest)
     }
 
-    @GetMapping("/orders/")
-    fun getAll(
-    ): Flux<Order> {
+    @GetMapping("/order")
+    fun getAll(): Flux<Order> {
+        logger.info("GET Request: \"/order\"")
         return orderService.getAllOrders()
     }
 
-    @GetMapping("/order/status/")
-    fun getStatusByOrderId(
-        @RequestParam orderId: String
-    ): Mono<String> {
+    @GetMapping("/order/status")
+    fun getStatusByOrderId(@RequestParam orderId: String): Mono<String> {
+        logger.info("GET Request: \"/order\": $orderId")
         return orderService.getStatusById(UUID.fromString(orderId))
-    }
-
-    @GetMapping("/order-products/")
-    fun getAllOrderProducts(
-    ): Flux<OrderProduct> {
-        return orderService.getAllOrderProducts()
     }
 }

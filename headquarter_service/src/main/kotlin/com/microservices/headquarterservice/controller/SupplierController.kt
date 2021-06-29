@@ -3,6 +3,7 @@ package com.microservices.headquarterservice.controller
 import com.microservices.headquarterservice.model.headquarter.Supplier
 import com.microservices.headquarterservice.model.supplier.*
 import com.microservices.headquarterservice.service.SupplierService
+import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -12,37 +13,26 @@ import java.util.*
 class SupplierController(
     private val supplierService: SupplierService,
 ) {
+    companion object {
+        val logger = LoggerFactory.getLogger(SupplierController::class.java)
+    }
 
-    @GetMapping("/suppliers/")
-    fun getAll(
-    ): Flux<Supplier> {
+    @GetMapping("/supplier/order")
+    fun getAll(): Flux<Supplier> {
+        logger.info("GET Request: \"/supplier\"")
         return supplierService.getAll()
     }
 
-    @PostMapping("/supplier")
-    fun createOrder(
-        @RequestBody supplierOrderRequest: SupplierOrderRequest
-    ): Mono<SupplierOrderResponse> {
+    @PostMapping("/supplier/order")
+    fun createOrder(@RequestBody supplierOrderRequest: SupplierOrderRequest): Mono<SupplierOrderResponse> {
+        logger.info("POST Request: \"/supplier\": ${supplierOrderRequest}")
         return supplierService.createOrderByRequest(supplierOrderRequest)
     }
 
-    @GetMapping("/supplier-orders/")
-    fun getAllSupplierOrder(
-    ): Flux<SupplierOrder> {
-        return supplierService.getAllOrders()
-    }
-
-    @GetMapping("/supplier-orders-parts/")
-    fun getAllSupplierOrderParts(
-    ): Flux<SupplierOrderPart> {
-        return supplierService.getAllOrderParts()
-    }
-
-    @GetMapping("/supplier-order/")
-    fun getAllSupplierOrder(
-        @RequestParam order_id: String
-    ): SupplierOrderStatusResponse {
-        return supplierService.getOrderStatus(UUID.fromString(order_id)).block()!!
+    @GetMapping("/supplier/order/{id}")
+    fun getAllSupplierOrder(@PathVariable id: String): SupplierOrderStatusResponse {
+        logger.info("GET Request: \"/supplier-order\"/${id}")
+        return supplierService.getOrderStatus(UUID.fromString(id)).block()!!
     }
 
 }

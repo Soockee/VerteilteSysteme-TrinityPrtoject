@@ -9,19 +9,26 @@ import org.slf4j.LoggerFactory;
 
 @RestController("ConditionController")
 class ConditionController(
-        private val conditionService: ConditionService,
+    private val conditionService: ConditionService,
 ) {
-    @PostMapping("/condition/")
+    companion object {
+        val logger = LoggerFactory.getLogger(ConditionController::class.java)
+    }
+
+    @PostMapping("/condition")
     fun create(@RequestBody condition: Condition): Mono<Condition> {
+        logger.info("POST Request: \"/condition\": ${condition}")
         return conditionService.createConditionAndSend(condition)
     }
 
-    @GetMapping("/condition/")
-    fun get(@RequestParam partId: String): Flux<Condition> {
-        return conditionService.getByPartId(partId)
+    @GetMapping("/condition/{partId}")
+    fun get(@PathVariable partId: String): Flux<Condition> {
+        logger.info("GET Request: \"/condition\"/${partId}")
+        val conditions = conditionService.getByPartId(partId)
+        return conditions
     }
 
-    @GetMapping("/conditions/")
+    @GetMapping("/condition")
     fun getAll(): Flux<Condition> {
         return conditionService.getAll()
     }

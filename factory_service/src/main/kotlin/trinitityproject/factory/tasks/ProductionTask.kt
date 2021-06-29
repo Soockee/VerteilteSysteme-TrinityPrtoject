@@ -1,5 +1,6 @@
 package trinitityproject.factory.tasks
 
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -76,7 +77,7 @@ class ProductionTask(
                             //If one order has not been accepted the current productOrder will be discarded and picked up later
                             val res = jacksonWebClient
                                 .post()
-                                .uri("/supplier")
+                                .uri("/supplier/order")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .bodyValue(supplierRequest)
                                 .retrieve()
@@ -107,10 +108,12 @@ class ProductionTask(
                             val res = jacksonWebClient
                                 .get()
                                 .uri { uriBuilder ->
+                                    // uilder.path("/first-").path("value/").path("/{id}").build("123")
+
                                     uriBuilder
-                                        .path("/supplier-order/")
-                                        .queryParam("order_id", it.orderId!!.toString())
-                                        .build()
+                                        .path("/supplier/order/")
+                                        .path("/{id}")
+                                        .build(it.orderId!!.toString())
                                 }
                                 .retrieve()
                                 .bodyToMono(SupplierStatusResponse::class.java)
@@ -140,9 +143,11 @@ class ProductionTask(
                         // Wait for each product the given production-time
                         val startTime = System.currentTimeMillis()
                         log.info("")
-                        log.info("Started Production of ${product.productData.name} with the production-time ${product.productData.productionTime}: $startTime")
-                        Thread.sleep(product.productData.productionTime)
-                        log.info("Finished Production of ${product.productData.name} after: ${System.currentTimeMillis() - startTime}")
+                        log.info("Started Production of ${product.count} - ${product.productData.name} with the production-time ${product.productData.productionTime}: $startTime")
+                        runBlocking {
+                            delay(product.productData.productionTime * 1000 * product.count)
+                        }
+                        log.info("Finished Production of ${product.count} - ${product.productData.name} after: ${System.currentTimeMillis() - startTime}")
                         productService.setProductStatus(
                             productOrder.productOrderId,
                             product.productData.productId,
@@ -164,6 +169,7 @@ class ProductionTask(
                 log.error("Production got interrupted: " + e.printStackTrace())
             }
         }
+
     }
 
 }

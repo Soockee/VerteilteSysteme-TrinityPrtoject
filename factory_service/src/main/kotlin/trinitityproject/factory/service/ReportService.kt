@@ -149,7 +149,7 @@ class ReportService(
             }
             .count()
 
-        return completedLastDay / receivedLastDay
+        return if(receivedLastDay > 0) completedLastDay / receivedLastDay else completedLastDay
     }
 
     /**

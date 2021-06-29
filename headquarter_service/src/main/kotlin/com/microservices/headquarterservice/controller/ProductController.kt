@@ -3,6 +3,7 @@ package com.microservices.headquarterservice.controller
 import com.microservices.headquarterservice.model.headquarter.Product
 import com.microservices.headquarterservice.model.headquarter.ProductPart
 import com.microservices.headquarterservice.service.ProductService
+import org.slf4j.LoggerFactory
 import org.springframework.web.bind.annotation.*
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
@@ -12,32 +13,26 @@ import java.util.*
 class ProductController(
     private val productService: ProductService,
 ) {
-    @PostMapping("/product/")
-    fun create(
-        @RequestBody product: Product
-    ): Mono<Product> {
+    companion object {
+        val logger = LoggerFactory.getLogger(ProductController::class.java)
+    }
+
+    @PostMapping("/product")
+    fun create(@RequestBody product: Product): Mono<Product> {
+        logger.info("POST Request: \"/product\": $product")
         return productService.create(product)
     }
 
-    @GetMapping("/product/")
-    fun get(@RequestParam productId: String): Mono<Void> {
-        productService.getProductResponse(UUID.fromString(productId))
+    @GetMapping("/product/{id}")
+    fun get(@PathVariable id: String): Mono<Void> {
+        logger.info("POST Request: \"/product\"$id")
+        productService.getProductResponse(UUID.fromString(id))
         return Mono.empty()
     }
 
-    @GetMapping("/product-parts/")
-    fun getProductParts(@RequestParam productId: String): Flux<ProductPart> {
-        return productService.getProductPartsByProductId(UUID.fromString(productId))
-    }
-
-    @GetMapping("/product-parts/all/")
-    fun getAllProductParts(): Flux<ProductPart> {
-        return productService.getAllProductParts()
-    }
-
-    @GetMapping("/products/")
-    fun getAll(
-    ): Flux<Product> {
+    @GetMapping("/product")
+    fun getAll(): Flux<Product> {
+        logger.info("GET Request: \"/product\"")
         return productService.getAll()
     }
 }
