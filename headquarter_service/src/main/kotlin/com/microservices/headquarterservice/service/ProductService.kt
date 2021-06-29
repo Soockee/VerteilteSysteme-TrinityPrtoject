@@ -23,17 +23,27 @@ class ProductService(
     @Value("\${microservice.rabbitmq.queueOrderUSA}") val headquarterOrderQueue: String,
     ){
 
-    companion object {
-        val logger = LoggerFactory.getLogger(ConditionService::class.java)
-    }
+    val logger = LoggerFactory.getLogger(ConditionService::class.java)
+    /**
+     *  create a product
+     *  @param product A part to be saved.
+     */
     fun create(product: Product): Mono<Product> {
         return productRepository.save(product)
     }
-
+    /**
+     *  get a product
+     * @param productId A product id which is used to get a product.
+     * @return Returns Product.
+     */
     fun getProduct(productId: UUID): Mono<Product> {
         return productRepository.findById(productId)
     }
-
+    /**
+     *  get productparts by product id
+     * @param productId A id by which ProductParts are filterd.
+     *  @return Returns filtered ProductParts.
+     */
     fun getProductPartsByProductId(productId: UUID): Flux<ProductPart> {
         return productPartRepository.findAll().filter{elem -> elem.product_id == productId }
     }
@@ -60,10 +70,17 @@ class ProductService(
             Json.encodeToString(productResponse))
     }
 
+    /**
+     *  get all productparts
+     *  @return Returns all ProductParts.
+     */
     fun getAllProductParts(): Flux<ProductPart> {
         return productPartRepository.findAll()
     }
-
+    /**
+     *  get all products
+     *  @return Returns all Product.
+     */
     fun getAll(): Flux<Product> {
         return productRepository.findAll()
     }

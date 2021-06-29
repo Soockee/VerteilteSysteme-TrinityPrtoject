@@ -23,15 +23,22 @@ class ConditionService(
     private val rabbitTemplate: AmqpTemplate,
     @Value("\${microservice.rabbitmq.queueCondition}") val headquarterConditionQueue: String,
 ) {
-    companion object {
-        val logger = LoggerFactory.getLogger(ConditionService::class.java)
-    }
+    val logger = LoggerFactory.getLogger(ConditionService::class.java)
 
+    /**
+     * save a condition into db
+     * @param condition A condition to be created.
+     * @return Returns saved Condition.
+     */
     fun create(condition: Condition): Mono<Condition> {
         condition.negotiation_timestamp = Instant.now()
         return repository.save(condition)
     }
-
+    /**
+     * save a condition into db and send to queue
+     * @param condition A condition to be created.
+     * @return Returns saved Condition.
+     */
     fun createConditionAndSend(condition: Condition): Mono<Condition> {
         val savedCondition = create(condition)
         savedCondition.publishOn(Schedulers.boundedElastic())
@@ -40,12 +47,18 @@ class ConditionService(
             .toFuture()
         return savedCondition
     }
-
+    /**
+     * return all conditions
+     */
     fun getAll(): Flux<Condition> {
         val conditions = repository.findAll()
         return conditions
     }
-
+    /**
+     * return N conditions by providing a part id and send to queue
+     * @param partId A part id.
+     * @return Returns all retrieved Condition.
+     */
     fun getByPartId(partId: String): Flux<Condition> {
         var condition = repository.findAll()
             .filter { elem ->
@@ -62,7 +75,9 @@ class ConditionService(
             .toFuture()
         return condition
     }
-
+    /**
+     * send a condition response
+     */
     fun send(condition: ConditionResponse) {
         rabbitTemplate.convertAndSend(
             headquarterConditionQueue, Json.encodeToString(condition)

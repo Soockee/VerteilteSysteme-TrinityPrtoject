@@ -10,10 +10,18 @@ import reactor.core.publisher.Mono
 class PartService(
     private val repository: PartRepository,
 ){
+    /**
+     * create a part
+     * @param part A part to be saved.
+     * @return Returns saved Part.
+     */
     fun create(part: Part): Mono<Part> {
         return repository.save(part)
     }
-
+    /**
+     *  get all parts
+     * @return Returns all Parts.
+     */
     fun getAll(): Flux<Part> {
         return repository.findAll()
     }

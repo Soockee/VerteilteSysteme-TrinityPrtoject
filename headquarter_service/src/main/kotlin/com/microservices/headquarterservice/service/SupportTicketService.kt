@@ -23,9 +23,7 @@ class SupportTicketService(
     private val supportTicketTextRepository: SupportTicketTextRepository,
     private val rabbitTemplate: AmqpTemplate,
     @Value("\${microservice.rabbitmq.queueSupport}") val headquarterSupportQueue: String,
-
-
-    ) {
+) {
     private val logger: Logger = LoggerFactory.getLogger(SupportTicketService::class.java)
 
     /**
@@ -62,14 +60,15 @@ class SupportTicketService(
         send(supportTicketResponse)
         return Mono.just(supportTicketResponse)
     }
+
     fun send(ticket: SupportTicketResponse) {
         rabbitTemplate.convertAndSend(
             headquarterSupportQueue,
             Json.encodeToString(ticket) as Any
-        ){ message ->
+        ) { message ->
             message.messageProperties.contentType = "application/json"
             message
         }
-        ConditionService.logger.info("Send msg = " + ticket)
+        logger.info("Send msg = " + ticket)
     }
 }

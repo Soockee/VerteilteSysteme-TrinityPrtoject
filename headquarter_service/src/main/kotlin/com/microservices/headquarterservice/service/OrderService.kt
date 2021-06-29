@@ -28,25 +28,12 @@ class OrderService(
     @Value("\${microservice.rabbitmq.queueOrderUSA}") val orderQueueUSA: String,
     @Value("\${microservice.rabbitmq.queueOrderChina}") val orderQueueChina: String,
 ) {
+    val logger = LoggerFactory.getLogger(ConditionService::class.java)
 
-    companion object {
-        val logger = LoggerFactory.getLogger(ConditionService::class.java)
-    }
-
-    /*
-    {
-        "customerId": "ID.....",
-        "products": [
-            {
-                "product_id": "ID....",
-                "count": 5
-            },
-            {
-                "product_id": "ID....",
-                "count": 5
-            },
-        ]
-    }
+    /**
+     * create an order and its corresponding n-m relationship to product
+     * @param orderRequest A order as orderRequest to be created.
+     * @return Returns order.
      */
     fun createOrder(orderRequest: OrderRequest): Order {
         var orderRaw = Order(null, orderRequest.customer_id, Instant.now(), "uncomplete")
@@ -71,6 +58,11 @@ class OrderService(
         return order
     }
 
+    /**
+     * send an order to order queue and retrieve n-m relationship
+     * @param order A orderId to be send.
+     * @param orderProducts A orderProducts (n-m table) for lookup.
+     */
     fun sendCustomerOrder(order: Order, orderProducts: MutableList<OrderProduct>) {
         var products: MutableList<Product> = mutableListOf()
         var productParts: MutableList<ProductPart> = mutableListOf()
@@ -105,28 +97,40 @@ class OrderService(
         send(OrderResponse(order.customer_id, orderProductResponses))
     }
 
+    /**
+     * return all Order
+     * @return Returns all orders.
+     */
     fun getAllOrders(): Flux<Order> {
         return orderRepository.findAll()
     }
-
+    /**
+     * return all OrderProducts
+     * @return Returns all OrderProducts.
+     */
     fun getAllOrderProducts(): Flux<OrderProduct> {
         return orderProductRepository.findAll()
     }
-
+    /**
+     * get orderr by id
+     * @param orderId A orderId to be created.
+     * @return Returns order.
+     */
     fun getOrderById(orderId: UUID): Mono<Order> {
         return orderRepository.findById(orderId)
     }
-
+    /**
+     * get status of oder by id
+     * @param orderId A orderId to be created.
+     * @return Returns status.
+     */
     fun getStatusById(orderId: UUID): Mono<String> {
         return orderRepository.findById(orderId).map { order -> order.status }
     }
 
-
-    fun getOrderProductsByOrderId(orderId: UUID): Flux<OrderProduct> {
-        return orderProductRepository.findAll().filter { elem -> elem.order_id == orderId }
-    }
-
-
+    /**
+     * send orderResponse with properties
+     */
     fun send(orderResponse: OrderResponse) {
         val orderQueue: String = kpiService.getFactoryLowestLoad()
 

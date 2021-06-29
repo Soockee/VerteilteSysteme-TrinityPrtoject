@@ -28,30 +28,50 @@ class SupplierService(
     private val rabbitTemplate: AmqpTemplate,
     private val supplierPartTaks: SupplierPartTask,
     @Value("\${microservice.rabbitmq.queueSupplierResponse}") val headquarterSupplierResponseQueue: String,
+) {
 
-    ) {
-    companion object {
-        var supplierId: UUID = UUID.randomUUID()
-        val logger = LoggerFactory.getLogger(ConditionService::class.java)
 
-    }
+    // fixed supplier id
+    var supplierId: UUID = UUID.randomUUID()
+    val logger = LoggerFactory.getLogger(ConditionService::class.java)
 
+    /**
+     * create a supplier
+     * @return Returns all Supplier.
+     */
     fun create(supplier: Supplier): Mono<Supplier> {
         return repository.save(supplier)
     }
 
+    /**
+     * get all supplier
+     * @return Returns all Supplier.
+     */
     fun getAll(): Flux<Supplier> {
         return repository.findAll()
     }
 
+    /**
+     * get all supplierorder
+     * @return Returns all SupplierOrder.
+     */
     fun getAllOrders(): Flux<SupplierOrder> {
         return orderRepository.findAll()
     }
+
+    /**
+     * get all orderparts
+     * @param supplier_order_id A supplier_order_id for reference.
+     * @return Returns all SupplierOrderPart.
+     */
     fun getAllOrderParts(): Flux<SupplierOrderPart> {
         return orderPartRepository.findAll()
     }
 
-
+    /**
+     * create a supplierOrder
+     * @return Returns created SupplierOrder.
+     */
     fun create(): Mono<SupplierOrder> {
         val supplierOrder = SupplierOrder(
             null,
@@ -62,6 +82,13 @@ class SupplierService(
         return orderRepository.save(supplierOrder)
     }
 
+    /**
+     * create a supplierOrderPart
+     * @param part_id A part id .
+     * @param count A number of parts to be ordered.
+     * @param supplier_order_id A supplier_order_id for reference.
+     * @return Returns SupplierOrderResponse.
+     */
     fun createSupplierOrderPart(part_id: UUID, count: Int, supplier_order_id: UUID): Mono<SupplierOrderPart> {
         val supplierOrderPart = SupplierOrderPart(
             null,
@@ -72,18 +99,24 @@ class SupplierService(
         return orderPartRepository.save(supplierOrderPart)
     }
 
+    /**
+     * create a SupplierOrder and its productOrderParts
+     * and schedule the processing task
+     * @param order A SupplierOrderRequest to create a order.
+     * @return Returns SupplierOrderResponse.
+     */
     fun createOrderByRequest(order: SupplierOrderRequest): Mono<SupplierOrderResponse> {
         val savedOrder = create().block()!!
         var isError = false
         for (productOrderPartRequest in order.supplierOrders) {
             var part = partRepository.findById(productOrderPartRequest.part_id).block()!!
-            var condition_per_part = conditionRepository.findAll().filter { e -> e.part_id == part.part_id }.collectList().block()!!
+            var condition_per_part =
+                conditionRepository.findAll().filter { e -> e.part_id == part.part_id }.collectList().block()!!
             if (condition_per_part.isEmpty()) {
                 logger.warn("BAD Part_ID IN create Supplier order: ${productOrderPartRequest.part_id}")
                 isError = true
                 break;
-            }
-            else{
+            } else {
                 for (productOrderPartRequest in order.supplierOrders) {
                     createSupplierOrderPart(
                         productOrderPartRequest.part_id,
@@ -93,17 +126,21 @@ class SupplierService(
                 }
             }
         }
-        if(isError){
+        if (isError) {
             orderRepository.delete(savedOrder)
             return Mono.error(BadRequestException("Supplier Order does contain invalid parts"))
-        }
-        else{
+        } else {
             // Task for status update
             supplierPartTaks.scheduleTaskWithDelay(savedOrder)
             return Mono.just(SupplierOrderResponse(savedOrder.order_id!!))
         }
     }
 
+    /**
+     * create a SupplierOrder and send to queue
+     * @param order A order request to create a order and send.
+     * @return Returns message of success of failure.
+     */
     fun createOrderByRequestAndSend(order: SupplierOrderRequest): Mono<String> {
         createOrderByRequest(order)
             .switchIfEmpty(Mono.error(BadRequestException("Order unsuccessful")))
@@ -113,20 +150,23 @@ class SupplierService(
         return Mono.just("Supplier Order successful")
     }
 
+    /**
+     * get Status of SupplierOrder by id
+     * @param supplier_order A supplier order id  to retrieve supplierorder status.
+     * @return Returns supplierorder status.
+     */
     fun getOrderStatus(supplier_order: UUID): Mono<SupplierOrderStatusResponse> {
         return orderRepository.findById(supplier_order).map { e -> SupplierOrderStatusResponse(e.status) }
     }
 
+    /**
+     * get Status of SupplierOrder by id
+     * @param supplierOrderResponse A supplier order id to be send.
+     */
     fun send(supplierOrderResponse: SupplierOrderResponse) {
         rabbitTemplate.convertAndSend(
             headquarterSupplierResponseQueue, Json.encodeToString(supplierOrderResponse)
         )
-        ConditionService.logger.info("Send msg = " + supplierOrderResponse)
+        logger.info("Send msg = " + supplierOrderResponse)
     }
-    /**
-     * Fixed Delay after Creation:
-     * 1) Update Status
-     * 2) Report Status to MQ
-     */
-
 }
