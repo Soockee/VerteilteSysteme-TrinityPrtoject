@@ -8,7 +8,6 @@
 
 ![](./img/reactiveprogramming.jpg)
 ![](./img/estimated-solution.jpg)
-.jpg)
 ![](./img/database-dev.jpg)
 
 
