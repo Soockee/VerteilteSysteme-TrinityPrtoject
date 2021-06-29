@@ -43,16 +43,12 @@ class ReportTask(
     fun sendReport() {
         val report: Report = reportService.generateReport()
 
-        if(report != null) {
-            logger.info("sending kpi message to headquarter")
+        logger.info("sending kpi message to headquarter")
 
-            val reportMessage = template.convertSendAndReceiveAsType(
-                "kpi",
-                report,
-                object : ParameterizedTypeReference<Report>() {}
-            )
-        } else {
-            logger.warn("kpi report could not be generated")
-        }
+        template.convertSendAndReceiveAsType(
+            "kpi",
+            report,
+            object : ParameterizedTypeReference<Report>() {}
+        )
     }
 }

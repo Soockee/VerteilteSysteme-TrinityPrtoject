@@ -12,19 +12,15 @@ import trinityproject.support.model.support.SupportTicketTextRequest
 import trinityproject.support.service.SupportTicketService
 
 @RestController("SupportTicketController")
-class SupportTicketController (
+class SupportTicketController(
     private val supportTicketService: SupportTicketService
-){
+) {
     private val logger: Logger = LoggerFactory.getLogger(SupportTicketService::class.java)
 
     @PostMapping("/ticket/")
     fun addTicketText(@RequestBody supportTicketTextRequest: SupportTicketTextRequest): Mono<SupportTicketResponse> {
         return runBlocking {
             logger.info("post request \"/ticket/\"")
-
-            /*if (!supportTicketService.existsSupportTicketId(supportTicketTextRequest))
-                return Mono.empty()*/
-
             return@runBlocking supportTicketService.addTicketText(supportTicketTextRequest)
         }
     }

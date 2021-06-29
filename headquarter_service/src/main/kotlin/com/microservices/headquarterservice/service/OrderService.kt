@@ -130,7 +130,6 @@ class OrderService(
     fun send(orderResponse: OrderResponse) {
         val orderQueue: String = kpiService.getFactoryLowestLoad()
 
-        rabbitTemplate.convertAndSend(orderQueue)
         rabbitTemplate.convertAndSend(
             orderQueue,
             Json.encodeToString(orderResponse) as Any

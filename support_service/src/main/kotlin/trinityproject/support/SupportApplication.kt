@@ -10,6 +10,7 @@ import org.springframework.data.r2dbc.repository.config.EnableR2dbcRepositories
 @EnableR2dbcRepositories
 @ConfigurationPropertiesScan("trinityproject.support.config")
 class SupportApplication
+
 fun main(args: Array<String>) {
-	runApplication<SupportApplication>(*args)
+    runApplication<SupportApplication>(*args)
 }

@@ -5,8 +5,9 @@ import com.fasterxml.jackson.annotation.JsonProperty
 
 enum class Status {
     @JsonEnumDefaultValue
-    @JsonProperty("open")
+    @JsonProperty("OPEN")
     OPEN,
-    @JsonProperty("closed")
+
+    @JsonProperty("CLOSED")
     CLOSED
 }

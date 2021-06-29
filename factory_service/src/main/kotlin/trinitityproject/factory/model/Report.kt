@@ -18,6 +18,6 @@ data class Report(
     val productivity: Number,
 
     val factoryName: String,
-    
+
     val timestamp: Long
 )

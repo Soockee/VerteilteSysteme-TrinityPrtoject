@@ -3,7 +3,12 @@ package com.microservices.headquarterservice
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.MainScope
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import org.slf4j.LoggerFactory
+import org.springframework.amqp.AmqpConnectException
 import org.springframework.amqp.core.*
 import org.springframework.amqp.rabbit.config.SimpleRabbitListenerContainerFactory
 import org.springframework.amqp.rabbit.connection.CachingConnectionFactory
@@ -18,7 +23,9 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration
 import org.springframework.context.annotation.Profile
 import org.springframework.stereotype.Component
+import java.util.concurrent.TimeUnit
 import javax.annotation.PostConstruct
+import kotlin.concurrent.thread
 
 
 @Configuration
@@ -141,18 +148,30 @@ class RabbitConfig(
         private val queueSupplierStatusResponse: Queue,
         private val amqpAdmin: AmqpAdmin,
     ) {
+        val scope = GlobalScope
+        var times = 1
         @PostConstruct
         fun createQueues() {
-            logger.info("Initialize AMQP")
-            amqpAdmin.declareQueue(queueKPI)
-            amqpAdmin.declareQueue(queueOrderUSA)
-            amqpAdmin.declareQueue(queueOrderChina)
-            amqpAdmin.declareQueue(queueCondition)
-            amqpAdmin.declareQueue(queueSupport)
-            amqpAdmin.declareQueue(queueSupplier)
-            amqpAdmin.declareQueue(queueSupplierResponse)
-            amqpAdmin.declareQueue(queueSupplierStatus)
-            amqpAdmin.declareQueue(queueSupplierStatusResponse)
+            logger.info("Initialize AMQP: Trying to declare queues... Trys: $times\"")
+            try {
+                amqpAdmin.declareQueue(queueKPI)
+                amqpAdmin.declareQueue(queueOrderUSA)
+                amqpAdmin.declareQueue(queueOrderChina)
+                amqpAdmin.declareQueue(queueCondition)
+                amqpAdmin.declareQueue(queueSupport)
+                amqpAdmin.declareQueue(queueSupplier)
+                amqpAdmin.declareQueue(queueSupplierResponse)
+                amqpAdmin.declareQueue(queueSupplierStatus)
+                amqpAdmin.declareQueue(queueSupplierStatusResponse)
+            }
+            catch (exception: AmqpConnectException){
+                times++
+                scope.launch{
+                    delay(5000)
+                    createQueues()
+                }
+
+            }
         }
 
     }

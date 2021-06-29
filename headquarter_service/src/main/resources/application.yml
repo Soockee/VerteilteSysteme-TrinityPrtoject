@@ -2,15 +2,15 @@ spring:
   main:
     web-application-type: reactive
   rabbitmq:
-#    host: rabbit_mq
-    host: localhost
+    host: rabbit_mq
+    #host: localhost
     port: 5672
     #username: msCloudBois
     #password: _420this_is_madness_1337
     #addresses: master.ms.depressive.life:5672
   r2dbc:
-    #host: db
-    host: localhost
+    host: db
+    #host: localhost
     port: 5432
     database: headquarterservice
     username: headquarterservice

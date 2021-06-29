@@ -19,6 +19,8 @@ import trinitityproject.factory.service.ProductOrderService
 class OrderListener(
     private val productOrderService: ProductOrderService
 ) {
+
+    //The jackson-deserilizer is set for the rabbitmq listener
     @Bean
     fun rabbitListenerContainerFactory(connectionFactory: ConnectionFactory): RabbitListenerContainerFactory<*>? {
         val factory = SimpleRabbitListenerContainerFactory()

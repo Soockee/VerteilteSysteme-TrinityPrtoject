@@ -15,6 +15,7 @@ class RabbitMqConfig {
         return Queue("conditionRequests")
     }
 
+    // The jackson is set for the rabbitmq RPC-call
     @Bean
     fun jackson2MessageConverter(): MessageConverter {
         return Jackson2JsonMessageConverter()

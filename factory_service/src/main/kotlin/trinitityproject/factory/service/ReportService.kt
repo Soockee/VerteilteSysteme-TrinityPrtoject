@@ -1,7 +1,12 @@
 package trinitityproject.factory.service
 
 import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import trinitityproject.factory.model.Product
+import trinitityproject.factory.model.ProductOrder
+import trinitityproject.factory.model.Report
+import trinitityproject.factory.model.Status
 import trinitityproject.factory.repository.ProductOrderRepository
 import java.time.Duration
 import java.util.*
@@ -36,7 +41,7 @@ class ReportService(
         val productOrdersMono = repository.findAll().collectList()
 
         val productOrders: List<ProductOrder> =
-            productOrdersMono.block(Duration.ofMillis(1000)) as List<ProductOrder>;
+            productOrdersMono.block(Duration.ofMillis(1000)) as List<ProductOrder>
 
         val completedProductPartOrdersPairs = getCompletedProductPartOrdersPairs(productOrders);
 
@@ -61,7 +66,7 @@ class ReportService(
                     "${report.toString()}"
         )
 
-        return report;
+        return report
     }
 
     /**
