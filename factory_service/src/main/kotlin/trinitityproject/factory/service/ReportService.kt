@@ -10,7 +10,6 @@ import trinitityproject.factory.model.Status
 import trinitityproject.factory.repository.ProductOrderRepository
 import java.time.Duration
 import java.util.*
-import org.slf4j.LoggerFactory
 import trinitityproject.factory.model.*
 import java.time.temporal.ChronoUnit
 
