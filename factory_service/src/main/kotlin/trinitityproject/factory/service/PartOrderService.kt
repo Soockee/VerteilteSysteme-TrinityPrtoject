@@ -18,25 +18,11 @@ class PartOrderService(
 ) {
 
 
-//    /**
-//     * Creates the partOrders for a given productOrder
-//     *
-//     * @param productOrderId Id of the ProductOrder for which the PartOrders are to be created
-//     */
-//    fun createPartOrders(productOrder: ProductOrder) {
-//        val neededParts = getRequiredParts(productOrder)
-//
-//        // TODO(Fabian): Submit PartOrders to corresponding Supplier
-//    }
-
-    // TODO(Fabian): PartOrder Updates fertigstellen
-
-
     /**
      * Updates the status of a partOrder
      *
      * @param productOrderId Id of the ProductOrder which contains the partOrder to be updated
-     * @param id Id of the PartOrder to be updated
+     * @param partOrderId Id of the PartOrder to be updated
      * @param status status to be set
      */
     suspend fun updatePartOderStatus(productOrderId: UUID, partOrderId: UUID, status: Status): ProductOrder {
@@ -44,7 +30,7 @@ class PartOrderService(
             .findById(productOrderId)
             .asFlow()
             .filterNotNull()
-            .map { productOrder ->
+            .map { productOrder: ProductOrder ->
                 val productIdx = productOrder
                     .partOrders
                     .indexOfFirst { it.partOrderId == partOrderId }
@@ -60,12 +46,12 @@ class PartOrderService(
     }
 
     /**
-     * Angeben, welche Parts bei welchem Lieferanten geordert werden sollen?
-     *
+     * A part-order will be added to a ProductOrder
      *
      * @param productOrderId Id of the product order for which parts are to be ordered
-     * @param supplierId Id of the supplier with whom the order is to be placed
-     * @param positions List of the positions to be ordered
+     * @param partOrder The part-order which will be added
+     *
+     * @return The updated ProductOrder
      */
     suspend fun addPartOrder(productOrderId: UUID, partOrder: PartOrder): ProductOrder {
         val productOrder = repository
@@ -73,15 +59,15 @@ class PartOrderService(
             .asFlow()
             .filterNotNull()
             .toList()
-            .first();
+            .first()
 
-        productOrder.partOrders = productOrder.partOrders.plus(listOf(partOrder));
+        productOrder.partOrders.plus(listOf(partOrder)).also { productOrder.partOrders = it }
 
         return repository
             .save(productOrder)
             .asFlow()
             .filterNotNull()
-            .first();
+            .first()
     }
 
     suspend fun getUnfinishedProductOrder(): ProductOrder {

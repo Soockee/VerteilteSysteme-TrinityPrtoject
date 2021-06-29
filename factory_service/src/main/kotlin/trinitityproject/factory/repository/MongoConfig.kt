@@ -5,8 +5,6 @@ import com.mongodb.MongoClientSettings
 import com.mongodb.reactivestreams.client.MongoClient
 import com.mongodb.reactivestreams.client.MongoClients
 import org.bson.UuidRepresentation
-import org.bson.codecs.UuidCodec
-import org.bson.codecs.configuration.CodecRegistries
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.Configuration

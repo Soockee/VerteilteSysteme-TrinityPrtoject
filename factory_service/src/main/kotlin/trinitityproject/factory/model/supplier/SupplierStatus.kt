@@ -9,6 +9,8 @@ enum class SupplierStatus {
     @JsonProperty("complete")
     COMPLETE,
 
+
+    @Suppress("unused")
     @JsonProperty("uncomplete")
     UNCOMPLETE
 

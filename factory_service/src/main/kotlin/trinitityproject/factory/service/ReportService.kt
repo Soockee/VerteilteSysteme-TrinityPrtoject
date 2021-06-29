@@ -1,14 +1,14 @@
 package trinitityproject.factory.service
 
 import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Service
+import trinitityproject.factory.model.Product
+import trinitityproject.factory.model.ProductOrder
+import trinitityproject.factory.model.Report
+import trinitityproject.factory.model.Status
 import trinitityproject.factory.repository.ProductOrderRepository
 import java.time.Duration
-import java.util.*
-import org.slf4j.LoggerFactory
-import org.springframework.amqp.rabbit.core.RabbitTemplate
-import org.springframework.core.ParameterizedTypeReference
-import trinitityproject.factory.model.*
 
 
 @Service
@@ -32,9 +32,9 @@ class ReportService(
         val productOrdersMono = repository.findAll().collectList()
 
         val productOrders: List<ProductOrder> =
-            productOrdersMono.block(Duration.ofMillis(1000)) as List<ProductOrder>;
+            productOrdersMono.block(Duration.ofMillis(1000)) as List<ProductOrder>
 
-        val finishedProductsCosts: Map<Product, Double> = getFinishedProductsCostsToday(productOrders);
+        val finishedProductsCosts: Map<Product, Double> = getFinishedProductsCostsToday(productOrders)
 
         val report = Report(
             null,
@@ -47,10 +47,10 @@ class ReportService(
         logger.info(
             "new report created at " +
                     "${timeService.getVirtualCurrentLocalTime(System.currentTimeMillis())}: " +
-                    "${report.toString()}"
+                    report.toString()
         )
 
-        return report;
+        return report
     }
 
     /**
@@ -67,7 +67,7 @@ class ReportService(
             productionTime += product.productData.productionTime
         }
 
-        return partCosts + productionTime * costPerHour;
+        return partCosts + productionTime * costPerHour
     }
 
     /**
@@ -85,7 +85,7 @@ class ReportService(
      * @return Finished goods since midnight
      */
     fun getFinishedProductsCostsToday(productOrders: List<ProductOrder>): Map<Product, Double> {
-        var finishedProductsCosts: MutableMap<Product, Double> = HashMap()
+        val finishedProductsCosts: MutableMap<Product, Double> = HashMap()
 
         productOrders.forEach { productOrder ->
             productOrder.products.forEach { product ->
@@ -93,10 +93,10 @@ class ReportService(
                     var productPartCosts = 0.0
                     product.parts.forEach { part ->
                         productOrder.partOrders.forEach { partOrder ->
-                            var position = partOrder.positions.find { position ->
+                            val position = partOrder.positions.find { position ->
                                 position.partSupplierId == part.partId
                             }
-                            if (position != null) productPartCosts += position!!.condition.price.toDouble()
+                            if (position != null) productPartCosts += position.condition.price.toDouble()
                         }
                     }
                     finishedProductsCosts[product] = productPartCosts
