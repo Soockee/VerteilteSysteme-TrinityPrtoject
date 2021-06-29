@@ -66,7 +66,28 @@ class SupportTicketService(
         return Mono.just(supportTicketResponse)
     }
 
-    /**
+    fun createTicket(supportTicketResponse: SupportTicketResponse) {
+        val supportTicket: SupportTicket = supportTicketRepository.save(
+            SupportTicket(
+                customerId = supportTicketResponse.customerId,
+                status = supportTicketResponse.status,
+                createTime = supportTicketResponse.createTime
+            )
+        ).block()!!
+        logger.info("Save ticket to support_db: $supportTicket")
+
+        supportTicketResponse.supportTicketText.forEach { ticket ->
+            val supportTicket = supportTicketTextRepository.save(
+                SupportTicketText(
+                    supportTicketId = supportTicket.supportTicketId,
+                    text = ticket.text,
+                    changeTime = Instant.now()
+                )
+            )
+            logger.info("Save ticket text to support_db")
+        }
+    }
+        /**
      * Get alls support tickets with $status from database.
      *
      * @param status The status of the tickets.

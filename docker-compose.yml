@@ -9,7 +9,7 @@ services:
       POSTGRES_USER: headquarterservice
       POSTGRES_DB: headquarterservice
 
-  support_db:
+  supportdb:
     image: postgres
     environment:
       POSTGRES_PASSWORD: supportservice123
@@ -41,6 +41,6 @@ services:
       - 8081:8080
     depends_on: 
       - rabbit_mq
-      - support_db
+      - supportdb
 volumes:  
   rabbitmq_data:

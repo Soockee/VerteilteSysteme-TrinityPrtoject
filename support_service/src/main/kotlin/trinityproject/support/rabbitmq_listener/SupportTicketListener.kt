@@ -1,6 +1,7 @@
 package trinityproject.support.rabbitmq_listener
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule
 import com.fasterxml.jackson.module.kotlin.KotlinModule
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -28,7 +29,11 @@ class SupportTicketListener(
         factory.setConnectionFactory(connectionFactory)
         // A custom objectMapper is needed, so the default values are set by kotlin
         val mapper = ObjectMapper()
-            .registerModule(KotlinModule())
+            .registerModules(
+                KotlinModule(),
+                JavaTimeModule()
+            )
+
         factory.setMessageConverter(Jackson2JsonMessageConverter(mapper))
         return factory
     }
@@ -38,5 +43,6 @@ class SupportTicketListener(
     fun receiveTicket(@Payload supportTicketResponse: SupportTicketResponse) {
         logger.warn("KEKW")
         logger.warn("Support Ticket Response: $supportTicketResponse")
+        supportTicketService.createTicket(supportTicketResponse)
     }
 }
