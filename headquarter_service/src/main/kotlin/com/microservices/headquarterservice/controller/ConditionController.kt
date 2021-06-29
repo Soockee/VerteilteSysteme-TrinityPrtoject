@@ -30,7 +30,6 @@ class ConditionController(
 
     @GetMapping("/condition")
     fun getAll(): Flux<Condition> {
-        logger.info("GET Request: \"/condition\"")
         return conditionService.getAll()
     }
 }

@@ -28,7 +28,7 @@ class OrderService(
     @Value("\${microservice.rabbitmq.queueOrderUSA}") val orderQueueUSA: String,
     @Value("\${microservice.rabbitmq.queueOrderChina}") val orderQueueChina: String,
 ) {
-    val logger = LoggerFactory.getLogger(ConditionService::class.java)
+    val logger = LoggerFactory.getLogger(OrderService::class.java)
 
     /**
      * create an order and its corresponding n-m relationship to product

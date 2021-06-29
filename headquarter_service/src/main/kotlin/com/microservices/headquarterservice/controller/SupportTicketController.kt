@@ -14,7 +14,7 @@ import reactor.core.publisher.Mono
 class SupportTicketController(
     private val supportTicketService: SupportTicketService
 ) {
-    private val logger: Logger = LoggerFactory.getLogger(SupportTicketService::class.java)
+    private val logger: Logger = LoggerFactory.getLogger(SupportTicketController::class.java)
 
     /**
      * Calls the support ticket service so that a new ticket is written to the database.

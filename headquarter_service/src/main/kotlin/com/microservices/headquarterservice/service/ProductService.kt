@@ -23,7 +23,7 @@ class ProductService(
     @Value("\${microservice.rabbitmq.queueOrderUSA}") val headquarterOrderQueue: String,
     ){
 
-    val logger = LoggerFactory.getLogger(ConditionService::class.java)
+    val logger = LoggerFactory.getLogger(ProductService::class.java)
     /**
      *  create a product
      *  @param product A part to be saved.
