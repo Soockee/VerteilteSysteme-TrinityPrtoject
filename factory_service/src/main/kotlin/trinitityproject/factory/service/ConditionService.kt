@@ -23,6 +23,14 @@ class ConditionService(
     private val template: RabbitTemplate,
 ) {
 
+    /**
+     * Returns a collection of Conditions for the given partId.
+     * If a condition for a part is not cached a PartCondition is requested over a rabbitmq-rpc-call to the Headquarter.
+     *
+     * @param partId the ID of the Part
+     *
+     * @return A collection of Conditions for the given Part
+     */
     suspend fun getCondition(partId: UUID): PartCondition? {
         return if (conditionCache.containsKey(partId)) {
             conditionCache[partId]
@@ -32,11 +40,19 @@ class ConditionService(
                 ConditionRequest(partId),
                 object : ParameterizedTypeReference<PartCondition>() {}
             )
-            conditionCache[partId] = newCondition
+            conditionCache[partId] = newCondition // A received condition will be cached
             newCondition
         }
     }
 
+
+    /**
+     * Returns condition with the lowest price for the part
+     *
+     * @param partId The ID of the Part
+     *
+     *
+     */
     suspend fun getBestCondition(partId: UUID): Condition {
         val partCondition =
             getCondition(partId)

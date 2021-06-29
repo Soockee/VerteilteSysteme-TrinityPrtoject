@@ -6,7 +6,7 @@ import java.util.*
 
 
 @Service
-class TimeService(private val dayInMillis: Long = 30000, private val timeZone: String = "CST") {
+class TimeService(private val dayInMillis: Long = 180000, private val timeZone: String = "CST") {
 
     /**
      * Compares a given date to the current date by converting each into a virtual date with shorter time
@@ -35,12 +35,12 @@ class TimeService(private val dayInMillis: Long = 30000, private val timeZone: S
      * @return Calendar representing the shorter virtual time
      */
     fun getVirtualCalendar(realTimestamp: Long): Calendar {
-        var hoursInMillis = dayInMillis.toDouble() / 24
-        var hoursSinceZero = realTimestamp.toDouble() / hoursInMillis % 1000
-        var daysSinceZero = hoursSinceZero / 24
-        var yearsSinceZero = daysSinceZero / 365
+        val hoursInMillis = dayInMillis.toDouble() / 24
+        val hoursSinceZero = realTimestamp.toDouble() / hoursInMillis % 1000
+        val daysSinceZero = hoursSinceZero / 24
+        val yearsSinceZero = daysSinceZero / 365
 
-        var calendar = Calendar.getInstance()
+        val calendar = Calendar.getInstance()
         calendar.set(Calendar.YEAR, yearsSinceZero.toInt())
         calendar.set(Calendar.DAY_OF_YEAR, daysSinceZero.toInt() - yearsSinceZero.toInt() * 365)
         calendar.set(Calendar.HOUR_OF_DAY, hoursSinceZero.toInt() - daysSinceZero.toInt() * 24)
@@ -50,6 +50,6 @@ class TimeService(private val dayInMillis: Long = 30000, private val timeZone: S
     }
 
     fun getReportDelay(): Long {
-        return dayInMillis / 4;
+        return dayInMillis / 12
     }
 }

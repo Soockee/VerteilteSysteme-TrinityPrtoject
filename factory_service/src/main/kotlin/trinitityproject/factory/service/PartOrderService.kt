@@ -1,8 +1,8 @@
 package trinitityproject.factory.service
 
-import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactive.asFlow
 import org.springframework.data.domain.Example
@@ -18,60 +18,61 @@ class PartOrderService(
 ) {
 
 
-//    /**
-//     * Creates the partOrders for a given productOrder
-//     *
-//     * @param productOrderId Id of the ProductOrder for which the PartOrders are to be created
-//     */
-//    fun createPartOrders(productOrder: ProductOrder) {
-//        val neededParts = getRequiredParts(productOrder)
-//
-//        // TODO(Fabian): Submit PartOrders to corresponding Supplier
-//    }
-
-    // TODO(Fabian): PartOrder Updates fertigstellen
     /**
      * Updates the status of a partOrder
      *
      * @param productOrderId Id of the ProductOrder which contains the partOrder to be updated
-     * @param id Id of the PartOrder to be updated
+     * @param partOrderId Id of the PartOrder to be updated
      * @param status status to be set
      */
-    suspend fun updatePartOderStatus(productOrderId: UUID, partOrderId: UUID, status: Status) {
-        val productOrderFlow = repository.findById(productOrderId).asFlow();
-
-        if (productOrderFlow.count() < 1) {
-            return;
-        }
-
-        var productOrder = productOrderFlow.toList().first();
+    suspend fun updatePartOderStatus(productOrderId: UUID, partOrderId: UUID, status: Status): ProductOrder {
+        val productOrder = repository
+            .findById(productOrderId)
+            .asFlow()
+            .filterNotNull()
+            .map { productOrder: ProductOrder ->
+                val productIdx = productOrder
+                    .partOrders
+                    .indexOfFirst { it.partOrderId == partOrderId }
+                productOrder.partOrders[productIdx].status = status
+                productOrder
+            }
+            .first()
+        return repository
+            .save(productOrder)
+            .asFlow()
+            .filterNotNull()
+            .first()
     }
 
     /**
-     * Angeben, welche Parts bei welchem Lieferanten geordert werden sollen?
-     *
+     * A List of part-order will be added to a ProductOrder
      *
      * @param productOrderId Id of the product order for which parts are to be ordered
-     * @param supplierId Id of the supplier with whom the order is to be placed
-     * @param positions List of the positions to be ordered
+     * @param partOrders The part-order which will be added
+     *
+     * @return The updated ProductOrder
      */
-    suspend fun addPartOrder(productOrderId: UUID, partOrder: PartOrder): ProductOrder {
+    suspend fun addPartOrders(productOrderId: UUID, partOrders: List<PartOrder>): ProductOrder {
         val productOrder = repository
             .findById(productOrderId)
             .asFlow()
             .filterNotNull()
             .toList()
-            .first();
+            .first()
 
-        productOrder.partOrders = productOrder.partOrders.plus(listOf(partOrder));
+        productOrder.partOrders = partOrders
 
         return repository
             .save(productOrder)
             .asFlow()
             .filterNotNull()
-            .first();
+            .first()
     }
 
+    /**
+     * Returns a product from the database which is not finished
+     */
     suspend fun getUnfinishedProductOrder(): ProductOrder {
         return repository
             .findAll(
@@ -96,6 +97,10 @@ class PartOrderService(
             .first()
     }
 
+
+    /**
+     * Aggregates the required parts over all products in a ProductOrder
+     */
     suspend fun getRequiredParts(order: ProductOrder): Map<UUID, Int> {
         return order.products
             .map { product ->

@@ -8,5 +8,5 @@ data class SupplierOrders(
     val part_id: UUID,
 
     @JsonProperty("count")
-    val count: Int
+    val count: Number
 )
