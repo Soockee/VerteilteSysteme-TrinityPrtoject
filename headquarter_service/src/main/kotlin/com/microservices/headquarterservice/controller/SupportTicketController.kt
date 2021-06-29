@@ -22,9 +22,9 @@ class SupportTicketController(
      * @param supportTicketRequest A new support ticket.
      * @return Returns the created ticket.
      */
-    @PostMapping("/ticket/")
+    @PostMapping("/ticket")
     fun createTicket(@RequestBody supportTicketRequest: SupportTicketRequest): Mono<SupportTicketResponse> {
-        logger.info("post request \"/ticket/\" to create a new support ticket")
+        logger.info("POST Request: \"/ticket\": $supportTicketRequest")
         return supportTicketService.createTicket(supportTicketRequest)
     }
 }

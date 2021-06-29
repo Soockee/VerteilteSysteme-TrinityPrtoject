@@ -12,35 +12,28 @@ import reactor.core.publisher.Mono
 import java.util.*
 
 @RestController("OrderController")
-class OrderController (
+class OrderController(
     private val orderService: OrderService,
-    ) {
+) {
     companion object {
-        val logger = LoggerFactory.getLogger(ConditionService::class.java)
-    }
-    @PostMapping("/order/")
-    fun create(
-        @RequestBody orderRequest: OrderRequest
-    ): Order {
-       return orderService.createOrder(orderRequest)
+        val logger = LoggerFactory.getLogger(OrderController::class.java)
     }
 
-    @GetMapping( "/orders/")
-    fun getAll(
-    ): Flux<Order> {
+    @PostMapping("/order")
+    fun create(@RequestBody orderRequest: OrderRequest): Order {
+        logger.info("POST Request: \"/order\": ${orderRequest}")
+        return orderService.createOrder(orderRequest)
+    }
+
+    @GetMapping("/order")
+    fun getAll(): Flux<Order> {
+        logger.info("GET Request: \"/order\"")
         return orderService.getAllOrders()
     }
 
-    @GetMapping( "/order/status/")
-    fun getStatusByOrderId(
-        @RequestParam orderId: String
-    ): Mono<String> {
+    @GetMapping("/order/status")
+    fun getStatusByOrderId(@RequestParam orderId: String): Mono<String> {
+        logger.info("GET Request: \"/order\": $orderId")
         return orderService.getStatusById(UUID.fromString(orderId))
-    }
-
-    @GetMapping( "/order-products/")
-    fun getAllOrderProducts(
-    ): Flux<OrderProduct> {
-        return orderService.getAllOrderProducts()
     }
 }
