@@ -12,6 +12,7 @@ import kotlinx.serialization.json.Json
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.amqp.core.AmqpTemplate
+import org.springframework.amqp.core.MessageDeliveryMode
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
@@ -67,6 +68,7 @@ class SupportTicketService(
             Json.encodeToString(ticket) as Any
         ) { message ->
             message.messageProperties.contentType = "application/json"
+            message.messageProperties.deliveryMode = MessageDeliveryMode.PERSISTENT
             message
         }
         logger.info("Send msg = " + ticket)

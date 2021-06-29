@@ -17,7 +17,6 @@ import trinitityproject.factory.service.*
 import java.time.DayOfWeek
 import java.time.Duration
 import java.time.LocalDate
-import java.time.ZoneId
 import java.util.*
 
 
@@ -28,7 +27,8 @@ class ProductionTask(
     private val productOrderService: ProductOrderService,
     private val productService: ProductService,
     private val jacksonWebClient: WebClient,
-    private val timeService: TimeService
+    private val timeService: TimeService,
+
 ) {
     private val log: Logger = LoggerFactory.getLogger(ProductionTask::class.java)
 
@@ -118,9 +118,9 @@ class ProductionTask(
                                     .get()
                                     .uri { uriBuilder ->
                                         uriBuilder
-                                        .path("/supplier/order/")
-                                        .path("/{id}")
-                                        .build(it.orderId!!.toString())
+                                            .path("/supplier/order/")
+                                            .path("/{id}")
+                                            .build(it.orderId!!.toString())
                                     }
                                     .retrieve()
                                     .bodyToMono(SupplierStatusResponse::class.java)

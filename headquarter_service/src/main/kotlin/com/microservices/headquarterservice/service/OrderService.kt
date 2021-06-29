@@ -8,6 +8,7 @@ import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
 import org.slf4j.LoggerFactory
 import org.springframework.amqp.core.AmqpTemplate
+import org.springframework.amqp.core.MessageDeliveryMode
 import org.springframework.amqp.core.MessagePostProcessor
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
@@ -104,6 +105,7 @@ class OrderService(
     fun getAllOrders(): Flux<Order> {
         return orderRepository.findAll()
     }
+
     /**
      * return all OrderProducts
      * @return Returns all OrderProducts.
@@ -111,6 +113,7 @@ class OrderService(
     fun getAllOrderProducts(): Flux<OrderProduct> {
         return orderProductRepository.findAll()
     }
+
     /**
      * get orderr by id
      * @param orderId A orderId to be created.
@@ -119,6 +122,7 @@ class OrderService(
     fun getOrderById(orderId: UUID): Mono<Order> {
         return orderRepository.findById(orderId)
     }
+
     /**
      * get status of oder by id
      * @param orderId A orderId to be created.
@@ -139,6 +143,7 @@ class OrderService(
             Json.encodeToString(orderResponse) as Any
         ) { message ->
             message.messageProperties.contentType = "application/json"
+            message.messageProperties.deliveryMode = MessageDeliveryMode.PERSISTENT
             message
         }
         logger.info("Send order = $orderResponse to queue $orderQueue")
