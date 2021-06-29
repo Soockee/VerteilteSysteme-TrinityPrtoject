@@ -7,4 +7,7 @@
 ## Größte Lerneffekte
 
 ![](./img/reactiveprogramming.jpg)
+![](./img/estimated-solution.jpg)
+![](./img/database-dev.jpg)
+
 
