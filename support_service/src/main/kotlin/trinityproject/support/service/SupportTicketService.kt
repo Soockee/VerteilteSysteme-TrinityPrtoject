@@ -27,6 +27,8 @@ class SupportTicketService(
      * @return The support ticket that was edited.
      */
     suspend fun addTicketText(supportTicketTextRequest: SupportTicketTextRequest): Mono<SupportTicketResponse> {
+        logger.info("Starting to add ticket text")
+
         var supportTicket: SupportTicket = supportTicketRepository.findById(supportTicketTextRequest.supportTicketId).asFlow().filterNotNull().first()
 
         if (supportTicket.status == Status.CLOSED) {
@@ -77,7 +79,7 @@ class SupportTicketService(
         logger.info("Save ticket to support_db: $supportTicket")
 
         supportTicketResponse.supportTicketText.forEach { ticket ->
-            val supportTicket = supportTicketTextRepository.save(
+            supportTicketTextRepository.save(
                 SupportTicketText(
                     supportTicketId = supportTicket.supportTicketId,
                     text = ticket.text,

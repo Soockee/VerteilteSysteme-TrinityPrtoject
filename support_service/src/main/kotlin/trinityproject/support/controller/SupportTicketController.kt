@@ -19,6 +19,8 @@ class SupportTicketController (
 
     @PostMapping("/ticket/")
     fun addTicketText(@RequestBody supportTicketTextRequest: SupportTicketTextRequest): Mono<SupportTicketResponse> {
+        logger.info("Starting to call add text fucntion in controller")
+
         return runBlocking {
             logger.info("post request \"/ticket/\"")
 
