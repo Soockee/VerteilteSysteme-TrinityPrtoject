@@ -41,8 +41,7 @@ class SupportTicketListener(
     @RabbitListener(queues = ["support"])
     @Throws(InterruptedException::class)
     fun receiveTicket(@Payload supportTicketResponse: SupportTicketResponse) {
-        logger.warn("KEKW")
-        logger.warn("Support Ticket Response: $supportTicketResponse")
+        logger.warn("SupportTicketResponse from queue: $supportTicketResponse")
         supportTicketService.createTicket(supportTicketResponse)
     }
 }

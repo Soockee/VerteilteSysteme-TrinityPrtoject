@@ -8,8 +8,8 @@ spring:
 
     url: r2dbc:postgresql://${spring.r2dbc.host}/${spring.r2dbc.database}
   rabbitmq:
-      host: rabbit_mq
-      port: 5672
+    host: rabbit_mq
+    port: 5672
 
   flyway:
     url: jdbc:postgresql://${spring.r2dbc.host}:${spring.r2dbc.port}/${spring.r2dbc.database}

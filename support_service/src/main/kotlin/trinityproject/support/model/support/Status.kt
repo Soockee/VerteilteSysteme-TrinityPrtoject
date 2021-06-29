@@ -7,6 +7,7 @@ enum class Status {
     @JsonEnumDefaultValue
     @JsonProperty("OPEN")
     OPEN,
+
     @JsonProperty("CLOSED")
     CLOSED
 }

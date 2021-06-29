@@ -23,7 +23,8 @@ class SupportTicketService(
     private val logger: Logger = LoggerFactory.getLogger(SupportTicketService::class.java)
 
     /**
-     * Add a ticket text and set the status. This is only possible if the ticket is currently being processed or it is already closed.
+     * Add a ticket text and set the status. This is only possible if the ticket is currently being processed
+     * or it is already closed.
      *
      * @param supportTicketTextRequest A request object to add a text and the status to a ticket.
      * @return The support ticket that was edited.
@@ -32,8 +33,10 @@ class SupportTicketService(
         logger.info("Starting to add ticket text")
 
         var supportTicketMono: Mono<SupportTicket> = supportTicketRepository
-            .findById(supportTicketTextRequest
-            .supportTicketId)
+            .findById(
+                supportTicketTextRequest
+                    .supportTicketId
+            )
         try {
             var supportTicket: SupportTicket = supportTicketMono.asFlow()
                 .filterNotNull()
@@ -73,13 +76,17 @@ class SupportTicketService(
 
             logger.info("The edited ticket: $supportTicketResponse")
             return Mono.just(supportTicketResponse)
-        }
-        catch (exception: NoSuchElementException){
+        } catch (exception: NoSuchElementException) {
             logger.info("Ticket not found!")
             return Mono.error(SupportTicketIdNotFoundException("Ticket Not Found"))
         }
     }
 
+    /**
+     * Creates a new ticket and saves it to the database.
+     *
+     * @param supportTicketResponse The ticket from the queue.
+     */
     fun createTicket(supportTicketResponse: SupportTicketResponse) {
         val supportTicket: SupportTicket = supportTicketRepository.save(
             SupportTicket(
@@ -88,7 +95,6 @@ class SupportTicketService(
                 createTime = supportTicketResponse.createTime
             )
         ).block()!!
-        logger.info("Save ticket to supportdb: $supportTicket")
 
         supportTicketResponse.supportTicketText.forEach { ticket ->
             supportTicketTextRepository.save(
@@ -98,11 +104,13 @@ class SupportTicketService(
                     changeTime = Instant.now()
                 )
             )
-            logger.info("Save ticket text to supportdb")
         }
+
+        logger.info("Ticket created: $supportTicket")
     }
-        /**
-     * Get alls support tickets with $status from database.
+
+    /**
+     * Get all support tickets with $status from database.
      *
      * @param status The status of the tickets.
      * @return A list of all support tickets with $status.
@@ -119,14 +127,5 @@ class SupportTicketService(
      */
     fun getAll(): Flux<SupportTicket> {
         return supportTicketRepository.findAll()
-    }
-
-    /**
-     * Check if the support ticket Id exists.
-     *
-     * @return true if the support ticket Id exist.
-     */
-    fun existsSupportTicketId(supportTicketTextRequest: SupportTicketTextRequest): Boolean {
-        return supportTicketRepository.existsById(supportTicketTextRequest.supportTicketId).block()!!
     }
 }

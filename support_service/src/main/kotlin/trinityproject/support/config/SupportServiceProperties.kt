@@ -5,7 +5,7 @@ import org.springframework.boot.context.properties.ConstructorBinding
 
 @ConfigurationProperties
 @ConstructorBinding
-data class SupportServiceProperties (
+data class SupportServiceProperties(
     val spring: Spring
 )
 
