@@ -1,18 +1,18 @@
 spring:
   r2dbc:
-    #host: support-db
-    host: localhost
-    port: 5433
-    #port: 5432
-    database: headquarterservice
-    username: headquarterservice
-    password: headquarterservice123
+    host: support_db
+    #host: localhost
+    #port: 5433
+    port: 5432
+    database: supportservice
+    username: supportservice
+    password: supportservice123
 #    database: supportservice
 #    username: supportservice
 #    password: supportservice123
     url: r2dbc:postgresql://${spring.r2dbc.host}:${spring.r2dbc.port}/${spring.r2dbc.database}
   rabbitmq:
-      host: localhost
+      host: rabbit_mq
       #host: localhost
       port: 5672
       #username: msCloudBois

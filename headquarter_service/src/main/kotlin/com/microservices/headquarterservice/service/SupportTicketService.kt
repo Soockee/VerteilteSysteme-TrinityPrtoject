@@ -15,6 +15,7 @@ import org.springframework.amqp.core.AmqpTemplate
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Mono
+import java.util.*
 
 @Component
 class SupportTicketService(
@@ -34,16 +35,21 @@ class SupportTicketService(
      * @return Returns the created ticket.
      */
     fun createTicket(supportTicketRequest: SupportTicketRequest): Mono<SupportTicketResponse> {
-        val supportTicket: SupportTicket =
-            supportTicketRepository.save(SupportTicket(customerId = supportTicketRequest.customerId)).block()!!
+        val supportTicket: SupportTicket = SupportTicket(
+            UUID.randomUUID(),
+            customerId = supportTicketRequest.customerId
+        )
+        //    supportTicketRepository.save(SupportTicket(customerId = supportTicketRequest.customerId)).block()!!
 
-        val supportTicketTextCreated: SupportTicketText = supportTicketTextRepository.save(
+
+        val supportTicketTextCreated: SupportTicketText =
             SupportTicketText(
+                UUID.randomUUID(),
                 supportTicketId = supportTicket.supportTicketId,
                 text = supportTicketRequest.text,
                 changeTime = supportTicket.createTime
             )
-        ).block()!!
+
 
         val supportTicketResponse = SupportTicketResponse(
             supportTicketId = supportTicket.supportTicketId,

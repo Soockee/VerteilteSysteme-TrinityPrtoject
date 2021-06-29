@@ -8,8 +8,6 @@ services:
       POSTGRES_PASSWORD: headquarterservice123
       POSTGRES_USER: headquarterservice
       POSTGRES_DB: headquarterservice
-    ports:
-      - 5432:5432
 
   support_db:
     image: postgres
@@ -17,8 +15,6 @@ services:
       POSTGRES_PASSWORD: supportservice123
       POSTGRES_USER: supportservice
       POSTGRES_DB: supportservice
-    ports:
-      - 5433:5432
 
   rabbit_mq:
     image: rabbitmq:3-management
@@ -33,18 +29,18 @@ services:
    restart: always
    build: ./headquarter_service
    ports:
-     - 8081:8080
+     - 8080:8080
    depends_on: 
      - rabbit_mq
      - db
   
-  # support:
-  #   image: docker.io/library/support:0.0.1-SNAPSHOT
-  #   restart: always
-  #   ports:
-  #     - 8081:8080
-  #   depends_on: 
-  #     - rabbit_mq
-  #     - support-db
+  support:
+    image: docker.io/library/support:0.0.1-SNAPSHOT
+    restart: always
+    ports:
+      - 8081:8080
+    depends_on: 
+      - rabbit_mq
+      - support_db
 volumes:  
   rabbitmq_data:
