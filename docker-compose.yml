@@ -11,7 +11,7 @@ services:
     ports:
       - 5432:5432
 
-  support-db:
+  support_db:
     image: postgres
     environment:
       POSTGRES_PASSWORD: supportservice123
@@ -28,24 +28,33 @@ services:
     volumes:
       - rabbitmq_data:/data
 
-  headquarter:
-   image: headquarter_service
-   restart: always
-   build: ./headquarter_service
-   ports:
-     - 8080:8080
-   depends_on: 
-     - rabbit_mq
-     - db
-  
-  support:
-    image: support_service
-    restart: always
-    build: ./support_service
+  adminer:
+    image: adminer:latest
+    environment:
+      ADMINER_DEFAULT_SERVER: headquarter_service_db
+      ADMINER_DEFAULT_DB_NAME: headquarterservice
     ports:
-      - 8081:8080
-    depends_on: 
-      - rabbit_mq
-      - support-db
+      - 9000:8080
+
+#  headquarter:
+#   image: headquarter_service
+#   restart: always
+#   build: ./headquarter_service
+#   ports:
+#     - 8081:8080
+#   depends_on: 
+#     - rabbit_mq
+#     - db
+  
+#  support:
+#    image: support_service
+#    restart: always
+#    build: ./support_service
+#    ports:
+#      - 8081:8080
+#    depends_on: 
+#      - rabbit_mq
+#      - support-db
+
 volumes:  
   rabbitmq_data:

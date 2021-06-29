@@ -9,7 +9,7 @@ class FlywayConfig (
     private val supportServiceProperties: SupportServiceProperties
 ){
 
-    @Bean
+    @Bean(initMethod = "migrate")
     fun flyway(): Flyway {
         return Flyway(Flyway.configure().dataSource(
             supportServiceProperties.spring.flyway.url,
