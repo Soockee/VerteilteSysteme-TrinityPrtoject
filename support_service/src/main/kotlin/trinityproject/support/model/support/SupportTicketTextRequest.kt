@@ -1,11 +1,9 @@
 package trinityproject.support.model.support
 
 import com.fasterxml.jackson.annotation.JsonProperty
-import org.springframework.data.annotation.Id
 import java.util.*
 
-data class SupportTicketTextRequest(
-    @Id
+class SupportTicketTextRequest(
     @JsonProperty("supportTicketId")
     val supportTicketId: UUID,
 

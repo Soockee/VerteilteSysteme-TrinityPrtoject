@@ -1,24 +1,16 @@
 spring:
   r2dbc:
     host: supportdb
-    #host: localhost
-    #port: 5433
     port: 5432
     database: supportservice
     username: supportservice
     password: supportservice123
-#    database: supportservice
-#    username: supportservice
-#    password: supportservice123
-    #url: r2dbc:postgresql://${spring.r2dbc.host}:${spring.r2dbc.port}/${spring.r2dbc.database}
+
     url: r2dbc:postgresql://${spring.r2dbc.host}/${spring.r2dbc.database}
   rabbitmq:
       host: rabbit_mq
-      #host: localhost
       port: 5672
-      #username: msCloudBois
-      #password: _420this_is_madness_1337
-      #addresses: master.ms.depressive.life:5672
+
   flyway:
     url: jdbc:postgresql://${spring.r2dbc.host}:${spring.r2dbc.port}/${spring.r2dbc.database}
     user: ${spring.r2dbc.username}

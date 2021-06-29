@@ -8,6 +8,8 @@ import org.slf4j.LoggerFactory
 import org.springframework.stereotype.Component
 import reactor.core.publisher.Flux
 import reactor.core.publisher.Mono
+import trinityproject.support.exception.SupportTicketClosedException
+import trinityproject.support.exception.SupportTicketIdNotFoundException
 import trinityproject.support.model.support.*
 import trinityproject.support.repository.SupportTicketRepository
 import trinityproject.support.repository.SupportTicketTextRepository
@@ -27,43 +29,55 @@ class SupportTicketService(
      * @return The support ticket that was edited.
      */
     suspend fun addTicketText(supportTicketTextRequest: SupportTicketTextRequest): Mono<SupportTicketResponse> {
-        var supportTicket: SupportTicket = supportTicketRepository.findById(supportTicketTextRequest.supportTicketId).asFlow().filterNotNull().first()
+        logger.info("Starting to add ticket text")
 
-        if (supportTicket.status == Status.CLOSED) {
-            logger.info("The ticket is already closed!")
-            return Mono.empty()
-        }
+        var supportTicketMono: Mono<SupportTicket> = supportTicketRepository
+            .findById(supportTicketTextRequest
+            .supportTicketId)
+        try {
+            var supportTicket: SupportTicket = supportTicketMono.asFlow()
+                .filterNotNull()
+                .first()
+            if (supportTicket.status == Status.CLOSED) {
+                logger.info("The ticket is already closed!")
+                return Mono.error(SupportTicketClosedException("ticket is closed"))
+            }
 
-        if (supportTicket.status != supportTicketTextRequest.status) {
-            supportTicket.status = supportTicketTextRequest.status
+            if (supportTicket.status != supportTicketTextRequest.status) {
+                supportTicket.status = supportTicketTextRequest.status
 
-            supportTicket = supportTicketRepository.save(supportTicket).asFlow().filterNotNull().first()
-        }
+                supportTicket = supportTicketRepository.save(supportTicket).asFlow().filterNotNull().first()
+            }
 
-        supportTicketTextRepository.save(
-            SupportTicketText(
+            supportTicketTextRepository.save(
+                SupportTicketText(
+                    supportTicketId = supportTicket.supportTicketId,
+                    text = supportTicketTextRequest.text,
+                    changeTime = Instant.now()
+                )
+            ).asFlow().filterNotNull().first()
+
+            val supportTicketResponse = SupportTicketResponse(
                 supportTicketId = supportTicket.supportTicketId,
-                text = supportTicketTextRequest.text,
-                changeTime = Instant.now()
+                customerId = supportTicket.customerId,
+                status = supportTicket.status,
+                createTime = supportTicket.createTime,
+                mutableListOf()
             )
-        ).asFlow().filterNotNull().first()
 
-        val supportTicketResponse = SupportTicketResponse(
-            supportTicketId = supportTicket.supportTicketId,
-            customerId = supportTicket.customerId,
-            status = supportTicket.status,
-            createTime = supportTicket.createTime,
-            mutableListOf()
-        )
+            supportTicketTextRepository.findAll().collectList().asFlow().filterNotNull().first()
+                .filter { e -> e.supportTicketId == supportTicket.supportTicketId }.forEach { e ->
+                    if (e.supportTicketId == supportTicketResponse.supportTicketId)
+                        supportTicketResponse.supportTicketText.add(e)
+                }
 
-        supportTicketTextRepository.findAll().collectList().asFlow().filterNotNull().first()
-            .filter { e -> e.supportTicketId == supportTicket.supportTicketId }.forEach { e ->
-            if (e.supportTicketId == supportTicketResponse.supportTicketId)
-                supportTicketResponse.supportTicketText.add(e)
+            logger.info("The edited ticket: $supportTicketResponse")
+            return Mono.just(supportTicketResponse)
         }
-
-        logger.info("The edited ticket: $supportTicketResponse")
-        return Mono.just(supportTicketResponse)
+        catch (exception: NoSuchElementException){
+            logger.info("Ticket not found!")
+            return Mono.error(SupportTicketIdNotFoundException("Ticket Not Found"))
+        }
     }
 
     fun createTicket(supportTicketResponse: SupportTicketResponse) {
@@ -74,17 +88,17 @@ class SupportTicketService(
                 createTime = supportTicketResponse.createTime
             )
         ).block()!!
-        logger.info("Save ticket to support_db: $supportTicket")
+        logger.info("Save ticket to supportdb: $supportTicket")
 
         supportTicketResponse.supportTicketText.forEach { ticket ->
-            val supportTicket = supportTicketTextRepository.save(
+            supportTicketTextRepository.save(
                 SupportTicketText(
                     supportTicketId = supportTicket.supportTicketId,
                     text = ticket.text,
                     changeTime = Instant.now()
                 )
             )
-            logger.info("Save ticket text to support_db")
+            logger.info("Save ticket text to supportdb")
         }
     }
         /**
