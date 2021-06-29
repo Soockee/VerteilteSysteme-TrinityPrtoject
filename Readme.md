@@ -5,6 +5,7 @@
 
 
 ## Größte Lerneffekte
+![Alt Text](https://media.giphy.com/media/lJNoBCvQYp7nq/giphy.gif)
 
 ![](./img/reactiveprogramming.jpg)
 
