@@ -6,7 +6,9 @@ import kotlinx.serialization.KSerializer
 import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 import org.springframework.data.annotation.*
-
+/**
+ * UUID Serializer is used for classes which contain fields of type UUID
+ */
 object UUIDSerializer : KSerializer<UUID> {
         override fun deserialize(decoder: Decoder): UUID {
                 return UUID.fromString(decoder.decodeString())
