@@ -39,65 +39,37 @@ class RabbitConfig(
     @Value("\${microservice.rabbitmq.queueSupplierResponse}") val queueSupplierResponse: String,
     @Value("\${microservice.rabbitmq.queueSupplierStatus}") val queueSupplierStatus: String,
     @Value("\${microservice.rabbitmq.queueSupplierStatusResponse}") val queueSupplierStatusResponse: String,
-
     private val connectionFactory: ConnectionFactory
 ) {
-    companion object {
-        val logger = LoggerFactory.getLogger(HeadquarterServiceApplication::class.java)
-    }
+
+    val logger = LoggerFactory.getLogger(HeadquarterServiceApplication::class.java)
+
 
     @Bean
     fun queueOrderUSA(): Queue {
-        // logger.warn(headquarterQueueName)
         return Queue(queueOrderUSA, true)
     }
 
     @Bean
     fun queueOrderChina(): Queue {
-        // logger.warn(headquarterQueueName)
         return Queue(queueOrderChina, true)
     }
 
     @Bean
     fun queueKPI(): Queue {
-        // logger.warn(headquarterQueueName)
         return Queue(queueKPI, true)
     }
 
     @Bean
     fun queueCondition(): Queue {
-        // logger.warn(headquarterQueueName)
         return Queue(queueCondition, true)
     }
+
     @Bean
     fun queueSupport(): Queue {
-        // logger.warn(headquarterQueueName)
         return Queue(queueSupport, true)
     }
 
-    @Bean
-    fun queueSupplier(): Queue {
-        // logger.warn(headquarterQueueName)
-        return Queue(queueSupplier, true)
-    }
-
-    @Bean
-    fun queueSupplierResponse(): Queue {
-        // logger.warn(headquarterQueueName)
-        return Queue(queueSupplierResponse, true)
-    }
-
-    @Bean
-    fun queueSupplierStatus(): Queue {
-        // logger.warn(headquarterQueueName)
-        return Queue(queueSupplierStatus, true)
-    }
-
-    @Bean
-    fun queueSupplierStatusResponse(): Queue {
-        // logger.warn(headquarterQueueName)
-        return Queue(queueSupplierStatusResponse, true)
-    }
 
     @Bean
     fun amqpAdmin(): AmqpAdmin {
@@ -107,20 +79,17 @@ class RabbitConfig(
     }
 
     @Bean
-    fun createReceiverConfig() : ReceiverConfig{
+    fun createReceiverConfig(): ReceiverConfig {
         return ReceiverConfig(
             queueKPI(),
             queueOrderUSA(),
             queueOrderChina(),
             queueCondition(),
-            queueSupplier(),
             queueSupport(),
-            queueSupplierResponse(),
-            queueSupplierStatus(),
-            queueSupplierStatusResponse(),
-            amqpAdmin(),
+            amqpAdmin()
         )
     }
+
     @Bean
     fun rabbitListenerContainerFactory(connectionFactory: ConnectionFactory): RabbitListenerContainerFactory<*>? {
         val factory = SimpleRabbitListenerContainerFactory()
@@ -141,15 +110,13 @@ class RabbitConfig(
         private val queueOrderUSA: Queue,
         private val queueOrderChina: Queue,
         private val queueCondition: Queue,
-        private val queueSupplier: Queue,
         private val queueSupport: Queue,
-        private val queueSupplierResponse: Queue,
-        private val queueSupplierStatus: Queue,
-        private val queueSupplierStatusResponse: Queue,
         private val amqpAdmin: AmqpAdmin,
     ) {
         val scope = GlobalScope
         var times = 1
+        val logger = LoggerFactory.getLogger(HeadquarterServiceApplication::class.java)
+
         @PostConstruct
         fun createQueues() {
             logger.info("Initialize AMQP: Trying to declare queues... Trys: $times\"")
@@ -159,14 +126,9 @@ class RabbitConfig(
                 amqpAdmin.declareQueue(queueOrderChina)
                 amqpAdmin.declareQueue(queueCondition)
                 amqpAdmin.declareQueue(queueSupport)
-                amqpAdmin.declareQueue(queueSupplier)
-                amqpAdmin.declareQueue(queueSupplierResponse)
-                amqpAdmin.declareQueue(queueSupplierStatus)
-                amqpAdmin.declareQueue(queueSupplierStatusResponse)
-            }
-            catch (exception: AmqpConnectException){
+            } catch (exception: AmqpConnectException) {
                 times++
-                scope.launch{
+                scope.launch {
                     delay(5000)
                     createQueues()
                 }

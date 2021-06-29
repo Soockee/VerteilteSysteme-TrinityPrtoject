@@ -9,6 +9,9 @@ import kotlinx.serialization.descriptors.*
 import kotlinx.serialization.encoding.*
 import org.springframework.data.annotation.*
 
+/**
+ * BigDecimal Serializer is used for classes which contain a BigDecimal field
+ */
 object BigDecimalSerializer : KSerializer<BigDecimal> {
         override fun deserialize(decoder: Decoder): BigDecimal {
                 val df = DecimalFormat()

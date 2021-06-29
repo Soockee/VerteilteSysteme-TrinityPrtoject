@@ -21,12 +21,13 @@ class ReportTask(
     private val reportService: ReportService,
     private val timeService: TimeService,
     private val template: RabbitTemplate,
+
 ) : SchedulingConfigurer {
     private val logger: Logger = LoggerFactory.getLogger(ReportTask::class.java)
 
     @Bean
     fun taskExecutor(): Executor {
-        return Executors.newSingleThreadScheduledExecutor()
+        return Executors.newScheduledThreadPool(2)
     }
 
     override fun configureTasks(taskRegistrar: ScheduledTaskRegistrar) {

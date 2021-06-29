@@ -131,7 +131,7 @@ class SupplierService(
             return Mono.error(BadRequestException("Supplier Order does contain invalid parts"))
         } else {
             // Task for status update
-            supplierPartTaks.scheduleTaskWithDelay(savedOrder)
+            //supplierPartTaks.scheduleTaskWithDelay(savedOrder)
             return Mono.just(SupplierOrderResponse(savedOrder.order_id!!))
         }
     }
