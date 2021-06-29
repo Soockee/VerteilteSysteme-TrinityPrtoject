@@ -6,6 +6,7 @@ import com.microservices.headquarterservice.serializer.BigDecimalSerializer
 import com.microservices.headquarterservice.serializer.InstantSerializer
 import com.microservices.headquarterservice.serializer.UUIDSerializer
 import kotlinx.serialization.Serializable
+import kotlinx.serialization.Transient
 import kotlinx.serialization.UseSerializers
 import org.springframework.data.annotation.Id
 import java.time.Instant
@@ -18,5 +19,5 @@ data class SupportTicketResponse(
     val customerId: UUID,
     var status: Status,
     val createTime: Instant,
-    val supportTicketText: MutableList<SupportTicketText> = mutableListOf()
+    @Transient  val supportTicketText: MutableList<SupportTicketText> = mutableListOf()
 )
