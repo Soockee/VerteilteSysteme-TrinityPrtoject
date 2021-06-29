@@ -132,9 +132,9 @@ class SupportTicketService(
     }
 
     /**
-     * Get all support tickets from database.
+     * Gat a support ticket by its id
      *
-     * @return A list of all support tickets.
+     * @return The support ticket with the corresponding id
      */
     suspend fun getTicketById(id: UUID): Mono<SupportTicketResponse> {
         try {
