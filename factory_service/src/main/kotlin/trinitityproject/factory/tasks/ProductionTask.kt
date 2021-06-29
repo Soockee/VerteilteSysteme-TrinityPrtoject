@@ -76,7 +76,7 @@ class ProductionTask(
                             //If one order has not been accepted the current productOrder will be discarded and picked up later
                             val res = jacksonWebClient
                                 .post()
-                                .uri("/supplier")
+                                .uri("/supplier/order")
                                 .contentType(MediaType.APPLICATION_JSON)
                                 .bodyValue(supplierRequest)
                                 .retrieve()
@@ -107,10 +107,12 @@ class ProductionTask(
                             val res = jacksonWebClient
                                 .get()
                                 .uri { uriBuilder ->
+                                    // uilder.path("/first-").path("value/").path("/{id}").build("123")
+
                                     uriBuilder
-                                        .path("/supplier-order/")
-                                        .queryParam("order_id", it.orderId!!.toString())
-                                        .build()
+                                        .path("/supplier/order/")
+                                        .path("/{id}")
+                                        .build(it.orderId!!.toString())
                                 }
                                 .retrieve()
                                 .bodyToMono(SupplierStatusResponse::class.java)
