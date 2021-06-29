@@ -24,7 +24,9 @@ class OrderService(
     private val productPartsRepository: ProductPartRepository,
     private val partRepository: PartRepository,
     private val rabbitTemplate: AmqpTemplate,
-    @Value("\${microservice.rabbitmq.queueOrder}") val headquarterOrderQueue: String,
+    private val kpiService: KPIService,
+    @Value("\${microservice.rabbitmq.queueOrderUSA}") val orderQueueUSA: String,
+    @Value("\${microservice.rabbitmq.queueOrderChina}") val orderQueueChina: String,
 ) {
 
     companion object {
@@ -126,14 +128,16 @@ class OrderService(
 
 
     fun send(orderResponse: OrderResponse) {
-        rabbitTemplate.convertAndSend(headquarterOrderQueue)
+        val orderQueue: String = kpiService.getFactoryLowestLoad()
+
+        rabbitTemplate.convertAndSend(orderQueue)
         rabbitTemplate.convertAndSend(
-            headquarterOrderQueue,
+            orderQueue,
             Json.encodeToString(orderResponse) as Any
         ) { message ->
             message.messageProperties.contentType = "application/json"
             message
         }
-        logger.info("Send msg = $orderResponse")
+        logger.info("Send order = $orderResponse to queue $orderQueue")
     }
 }

@@ -26,8 +26,9 @@ spring:
 microservice:
   rabbitmq:
     queueCondition: condition
-    queueKIP: kip
-    queueOrder: order
+    queueKPI: kpi
+    queueOrderUSA: order/usa
+    queueOrderChina: order/china
     queueSupplier: supplier
     queueSupport: support
     queueSupplierResponse: supplierResponse

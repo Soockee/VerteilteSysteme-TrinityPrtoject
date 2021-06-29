@@ -20,7 +20,7 @@ class ProductService(
     private val productRepository: ProductRepository,
     private val productPartRepository: ProductPartRepository,
     private val rabbitTemplate: AmqpTemplate,
-    @Value("\${microservice.rabbitmq.queueOrder}") val headquarterOrderQueue: String,
+    @Value("\${microservice.rabbitmq.queueOrderUSA}") val headquarterOrderQueue: String,
     ){
 
     companion object {

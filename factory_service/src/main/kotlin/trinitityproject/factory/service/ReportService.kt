@@ -37,9 +37,11 @@ class ReportService(
         val finishedProductsCosts: Map<Product, Double> = getFinishedProductsCostsToday(productOrders);
 
         val report = Report(
+            null,
             getProductOrdersToday(productOrders).size,
             finishedProductsCosts.size,
-            calculateCosts(finishedProductsCosts)
+            calculateCosts(finishedProductsCosts),
+            "china"
         );
 
         logger.info(

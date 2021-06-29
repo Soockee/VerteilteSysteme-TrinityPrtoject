@@ -24,8 +24,9 @@ import javax.annotation.PostConstruct
 @Configuration
 class RabbitConfig(
     @Value("\${microservice.rabbitmq.queueCondition}") val queueCondition: String,
-    @Value("\${microservice.rabbitmq.queueKIP}") val queueKIP: String,
-    @Value("\${microservice.rabbitmq.queueOrder}") val queueOrder: String,
+    @Value("\${microservice.rabbitmq.queueKPI}") val queueKPI: String,
+    @Value("\${microservice.rabbitmq.queueOrderUSA}") val queueOrderUSA: String,
+    @Value("\${microservice.rabbitmq.queueOrderChina}") val queueOrderChina: String,
     @Value("\${microservice.rabbitmq.queueSupplier}") val queueSupplier: String,
     @Value("\${microservice.rabbitmq.queueSupport}") val queueSupport: String,
     @Value("\${microservice.rabbitmq.queueSupplierResponse}") val queueSupplierResponse: String,
@@ -39,15 +40,21 @@ class RabbitConfig(
     }
 
     @Bean
-    fun queueOrder(): Queue {
+    fun queueOrderUSA(): Queue {
         // logger.warn(headquarterQueueName)
-        return Queue(queueOrder, true)
+        return Queue(queueOrderUSA, true)
     }
 
     @Bean
-    fun queueKIP(): Queue {
+    fun queueOrderChina(): Queue {
         // logger.warn(headquarterQueueName)
-        return Queue(queueKIP, true)
+        return Queue(queueOrderChina, true)
+    }
+
+    @Bean
+    fun queueKPI(): Queue {
+        // logger.warn(headquarterQueueName)
+        return Queue(queueKPI, true)
     }
 
     @Bean
@@ -95,8 +102,9 @@ class RabbitConfig(
     @Bean
     fun createReceiverConfig() : ReceiverConfig{
         return ReceiverConfig(
-            queueKIP(),
-            queueOrder(),
+            queueKPI(),
+            queueOrderUSA(),
+            queueOrderChina(),
             queueCondition(),
             queueSupplier(),
             queueSupport(),
@@ -122,8 +130,9 @@ class RabbitConfig(
 
     @Component
     class ReceiverConfig(
-        private val queueKIP: Queue,
-        private val queueOrder: Queue,
+        private val queueKPI: Queue,
+        private val queueOrderUSA: Queue,
+        private val queueOrderChina: Queue,
         private val queueCondition: Queue,
         private val queueSupplier: Queue,
         private val queueSupport: Queue,
@@ -135,8 +144,9 @@ class RabbitConfig(
         @PostConstruct
         fun createQueues() {
             logger.info("Initialize AMQP")
-            amqpAdmin.declareQueue(queueKIP)
-            amqpAdmin.declareQueue(queueOrder)
+            amqpAdmin.declareQueue(queueKPI)
+            amqpAdmin.declareQueue(queueOrderUSA)
+            amqpAdmin.declareQueue(queueOrderChina)
             amqpAdmin.declareQueue(queueCondition)
             amqpAdmin.declareQueue(queueSupport)
             amqpAdmin.declareQueue(queueSupplier)
