@@ -21,6 +21,7 @@ import trinitityproject.factory.model.supplier.*
 import trinitityproject.factory.service.ConditionService
 import trinitityproject.factory.service.PartOrderService
 import trinitityproject.factory.service.ProductOrderService
+import trinitityproject.factory.service.ProductService
 import java.lang.IllegalStateException
 import java.time.Duration
 import java.util.*
@@ -30,7 +31,8 @@ import java.util.*
 class ProductionTask(
     private val partOrderService: PartOrderService,
     private val conditionService: ConditionService,
-    private val productOrderService: ProductOrderService
+    private val productOrderService: ProductOrderService,
+    private val productService: ProductService
 ) {
     private val log: Logger = LoggerFactory.getLogger(ProductionTask::class.java)
 
@@ -139,11 +141,15 @@ class ProductionTask(
                     .none { it.status == Status.OPEN }
                 if (noProductOrdersArePending) {
                     for (product in productOrder.products) {
-                        log.info("Started Production of ${product.productData.name}: ${System.currentTimeMillis()}")
+                        val startTime = System.currentTimeMillis()
+                        log.info("Started Production of ${product.productData.name}: $startTime")
                         delay(product.completionTime)
-
-                        log.info("Finished Production of ${product.productData.name}: ${System.currentTimeMillis()}")
-
+                        log.info("Finished Production of ${product.productData.name} after: ${System.currentTimeMillis() - startTime}")
+                        productService.setProductStatus(
+                            productOrder.productOrderId,
+                            product.productData.productId,
+                            Status.DONE
+                        )
                     }
                     productOrder = productOrderService
                         .updateProductOrderState(
