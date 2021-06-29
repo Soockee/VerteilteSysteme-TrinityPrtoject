@@ -94,7 +94,9 @@ class PartOrderService(
                 )
             )
             .asFlow()
-            .first()
+            .filterNotNull()
+            .toList()
+            .random()
     }
 
 
