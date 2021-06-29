@@ -21,12 +21,11 @@ import trinitityproject.factory.model.PartOrder
 import trinitityproject.factory.model.Position
 import trinitityproject.factory.model.Status
 import trinitityproject.factory.model.condition.Condition
-import trinitityproject.factory.model.supplier.SupplierOrders
-import trinitityproject.factory.model.supplier.SupplierRequest
-import trinitityproject.factory.model.supplier.SupplierResponse
+import trinitityproject.factory.model.supplier.*
 import trinitityproject.factory.service.ConditionService
 import trinitityproject.factory.service.PartOrderService
 import trinitityproject.factory.service.ProductOrderService
+import java.lang.IllegalStateException
 import java.time.Duration
 import java.util.*
 
@@ -102,14 +101,37 @@ class ProductionTask(
                                 .block()!!
                             partOrder.orderId = res.supplierId
                             log.warn("orderID: " + res.supplierId.toString())
-                            partOrder
+                            partOrderService.addPartOrder(productOrder.productOrderId, partOrder)
                         }
-                    log.info("Created: $ll")
-
-
                     productOrder = productOrderService.getOrder(productOrder.productOrderId)
+                    log.info("Added part Orders to productOrder: $productOrder")
                 }
 
+                log.info("Found no entry with partOrders")
+
+                productOrder.partOrders
+                    .filter { it.status == Status.OPEN }
+                    .onEach {
+                        if (it.orderId == null) {
+                            throw IllegalStateException("orderId must be set for ")
+                        }
+                        if (it.orderId != null) {
+                            val res = client
+                                .get()
+                                .uri { uriBuilder ->
+                                    uriBuilder
+                                        .path("/products/{id}/attributes/{attributeId}")
+                                        .build(it.orderId!!.toString())
+                                }
+                                .retrieve()
+                                .bodyToMono(SupplierStatusResponse::class.java)
+                                .retryWhen(Retry.backoff(3, Duration.ofSeconds(2)))
+                                .block()!!
+                            if (res.status == SupplierStatus.COMPLETE) {
+                                it.
+                            }
+                        }
+                    }
 //                val orderHasPendingSupplierRequests = productOrder.partOrders.filter { it.status. }
 
             } catch (e: Exception) {

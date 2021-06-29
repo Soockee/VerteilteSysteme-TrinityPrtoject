@@ -38,13 +38,12 @@ class PartOrderService(
      * @param status status to be set
      */
     suspend fun updatePartOderStatus(productOrderId: UUID, partOrderId: UUID, status: Status) {
-        val productOrderFlow = repository.findById(productOrderId).asFlow();
-
-        if (productOrderFlow.count() < 1) {
-            return;
-        }
-
-        var productOrder = productOrderFlow.toList().first();
+        val productOrder = repository.findById(productOrderId).asFlow().filterNotNull().first();
+        val partOrder = productOrder
+            .partOrders.first { it.partOrderId == partOrderId }
+        partOrder.status = status
+        productOrder.partOrders
+        repository.save(productOrder)
     }
 
     /**
