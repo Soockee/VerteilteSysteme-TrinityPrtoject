@@ -10,6 +10,7 @@ import trinityproject.support.model.support.SupportTicket
 import trinityproject.support.model.support.SupportTicketResponse
 import trinityproject.support.model.support.SupportTicketTextRequest
 import trinityproject.support.service.SupportTicketService
+import java.util.*
 
 @RestController("SupportTicketController")
 class SupportTicketController(
@@ -17,7 +18,7 @@ class SupportTicketController(
 ) {
     private val logger: Logger = LoggerFactory.getLogger(SupportTicketService::class.java)
 
-    @PostMapping("/ticket/")
+    @PatchMapping("/ticket")
     fun addTicketText(@RequestBody supportTicketTextRequest: SupportTicketTextRequest): Mono<SupportTicketResponse> {
         return runBlocking {
             logger.info("post request \"/ticket/\"")
@@ -25,15 +26,18 @@ class SupportTicketController(
         }
     }
 
-    @GetMapping("/tickets/{status}")
-    fun getAllWithStatus(@PathVariable status: String): Flux<SupportTicket> {
-        logger.info("get request \"/tickets/{status}\"")
-        return supportTicketService.getAllWithStatus(status)
+    @GetMapping("/ticket")
+    fun getAll(@RequestParam status: String?): Flux<SupportTicket> {
+        logger.info("get request \"/tickets/\"")
+        return if(status == null) supportTicketService.getAll()
+            else supportTicketService.getAllWithStatus(status)
     }
 
-    @GetMapping("/tickets/")
-    fun getAll(): Flux<SupportTicket> {
-        logger.info("get request \"/tickets/\"")
-        return supportTicketService.getAll()
+    @GetMapping("/ticket/{id}")
+    fun getTicket(@PathVariable id: UUID): Mono<SupportTicketResponse> {
+        return runBlocking {
+            logger.info("get request \"/tickets/{id}\"")
+            return@runBlocking supportTicketService.getTicketById(id)
+        }
     }
 }

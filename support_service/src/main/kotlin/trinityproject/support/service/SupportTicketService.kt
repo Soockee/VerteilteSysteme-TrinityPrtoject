@@ -14,6 +14,8 @@ import trinityproject.support.model.support.*
 import trinityproject.support.repository.SupportTicketRepository
 import trinityproject.support.repository.SupportTicketTextRepository
 import java.time.Instant
+import java.util.*
+import kotlin.NoSuchElementException
 
 @Component
 class SupportTicketService(
@@ -127,5 +129,37 @@ class SupportTicketService(
      */
     fun getAll(): Flux<SupportTicket> {
         return supportTicketRepository.findAll()
+    }
+
+    /**
+     * Get all support tickets from database.
+     *
+     * @return A list of all support tickets.
+     */
+    suspend fun getTicketById(id: UUID): Mono<SupportTicketResponse> {
+        try {
+            val supportTicket = supportTicketRepository.findById(id).asFlow()
+                .filterNotNull()
+                .first()
+
+            var supportTicketResponse = SupportTicketResponse(
+                supportTicket.supportTicketId,
+                supportTicket.customerId,
+                supportTicket.status,
+                supportTicket.createTime,
+                mutableListOf()
+            )
+
+            supportTicketTextRepository.findAll().collectList().asFlow().filterNotNull().first()
+                .filter { e -> e.supportTicketId == supportTicket.supportTicketId }.forEach { e ->
+                    if (e.supportTicketId == supportTicketResponse.supportTicketId)
+                        supportTicketResponse.supportTicketText.add(e)
+                }
+
+            return Mono.just(supportTicketResponse)
+        } catch (exception: NoSuchElementException) {
+            logger.info("Ticket not found!")
+            return Mono.error(SupportTicketIdNotFoundException("Ticket Not Found"))
+        }
     }
 }
