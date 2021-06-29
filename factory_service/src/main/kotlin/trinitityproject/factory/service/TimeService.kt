@@ -7,7 +7,7 @@ import java.util.*
 
 
 @Service
-class TimeService(private val dayInMillis: Long = 180000, private val timeZone: String = "CST") {
+class TimeService(private val dayInMillis: Long = 180000, private val timeZone: String = "GMT+8India: IST") {
 
     /**
      * Compares a given date to the current date by converting each into a virtual date with shorter time
