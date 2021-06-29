@@ -1,8 +1,7 @@
 package trinitityproject.factory.tasks
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import kotlinx.coroutines.flow.retry
-import kotlinx.coroutines.flow.retryWhen
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -14,13 +13,10 @@ import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
 import org.springframework.web.reactive.function.client.ExchangeStrategies
 import org.springframework.web.reactive.function.client.WebClient
-import org.springframework.web.reactive.function.client.bodyToFlow
-import reactor.kotlin.core.publisher.toMono
 import reactor.util.retry.Retry
 import trinitityproject.factory.model.PartOrder
 import trinitityproject.factory.model.Position
 import trinitityproject.factory.model.Status
-import trinitityproject.factory.model.condition.Condition
 import trinitityproject.factory.model.supplier.*
 import trinitityproject.factory.service.ConditionService
 import trinitityproject.factory.service.PartOrderService
@@ -58,8 +54,9 @@ class ProductionTask(
         runBlocking {
             try {
                 var productOrder = partOrderService.getUnfinishedProductOrder()
+                log.warn("Process: $productOrder")
                 if (productOrder.partOrders.isEmpty()) {
-                    val ll = partOrderService
+                    partOrderService
                         .getRequiredParts(productOrder)
                         .map {
                             Pair(conditionService.getBestCondition(it.key), it.value)
@@ -104,10 +101,8 @@ class ProductionTask(
                             partOrderService.addPartOrder(productOrder.productOrderId, partOrder)
                         }
                     productOrder = productOrderService.getOrder(productOrder.productOrderId)
-                    log.info("Added part Orders to productOrder: $productOrder")
+                    log.warn("Added part Orders to productOrder: $productOrder")
                 }
-
-                log.info("Found no entry with partOrders")
 
                 productOrder.partOrders
                     .filter { it.status == Status.OPEN }
@@ -120,20 +115,45 @@ class ProductionTask(
                                 .get()
                                 .uri { uriBuilder ->
                                     uriBuilder
-                                        .path("/products/{id}/attributes/{attributeId}")
-                                        .build(it.orderId!!.toString())
+                                        .path("/supplier-order/")
+                                        .queryParam("order_id", it.orderId!!.toString())
+                                        .build()
                                 }
                                 .retrieve()
                                 .bodyToMono(SupplierStatusResponse::class.java)
                                 .retryWhen(Retry.backoff(3, Duration.ofSeconds(2)))
                                 .block()!!
+                            log.warn("Got Response: $res")
                             if (res.status == SupplierStatus.COMPLETE) {
-                                it.
+                                productOrder = partOrderService.updatePartOderStatus(
+                                    productOrderId = productOrder.productOrderId,
+                                    partOrderId = it.partOrderId,
+                                    status = Status.DONE
+                                )
+                                log.warn("Updated Part Order Status: $productOrder")
                             }
                         }
                     }
-//                val orderHasPendingSupplierRequests = productOrder.partOrders.filter { it.status. }
+                val noProductOrdersArePending = productOrder
+                    .partOrders
+                    .none { it.status == Status.OPEN }
+                if (noProductOrdersArePending) {
+                    for (product in productOrder.products) {
+                        log.info("Started Production of ${product.productData.name}: ${System.currentTimeMillis()}")
+                        delay(product.completionTime)
 
+                        log.info("Finished Production of ${product.productData.name}: ${System.currentTimeMillis()}")
+
+                    }
+                    productOrder = productOrderService
+                        .updateProductOrderState(
+                            productOrderId = productOrder.productOrderId,
+                            status = Status.DONE
+                        )
+                    log.info("Finished Product: $productOrder")
+                } else {
+                    log.info("Part Orders are still pending: $productOrder")
+                }
             } catch (e: Exception) {
                 log.error("Production got interrupted: " + e.printStackTrace())
             }

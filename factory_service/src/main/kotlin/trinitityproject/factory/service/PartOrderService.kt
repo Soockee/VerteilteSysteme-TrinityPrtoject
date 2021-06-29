@@ -1,8 +1,8 @@
 package trinitityproject.factory.service
 
-import kotlinx.coroutines.flow.count
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactive.asFlow
 import org.springframework.data.domain.Example
@@ -30,6 +30,8 @@ class PartOrderService(
 //    }
 
     // TODO(Fabian): PartOrder Updates fertigstellen
+
+
     /**
      * Updates the status of a partOrder
      *
@@ -37,13 +39,24 @@ class PartOrderService(
      * @param id Id of the PartOrder to be updated
      * @param status status to be set
      */
-    suspend fun updatePartOderStatus(productOrderId: UUID, partOrderId: UUID, status: Status) {
-        val productOrder = repository.findById(productOrderId).asFlow().filterNotNull().first();
-        val partOrder = productOrder
-            .partOrders.first { it.partOrderId == partOrderId }
-        partOrder.status = status
-        productOrder.partOrders
-        repository.save(productOrder)
+    suspend fun updatePartOderStatus(productOrderId: UUID, partOrderId: UUID, status: Status): ProductOrder {
+        val productOrder = repository
+            .findById(productOrderId)
+            .asFlow()
+            .filterNotNull()
+            .map { productOrder ->
+                val productIdx = productOrder
+                    .partOrders
+                    .indexOfFirst { it.partOrderId == partOrderId }
+                productOrder.partOrders[productIdx].status = status
+                productOrder
+            }
+            .first()
+        return repository
+            .save(productOrder)
+            .asFlow()
+            .filterNotNull()
+            .first()
     }
 
     /**
