@@ -19,5 +19,5 @@ data class SupportTicketResponse(
     val customerId: UUID,
     var status: Status,
     val createTime: Instant,
-    @Transient  val supportTicketText: MutableList<SupportTicketText> = mutableListOf()
+    val supportTicketText: MutableList<SupportTicketText> = mutableListOf()
 )

@@ -18,10 +18,10 @@ data class SupportTicketText(
     val supportTicketId: UUID?,
 
     @Column("text")
-    @JsonProperty("supportTicketId")
+    @JsonProperty("text")
     val text: String,
 
     @Column("change_time")
-    @JsonProperty("supportTicketId")
-    val changeTime: Instant = Instant.now()
+    @JsonProperty("changeTime")
+    val changeTime: Instant
 )

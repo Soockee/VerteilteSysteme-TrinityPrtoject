@@ -11,6 +11,7 @@ import reactor.core.publisher.Mono
 import trinityproject.support.model.support.*
 import trinityproject.support.repository.SupportTicketRepository
 import trinityproject.support.repository.SupportTicketTextRepository
+import java.time.Instant
 
 @Component
 class SupportTicketService(
@@ -42,7 +43,8 @@ class SupportTicketService(
         supportTicketTextRepository.save(
             SupportTicketText(
                 supportTicketId = supportTicket.supportTicketId,
-                text = supportTicketTextRequest.text
+                text = supportTicketTextRequest.text,
+                changeTime = Instant.now()
             )
         ).asFlow().filterNotNull().first()
 
@@ -50,7 +52,8 @@ class SupportTicketService(
             supportTicketId = supportTicket.supportTicketId,
             customerId = supportTicket.customerId,
             status = supportTicket.status,
-            createTime = supportTicket.createTime
+            createTime = supportTicket.createTime,
+            mutableListOf()
         )
 
         supportTicketTextRepository.findAll().collectList().asFlow().filterNotNull().first()
