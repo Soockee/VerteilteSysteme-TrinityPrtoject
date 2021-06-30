@@ -130,6 +130,8 @@ class OrderService(
 
     /**
      * send orderResponse with properties
+     *
+     * the factory to send the order to is determined by comparing the load of the factories
      */
     fun send(orderResponse: OrderResponse) {
         val orderQueue: String = kpiService.getFactoryLowestLoad()

@@ -85,15 +85,18 @@ CREATE TABLE supplier_order
     PRIMARY KEY (order_id)
 );
 
-CREATE TABLE report (
-    report_id UUID NOT NULL DEFAULT uuid_generate_v1 (),
-    order_count INTEGER NOT NULL,
-    finished_goods_count INTEGER NOT NULL,
-    costs FLOAT NOT NULL,
-    factory_name character varying(255) NOT NULL,
+CREATE TABLE report
+(
+    report_id       UUID                    NOT NULL DEFAULT uuid_generate_v1 (),
+    orders_today    INTEGER                 NOT NULL,
+    produced_goods  INTEGER                 NOT NULL,
+    production_cost FLOAT                   NOT NULL,
+    open_orders     INTEGER                 NOT NULL,
+    productivity    FLOAT                   NOT NULL,
+    factory_name    character varying(255)  NOT NULL,
+    created_at      BIGINT                  NOT NULL,
     PRIMARY KEY(report_id)
 );
-
 
 -- Add suppliers
 INSERT INTO supplier (supplier_id, name)

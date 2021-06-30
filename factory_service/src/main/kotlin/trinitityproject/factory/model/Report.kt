@@ -13,11 +13,11 @@ data class Report(
 
     val productionCost: Number,
 
-    val completedOrders: Number,
+    val openOrders: Number,
 
     val productivity: Number,
 
     val factoryName: String,
 
-    val timestamp: Long
+    val createdAt: Long
 )
