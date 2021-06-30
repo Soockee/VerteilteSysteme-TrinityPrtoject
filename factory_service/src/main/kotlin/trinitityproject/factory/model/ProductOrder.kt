@@ -28,6 +28,6 @@ data class ProductOrder(
     var partOrders: List<PartOrder> = listOf(),
 
     @JsonProperty("factoryName", access = JsonProperty.Access.READ_ONLY)
-    val factoryName: String = "\${factory.name}"
+    val factoryName: String = ""
 )
 

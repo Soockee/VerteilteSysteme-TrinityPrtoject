@@ -152,7 +152,7 @@ class ProductionTask(
                             log.info("")
                             log.info("Started Production of ${product.count} - ${product.productData.name} with the production-time ${product.productData.productionTime}: $startTime")
                             runBlocking {
-                                delay(product.productData.productionTime * product.count)
+                                delay(timeService.realtimeToVirtualTimeMillis(product.productData.productionTime) * product.count)
                             }
                             log.info("Finished Production of ${product.count} - ${product.productData.name} after: ${System.currentTimeMillis() - startTime}")
                             productService.setProductStatus(

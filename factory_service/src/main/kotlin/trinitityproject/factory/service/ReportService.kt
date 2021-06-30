@@ -41,8 +41,9 @@ class ReportService(
     fun generateReport(): Report {
         val productOrdersMono = repository.findAll().collectList()
 
-        val productOrders: List<ProductOrder> =
-            productOrdersMono.block(Duration.ofMillis(1000)) as List<ProductOrder>
+        var productOrders: List<ProductOrder> =
+            (productOrdersMono.block(Duration.ofMillis(1000)) as List<ProductOrder>)
+                .filter { productOrder -> productOrder.factoryName == factoryName }
 
         val completedProductPartOrdersPairs = getCompletedProductPartOrdersPairs(productOrders);
 
@@ -62,7 +63,7 @@ class ReportService(
         );
 
         logger.info(
-            "new report created at " +
+            "new report from $factoryName created at " +
                     "${timeService.getVirtualLocalTime(System.currentTimeMillis())}: " +
                     "${report.toString()}"
         )

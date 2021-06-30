@@ -6,6 +6,7 @@ import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.reactive.asFlow
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import trinitityproject.factory.model.ProductOrder
 import trinitityproject.factory.model.Status
@@ -14,12 +15,20 @@ import java.util.*
 
 @Component
 class ProductOrderService(
-    private val repository: ProductOrderRepository
+    private val repository: ProductOrderRepository,
+    @Value("\${factory.name}") val factoryName: String,
 ) {
     private val log: Logger = LoggerFactory.getLogger(ProductOrderService::class.java)
 
     fun createOrder(order: ProductOrder) {
-        val submitedOrder = repository.insert(order).block()
+        val test = ProductOrder(order.productOrderId,
+            order.customerId,
+            order.receptionTime,
+            order.status,
+            order.products,
+            order.partOrders,
+            factoryName)
+        val submitedOrder = repository.insert(test).block()
         log.info("Saved to order to database: $submitedOrder")
     }
 
