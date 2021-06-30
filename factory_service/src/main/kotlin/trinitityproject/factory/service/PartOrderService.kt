@@ -5,6 +5,7 @@ import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.toList
 import kotlinx.coroutines.reactive.asFlow
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.domain.Example
 import org.springframework.data.domain.ExampleMatcher
 import org.springframework.stereotype.Service
@@ -14,7 +15,8 @@ import java.util.*
 
 @Service
 class PartOrderService(
-    private val repository: ProductOrderRepository
+    private val repository: ProductOrderRepository,
+    @Value("\${factory.name}") val factoryName: String,
 ) {
 
 
@@ -80,7 +82,8 @@ class PartOrderService(
                     ProductOrder(
                         customerId = UUID.fromString("cf9ae254-c466-11eb-8529-0242ac130003"),
                         status = Status.OPEN,
-                        products = listOf()
+                        products = listOf(),
+                        factoryName = factoryName
                     ),
                     ExampleMatcher
                         .matchingAny()

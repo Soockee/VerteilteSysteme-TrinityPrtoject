@@ -7,6 +7,7 @@ import kotlinx.coroutines.flow.retry
 import kotlinx.coroutines.reactive.asFlow
 import org.springframework.amqp.AmqpException
 import org.springframework.amqp.rabbit.core.RabbitTemplate
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.core.ParameterizedTypeReference
 import org.springframework.stereotype.Component
 import reactor.kotlin.core.publisher.toMono
@@ -21,6 +22,7 @@ import java.util.concurrent.ConcurrentMap
 class ConditionService(
     private val conditionCache: ConcurrentMap<UUID, PartCondition>,
     private val template: RabbitTemplate,
+    @Value("\${conditionQueueName}") private val conditionQueue: String
 ) {
 
     /**
@@ -36,7 +38,7 @@ class ConditionService(
             conditionCache[partId]
         } else {
             val newCondition = template.convertSendAndReceiveAsType(
-                "condition",
+                conditionQueue,
                 ConditionRequest(partId),
                 object : ParameterizedTypeReference<PartCondition>() {}
             )

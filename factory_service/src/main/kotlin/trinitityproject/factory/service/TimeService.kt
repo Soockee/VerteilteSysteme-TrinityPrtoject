@@ -1,13 +1,17 @@
 package trinitityproject.factory.service
 
 import org.apache.commons.lang3.time.DateUtils
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import java.time.Instant
 import java.util.*
 
 
 @Service
-class TimeService(private val dayInMillis: Long = 180000, private val timeZone: String = "CST") {
+class TimeService(
+    private val dayInMillis: Long,
+    @Value("\${factory.timezone}") val timeZone: String
+) {
 
     /**
      * Compares a given date to the current date by converting each into a virtual date with shorter time
