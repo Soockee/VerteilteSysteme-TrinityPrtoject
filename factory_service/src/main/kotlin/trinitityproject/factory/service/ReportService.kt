@@ -2,6 +2,7 @@ package trinitityproject.factory.service
 
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 import trinitityproject.factory.model.Product
 import trinitityproject.factory.model.ProductOrder
@@ -18,6 +19,7 @@ import java.time.temporal.ChronoUnit
 class ReportService(
     private val repository: ProductOrderRepository,
     private val timeService: TimeService,
+    @Value("\${factory.name}") val factoryName: String,
 ) {
     private val logger: Logger = LoggerFactory.getLogger(ReportService::class.java)
 
@@ -55,7 +57,7 @@ class ReportService(
             getCompletedProductsCostsToday(completedProductPartOrdersPairsToday),
             countOpenOrders(productOrders),
             calculateFactoryProductivity(productOrders),
-            "china",
+            factoryName,
             System.currentTimeMillis()
         );
 
