@@ -31,7 +31,7 @@ class OrderListener(
         factory.setMessageConverter(Jackson2JsonMessageConverter(mapper))
         return factory
     }
-    
+
     @RabbitListener(queues = ["\${factory.orderQueueName}"])
     @Throws(InterruptedException::class)
     fun receiveOrder(@Payload order: ProductOrder) {
