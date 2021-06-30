@@ -24,7 +24,16 @@
 
 ## Sample Requests
 
-- TODO
+### Order
+- [order 1](./docs/requests/orderRequest1.json)
+
+- [order 2](./docs/requests/orderRequest2.json)
+
+- [order 3](./docs/requests/orderRequest3.json)
+
+### Ticket
+- Submit Ticket [ticket 3](./docs/requests/supportTicketRequest.json)
+
 
 ## Our range of products
 
