@@ -22,7 +22,7 @@ import java.util.concurrent.ConcurrentMap
 class ConditionService(
     private val conditionCache: ConcurrentMap<UUID, PartCondition>,
     private val template: RabbitTemplate,
-    @Value("\${conditionQueueName}") private val conditionQueue: String
+    @Value("\${factory.conditionQueueName}") private val conditionQueue: String
 ) {
 
     /**
