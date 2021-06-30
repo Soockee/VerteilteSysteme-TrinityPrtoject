@@ -49,7 +49,7 @@ class KPIService(
         val loadUSA = calculateLoad(reportUSA)
         val loadChina = calculateLoad(reportChina)
 
-        return if(loadUSA <= loadChina) "usa" else "china"
+        return if(loadUSA <= loadChina) "order/usa" else "order/china"
     }
 
     /**
