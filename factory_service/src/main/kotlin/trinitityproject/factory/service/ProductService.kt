@@ -16,26 +16,26 @@ class ProductService(
 ) {
 
     /**
-     * Sets the Product with the given ID to the given status.
+     * Sets the Product with the given ID to done.
      * A random product is picked since the index of a value could change.
      *
      * @return The updated ProductOrder
      */
-    suspend fun setProductStatus(productOrderId: UUID, productId: UUID, status: Status): ProductOrder {
+    suspend fun setProductStatusToDone(productOrderId: UUID, productId: UUID): ProductOrder {
         val updatedProductOrder = repository
             .findById(productOrderId)
             .asFlow()
             .filterNotNull()
             .map { productOrder ->
-                if(productOrder.partOrders.isEmpty()) productOrder
+                if (productOrder.partOrders.isEmpty()) productOrder
 
                 val productIdx = productOrder
                     .products
                     .indexOfFirst {
-                        (it.productData.productId == productId) && (it.status != status)
+                        ((it.productData.productId == productId) && (it.status == Status.OPEN))
                     }
 
-                productOrder.products[productIdx].status = status
+                productOrder.products[productIdx].status = Status.DONE
                 productOrder
             }
             .first()

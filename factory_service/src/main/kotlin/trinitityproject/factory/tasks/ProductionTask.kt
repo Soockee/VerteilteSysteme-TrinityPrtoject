@@ -155,10 +155,9 @@ class ProductionTask(
                                 delay(timeService.realtimeToVirtualTimeMillis(product.productData.productionTime) * product.count)
                             }
                             log.info("Finished Production of ${product.count} - ${product.productData.name} after: ${System.currentTimeMillis() - startTime}")
-                            productService.setProductStatus(
-                                productOrder.productOrderId,
-                                product.productData.productId,
-                                Status.DONE
+                            productService.setProductStatusToDone(
+                                productOrderId = productOrder.productOrderId,
+                                productId = product.productData.productId
                             )
                         }
                         // If all products are produced the product order will be set to done
