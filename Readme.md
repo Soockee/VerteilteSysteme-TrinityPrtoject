@@ -47,3 +47,4 @@
 ![reactive programming](./img/reactiveprogramming.jpg)
 ![estimated solution](./img/estimated-solution.jpg)
 ![database dev](./img/database-dev.jpg)
+![null problemo](./img/null-problem-löser.png)
