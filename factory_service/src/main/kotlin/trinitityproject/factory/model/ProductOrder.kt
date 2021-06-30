@@ -1,6 +1,7 @@
 package trinitityproject.factory.model
 
 import com.fasterxml.jackson.annotation.JsonProperty
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.data.annotation.Id
 import org.springframework.data.mongodb.core.mapping.Document
 import java.util.*
@@ -24,6 +25,9 @@ data class ProductOrder(
     var products: List<Product>,
 
     @JsonProperty("partOrders", access = JsonProperty.Access.READ_ONLY)
-    var partOrders: List<PartOrder> = listOf()
+    var partOrders: List<PartOrder> = listOf(),
+
+    @JsonProperty("factoryName", access = JsonProperty.Access.READ_ONLY)
+    @Value("\${factory.name}") val factoryName: String
 )
 
