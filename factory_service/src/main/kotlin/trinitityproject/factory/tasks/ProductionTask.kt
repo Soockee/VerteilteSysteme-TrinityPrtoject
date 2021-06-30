@@ -29,7 +29,7 @@ class ProductionTask(
     private val jacksonWebClient: WebClient,
     private val timeService: TimeService,
 
-) {
+    ) {
     private val log: Logger = LoggerFactory.getLogger(ProductionTask::class.java)
 
 
@@ -171,6 +171,8 @@ class ProductionTask(
                     } else {
                         log.info("Part Orders are still pending: $productOrder")
                     }
+                } catch (e: NoSuchElementException) {
+                    log.warn("No open products")
                 } catch (e: Exception) {
                     // Show
                     log.error("Production got interrupted: " + e.printStackTrace())
