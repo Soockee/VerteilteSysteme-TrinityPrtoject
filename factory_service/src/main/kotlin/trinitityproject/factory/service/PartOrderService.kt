@@ -88,7 +88,7 @@ class PartOrderService(
                         factoryName = factoryName
                     ),
                     ExampleMatcher
-                        .matchingAny()
+                        .matchingAll()
                         .withIgnorePaths(
                             "productOrderId",
                             "customerId",

@@ -141,11 +141,15 @@ class ProductionTask(
                         }
 
                     val noProductOrdersArePending = productOrder
-                        .products
+                        .partOrders
                         .none { it.status == Status.OPEN }
 
+                    val productsAreOpen = productOrder
+                        .products.any { it.status == Status.OPEN }
+
+
                     // If one part-order is not completed productOrder will be discarded and picked up later
-                    if (noProductOrdersArePending) {
+                    if (noProductOrdersArePending && productsAreOpen) {
                         for (product in productOrder.products) {
                             // Wait for each product the given production-time
                             val startTime = System.currentTimeMillis()
