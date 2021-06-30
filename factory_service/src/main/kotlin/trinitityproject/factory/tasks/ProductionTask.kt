@@ -4,6 +4,7 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.runBlocking
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.http.MediaType
 import org.springframework.scheduling.annotation.Scheduled
 import org.springframework.stereotype.Component
@@ -28,8 +29,8 @@ class ProductionTask(
     private val productService: ProductService,
     private val jacksonWebClient: WebClient,
     private val timeService: TimeService,
-
-    ) {
+    @Value("\${factory.timezone}") val timeZone: String
+) {
     private val log: Logger = LoggerFactory.getLogger(ProductionTask::class.java)
 
 
@@ -37,7 +38,7 @@ class ProductionTask(
     fun scheduleTaskWithFixedRate() {
         val currDate = LocalDate.ofInstant(
             timeService.getVirtualLocalTime(System.currentTimeMillis()),
-            TimeZone.getTimeZone("GMT+8India: IST").toZoneId()
+            TimeZone.getTimeZone(timeZone).toZoneId()
         )
         if ((currDate.dayOfWeek == DayOfWeek.SATURDAY) || (currDate.dayOfWeek == DayOfWeek.SUNDAY)) {
             log.info("Today it's: ${currDate.dayOfWeek}, WE DON'T WORK\"")
