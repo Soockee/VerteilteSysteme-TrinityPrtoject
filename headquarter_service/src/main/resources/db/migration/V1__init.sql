@@ -106,49 +106,49 @@ VALUES ('8d017b98-d419-11eb-b8bc-0242ac130003', 'CoolMechanics.com');
 
 -- Add Parts
 INSERT INTO part (part_id, name, delievery_time)
-VALUES ('fa67191c-d4e2-11eb-b8bc-0242ac130003', 'Schraube 3x16', 72000);
+VALUES ('fa67191c-d4e2-11eb-b8bc-0242ac130003', 'Schraube 3x16', 10000);
 INSERT INTO part (part_id, name, delievery_time)
-VALUES ('fa67169c-d4e2-11eb-b8bc-0242ac130003', 'Schraube 3x18', 72000);
+VALUES ('fa67169c-d4e2-11eb-b8bc-0242ac130003', 'Schraube 3x18', 10000);
 INSERT INTO part (part_id, name, delievery_time)
-VALUES ('10b695e8-d66a-11eb-b8bc-0242ac130003', 'Schraube 4x20', 144000);
+VALUES ('10b695e8-d66a-11eb-b8bc-0242ac130003', 'Schraube 4x20', 20000);
 INSERT INTO part (part_id, name, delievery_time)
-VALUES ('10b69ff2-d66a-11eb-b8bc-0242ac130003', 'Kühlbox 60cmx60cmx60cm', 144000);
+VALUES ('10b69ff2-d66a-11eb-b8bc-0242ac130003', 'Kühlbox 60cmx60cmx60cm', 20000);
 INSERT INTO part (part_id, name, delievery_time)
-VALUES ('10b6a0b0-d66a-11eb-b8bc-0242ac130003', 'Kühlbox Deckel 60cmx60cm', 144000);
+VALUES ('10b6a0b0-d66a-11eb-b8bc-0242ac130003', 'Kühlbox Deckel 60cmx60cm', 20000);
 INSERT INTO part (part_id, name, delievery_time)
-VALUES ('fa671a02-d4e2-11eb-b8bc-0242ac130003', 'Tür Größe S 100cmx60cm', 144000);
+VALUES ('fa671a02-d4e2-11eb-b8bc-0242ac130003', 'Tür Größe S 100cmx60cm', 20000);
 INSERT INTO part (part_id, name, delievery_time)
-VALUES ('fa671aca-d4e2-11eb-b8bc-0242ac130003', 'Korpus Größe S 100cmx60cmx55cm', 144000);
+VALUES ('fa671aca-d4e2-11eb-b8bc-0242ac130003', 'Korpus Größe S 100cmx60cmx55cm', 20000);
 INSERT INTO part (part_id, name, delievery_time)
-VALUES ('7f58bfe8-d418-11eb-b8bc-0242ac130003', 'Kühlmotor klein', 144000);
+VALUES ('7f58bfe8-d418-11eb-b8bc-0242ac130003', 'Kühlmotor klein', 20000);
 INSERT INTO part (part_id, name, delievery_time)
-VALUES ('10b6985e-d66a-11eb-b8bc-0242ac130003', 'Tür Größe M 150cmx60cm', 144000);
+VALUES ('10b6985e-d66a-11eb-b8bc-0242ac130003', 'Tür Größe M 150cmx60cm', 20000);
 INSERT INTO part (part_id, name, delievery_time)
-VALUES ('10b69944-d66a-11eb-b8bc-0242ac130003', 'Korpus Größe M 150cmx60cmx55cm', 144000);
+VALUES ('10b69944-d66a-11eb-b8bc-0242ac130003', 'Korpus Größe M 150cmx60cmx55cm', 20000);
 INSERT INTO part (part_id, name, delievery_time)
-VALUES ('10b69a0c-d66a-11eb-b8bc-0242ac130003', 'Kühlmotor groß', 288000);
+VALUES ('10b69a0c-d66a-11eb-b8bc-0242ac130003', 'Kühlmotor groß', 30000);
 INSERT INTO part (part_id, name, delievery_time)
-VALUES ('10b69aca-d66a-11eb-b8bc-0242ac130003', 'Tür Größe L 200cmx60cm', 288000);
+VALUES ('10b69aca-d66a-11eb-b8bc-0242ac130003', 'Tür Größe L 200cmx60cm', 30000);
 INSERT INTO part (part_id, name, delievery_time)
-VALUES ('10b69d4a-d66a-11eb-b8bc-0242ac130003', 'Korpus Größe L 200cmx60cmx55cm', 288000);
+VALUES ('10b69d4a-d66a-11eb-b8bc-0242ac130003', 'Korpus Größe L 200cmx60cmx55cm', 30000);
 INSERT INTO part (part_id, name, delievery_time)
-VALUES ('10b69e6c-d66a-11eb-b8bc-0242ac130003', 'Korpus Größe XL 200cmx120cmx55cm', 288000);
+VALUES ('10b69e6c-d66a-11eb-b8bc-0242ac130003', 'Korpus Größe XL 200cmx120cmx55cm', 30000);
 
 -- Add Product
 INSERT INTO product (product_id, name, production_time)
-VALUES ('9e9383ca-d855-11eb-b8bc-0242ac130003', 'Kühlbox 60cmx60cmx60cm - Modell: Die Studentenbox', 432000);
+VALUES ('9e9383ca-d855-11eb-b8bc-0242ac130003', 'Kühlbox 60cmx60cmx60cm - Modell: Die Studentenbox', 10000);
 INSERT INTO product (product_id, name, production_time)
 VALUES ('7174a632-d4e3-11eb-b8bc-0242ac130003',
-        'Kühlschrank Größe S 100cmx60cmx60cm - Modell: Der Kühlschrank für Singles', 432000);
+        'Kühlschrank Größe S 100cmx60cmx60cm - Modell: Der Kühlschrank für Singles', 20000);
 INSERT INTO product (product_id, name, production_time)
 VALUES ('82a637fe-d4e3-11eb-b8bc-0242ac130003',
-        'Kühlschrank Größe M 150cmx60cmx60cm - Modell: Der Kühlschrank für Pärchen', 432000);
+        'Kühlschrank Größe M 150cmx60cmx60cm - Modell: Der Kühlschrank für Pärchen', 30000);
 INSERT INTO product (product_id, name, production_time)
 VALUES ('8664853a-d4e3-11eb-b8bc-0242ac130003', 'Kühlschrank Größe L 200cmx60cmx60cm - Modell: Für die ganze Familie',
-        576000);
+        30000);
 INSERT INTO product (product_id, name, production_time)
 VALUES ('10b69f3e-d66a-11eb-b8bc-0242ac130003',
-        'Kühlschrank Größe XL 200cmx120cmx60cm - Modell: Aus dem Weg Kleinverdiener', 576000);
+        'Kühlschrank Größe XL 200cmx120cmx60cm - Modell: Aus dem Weg Kleinverdiener', 30400);
 
 -- Add Product_Part
 INSERT INTO product_part (product_id, part_id, count)

@@ -7,6 +7,8 @@ import org.springframework.data.r2dbc.repository.config.EnableR2dbcRepositories
 import org.slf4j.LoggerFactory;
 import org.springframework.context.annotation.Bean
 import org.springframework.scheduling.annotation.EnableScheduling
+import java.util.concurrent.Executor
+import java.util.concurrent.Executors
 
 @SpringBootApplication
 @EnableR2dbcRepositories
@@ -19,6 +21,10 @@ class HeadquarterServiceApplication{
 }
 
 
+//@Bean
+//fun taskExecutor(): Executor {
+//    return Executors.newScheduledThreadPool(2)
+//}
 
 fun main(args: Array<String>) {
     runApplication<HeadquarterServiceApplication>(*args)

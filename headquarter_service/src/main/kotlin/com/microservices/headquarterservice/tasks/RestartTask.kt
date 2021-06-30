@@ -2,25 +2,40 @@ package com.microservices.headquarterservice.tasks
 
 import com.microservices.headquarterservice.HeadquarterServiceApplication
 import com.microservices.headquarterservice.service.TimeService
+import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.boot.ApplicationArguments
 import org.springframework.boot.runApplication
 import org.springframework.context.ConfigurableApplicationContext
-import org.springframework.scheduling.annotation.Scheduled
+import org.springframework.scheduling.annotation.EnableScheduling
+import org.springframework.scheduling.annotation.SchedulingConfigurer
+import org.springframework.scheduling.config.ScheduledTaskRegistrar
 import org.springframework.stereotype.Component
 import java.time.Instant
 import java.util.*
+import java.util.concurrent.Executor
+
 
 
 @Component
+@EnableScheduling
 class RestartTask(
     val timeService: TimeService,
-    var context: ConfigurableApplicationContext
-) {
+    var context: ConfigurableApplicationContext,
+    val taskExecutor: Executor
+)//: SchedulingConfigurer
+{
     val logger = LoggerFactory.getLogger(RestartTask::class.java)
     var doneOnce = false
 
-    @Scheduled(fixedRate = 500)
+
+//    override fun configureTasks(taskRegistrar: ScheduledTaskRegistrar) {
+//        taskRegistrar.setScheduler(taskExecutor)
+//
+//        taskRegistrar.addFixedRateTask({
+//            restart()
+//        }, timeService.getReportDelay())
+//    }
     fun restart() {
         val virtualNow = Date.from(timeService.getVirtualLocalTime(Instant.now().toEpochMilli()))
         val virtualNowHours = virtualNow.hours
