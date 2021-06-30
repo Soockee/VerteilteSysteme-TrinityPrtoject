@@ -16,9 +16,7 @@ import java.util.*
 class OrderController(
     private val orderService: OrderService,
 ) {
-    companion object {
-        val logger = LoggerFactory.getLogger(OrderController::class.java)
-    }
+    val logger: Logger = LoggerFactory.getLogger(OrderController::class.java)
 
     @PostMapping("/order")
     fun create(@RequestBody orderRequest: OrderRequest): Order {

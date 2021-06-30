@@ -1,0 +1,13 @@
+{
+  "customer_id": "b9effa6e-d93a-11eb-b8bc-0242ac130003",
+  "products": [
+    {
+      "product_id": "10b69f3e-d66a-11eb-b8bc-0242ac130003",
+      "count": 1
+    },
+    {
+      "product_id": "9e9383ca-d855-11eb-b8bc-0242ac130003",
+      "count": 2
+    }
+  ]
+}
