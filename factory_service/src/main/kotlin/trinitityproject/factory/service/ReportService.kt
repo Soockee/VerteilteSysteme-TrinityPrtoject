@@ -47,15 +47,11 @@ class ReportService(
 
         val completedProductPartOrdersPairs = getCompletedProductPartOrdersPairs(productOrders);
 
-        val completedProductPartOrdersPairsToday = completedProductPartOrdersPairs.filter { productPartOrdersPair ->
-            timeService.isSameVirtualLocalDate(productPartOrdersPair.first.completionTime)
-        }
-
         val report = Report(
             null,
             getProductOrdersToday(productOrders).size,
             completedProductPartOrdersPairs.size,
-            getCompletedProductsCostsToday(completedProductPartOrdersPairsToday),
+            getCompletedProductsCostsToday(completedProductPartOrdersPairs),
             countOpenOrders(productOrders),
             calculateFactoryProductivity(productOrders),
             factoryName,
@@ -165,6 +161,9 @@ class ReportService(
             .map { productOrder -> productOrder.products.map { product -> Pair(product, productOrder.partOrders) } }
             .flatten()
             .toCollection(ArrayList())
-            .filter { productPartOrderPair -> productPartOrderPair.first.status == Status.DONE }
+            .filter { productPartOrderPair ->
+                productPartOrderPair.first.status == Status.DONE &&
+                    timeService.isSameVirtualLocalDate(productPartOrderPair.first.completionTime)
+            }
     }
 }
