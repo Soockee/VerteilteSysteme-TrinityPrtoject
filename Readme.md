@@ -10,11 +10,12 @@
 ## Requirements
 
 [Requirements Document](./docs/Requirements%20für%20eFridge.com.pdf)
-[TODO Requirements](https://git.thm.de/verteilte-systeme-2021-efridge/gruppe-2-trinity-project/-/blob/master/docs/requirements.md)
 
-## Get Started
+## Starting the project
 
-- TODO
+- Requirements: `docker & docker-compose`
+
+- Run start script `./run.sh`
 
 ## Architecture
 
@@ -23,17 +24,15 @@
 ## Sample Requests
 
 ### Order
+
 - [order 1](./docs/requests/orderRequest.json)
-
 - [order 2](./docs/requests/orderRequest2.json)
-
 - [order 3](./docs/requests/orderRequest3.json)
 
 ### Ticket
+
 - Submit Ticket: [Submit Ticket](./docs/requests/supportTicketRequest.json)
-
 - Edit Ticket: [edit ticket](./doc/requests/supportTicketText.json)
-
 
 ## Our range of products
 
