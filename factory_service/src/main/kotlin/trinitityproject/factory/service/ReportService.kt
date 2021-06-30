@@ -65,7 +65,7 @@ class ReportService(
         logger.info(
             "new report from $factoryName created at " +
                     "${timeService.getVirtualLocalTime(System.currentTimeMillis())}: " +
-                    "${report.toString()}"
+                    "$report"
         )
 
         return report
@@ -132,12 +132,10 @@ class ReportService(
      */
     fun calculateFactoryProductivity(productOrders: List<ProductOrder>): Number {
         var completedLastDay = productOrders
-            .asSequence()
             .map { productOrder -> productOrder.products }
             .flatten()
-            .toCollection(ArrayList())
             .filter { product ->
-                timeService.getVirtualLocalTime(product.completionTime).toEpochMilli() ==
+                timeService.getVirtualLocalTime(product.completionTime).toEpochMilli() >=
                     timeService.getVirtualLocalTime(System.currentTimeMillis())
                         .minus(24, ChronoUnit.HOURS)
                         .toEpochMilli()
@@ -145,7 +143,7 @@ class ReportService(
 
         var receivedLastDay = productOrders
             .filter { productOrder ->
-                timeService.getVirtualLocalTime(productOrder.receptionTime).toEpochMilli() ==
+                timeService.getVirtualLocalTime(productOrder.receptionTime).toEpochMilli() >=
                     timeService.getVirtualLocalTime(System.currentTimeMillis())
                         .minus(24, ChronoUnit.HOURS)
                         .toEpochMilli()

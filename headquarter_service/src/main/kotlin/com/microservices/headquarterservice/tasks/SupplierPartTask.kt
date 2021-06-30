@@ -54,7 +54,7 @@ class SupplierPartTask(
         var minScheduleTime = Int.MIN_VALUE
         for (supplierOrderPart in supplierOrderParts.filter { supplierOrderPart -> supplierOrderPart.supplier_order_id == supplierOrder.order_id }) {
             for (part in parts.filter {  e -> e.part_id == supplierOrderPart.part_id  }){
-                val deliveryTimeMillis = part.delievery_time * 1000
+                val deliveryTimeMillis = part.delievery_time
                 val future = updateStatusTask(part,SupplierPartTimerTask(part), timeService.realtimeToVirtualTimeMillis(deliveryTimeMillis.toLong()))
                 partTimerList.add(future)
                 if (part.delievery_time > minScheduleTime) {

@@ -27,11 +27,14 @@ class ProductService(
             .asFlow()
             .filterNotNull()
             .map { productOrder ->
+                if(productOrder.partOrders.isEmpty()) productOrder
+
                 val productIdx = productOrder
                     .products
                     .indexOfFirst {
                         (it.productData.productId == productId) && (it.status != status)
                     }
+
                 productOrder.products[productIdx].status = status
                 productOrder
             }
