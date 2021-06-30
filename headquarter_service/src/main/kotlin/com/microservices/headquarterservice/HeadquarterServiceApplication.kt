@@ -21,11 +21,6 @@ class HeadquarterServiceApplication{
 }
 
 
-//@Bean
-//fun taskExecutor(): Executor {
-//    return Executors.newScheduledThreadPool(2)
-//}
-
 fun main(args: Array<String>) {
     runApplication<HeadquarterServiceApplication>(*args)
 }
