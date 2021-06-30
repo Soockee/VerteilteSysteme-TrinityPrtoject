@@ -1,7 +1,5 @@
 # Trinity-Project
 
-[Requirements](https://git.thm.de/verteilte-systeme-2021-efridge/gruppe-2-trinity-project/-/blob/master/docs/requirements.md)
-[Requirements-doc](https://git.thm.de/verteilte-systeme-2021-efridge/gruppe-2-trinity-project/-/blob/master/docs/requirements_doc.pdf)
 - A project in the course 'Distributed Systems'
 - Members of the Trinity-Project
   - Björn Franke
@@ -25,14 +23,16 @@
 ## Sample Requests
 
 ### Order
-- [order 1](./docs/requests/orderRequest1.json)
+- [order 1](./docs/requests/orderRequest.json)
 
 - [order 2](./docs/requests/orderRequest2.json)
 
 - [order 3](./docs/requests/orderRequest3.json)
 
 ### Ticket
-- Submit Ticket [ticket 3](./docs/requests/supportTicketRequest.json)
+- Submit Ticket: [Submit Ticket](./docs/requests/supportTicketRequest.json)
+
+- Edit Ticket: [edit ticket](./doc/requests/supportTicketText.json)
 
 
 ## Our range of products
