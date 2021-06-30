@@ -33,7 +33,6 @@ class PartOrderService(
             .asFlow()
             .filterNotNull()
             .map { productOrder: ProductOrder ->
-                if(productOrder.partOrders.isEmpty()) productOrder
 
                 val productIdx = productOrder
                     .partOrders

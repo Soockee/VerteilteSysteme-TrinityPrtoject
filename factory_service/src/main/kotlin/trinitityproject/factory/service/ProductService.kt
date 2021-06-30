@@ -16,25 +16,33 @@ class ProductService(
 ) {
 
     /**
-     * Sets all Products of the given productOrderId to done.
+     * Sets the Product with the given ID to done.
+     * A random product is picked since the index of a value could change.
      *
      * @return The updated ProductOrder
      */
-    suspend fun setAllProductStatusToDone(productOrderId: UUID): ProductOrder {
+    suspend fun setProductStatusToDone(productOrderId: UUID, productId: UUID): ProductOrder {
         val updatedProductOrder = repository
             .findById(productOrderId)
             .asFlow()
             .filterNotNull()
+            .map { productOrder ->
+
+                val productIdx = productOrder
+                    .products
+                    .indexOfFirst {
+                        ((it.productData.productId == productId) && (it.status == Status.OPEN))
+                    }
+
+                productOrder.products[productIdx].status = Status.DONE
+                productOrder
+            }
             .first()
-
-        updatedProductOrder.products.forEach {
-            it.status = Status.DONE
-        }
-
         return repository
             .save(updatedProductOrder)
             .asFlow()
             .filterNotNull()
             .first()
     }
+
 }

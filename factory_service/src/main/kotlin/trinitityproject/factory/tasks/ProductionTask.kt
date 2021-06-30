@@ -141,7 +141,7 @@ class ProductionTask(
                         }
 
                     val noProductOrdersArePending = productOrder
-                        .partOrders
+                        .products
                         .none { it.status == Status.OPEN }
 
                     // If one part-order is not completed productOrder will be discarded and picked up later
@@ -155,11 +155,13 @@ class ProductionTask(
                                 delay(timeService.realtimeToVirtualTimeMillis(product.productData.productionTime) * product.count)
                             }
                             log.info("Finished Production of ${product.count} - ${product.productData.name} after: ${System.currentTimeMillis() - startTime}")
+
+                            productOrder = productService.setProductStatusToDone(
+                                productOrderId = productOrder.productOrderId,
+                                productId = product.productData.productId
+                            )
                         }
-                        //set all products to done when they are produced
-                        productService.setAllProductStatusToDone(
-                            productOrderId = productOrder.productOrderId,
-                        )
+
                         // If all products are produced the product order will be set to done
                         productOrder = productOrderService
                             .updateProductOrderState(

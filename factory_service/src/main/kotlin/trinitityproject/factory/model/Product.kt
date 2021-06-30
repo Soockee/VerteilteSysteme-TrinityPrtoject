@@ -18,6 +18,6 @@ data class Product(
     @JsonProperty("status", access = JsonProperty.Access.READ_ONLY)
     var status: Status = Status.OPEN,
 
-    @JsonProperty("status", access = JsonProperty.Access.READ_ONLY)
+    @JsonProperty("completionTime", access = JsonProperty.Access.READ_ONLY)
     var completionTime: Long
 )
