@@ -34,6 +34,53 @@
 - Submit Ticket: [Submit Ticket](./docs/requests/supportTicketRequest.json)
 - Edit Ticket: [edit ticket](./doc/requests/supportTicketText.json)
 
+## Example Requests
+
+### Order
+
+```bash
+curl -XPOST -H "Content-type: application/json" -d '{
+  "customer_id": "b9effa6e-d93a-11eb-b8bc-0242ac130003",
+  "products": [
+    {
+      "product_id": "10b69f3e-d66a-11eb-b8bc-0242ac130003",
+      "count": 1
+    },
+    {
+      "product_id": "9e9383ca-d855-11eb-b8bc-0242ac130003",
+      "count": 2
+    }
+  ]
+}' 'localhost:8080/order/'
+```
+
+
+### Ticket
+
+create ticket in HQ:
+
+```bash
+curl -XPOST -H "Content-type: application/json" -d '{
+  "customerId" : "10b6a0b0-d66a-11eb-b8bc-0242ac130003",
+  "text" : "Mein Kühlschrank geht nicht mehr zuuuu."
+}' 'localhost:8080/ticket'
+```
+
+
+update ticket in Support Service:
+```bash
+curl -XPATCH -H "Content-type: application/json" -d '{
+	"supportTicketId": "0f0b42ce-d855-11eb-b8bc-0242ac130003",
+	"status": "OPEN",
+	"text": "KLAPPE ZU AFFE TOD"
+}' 'localhost:8081/ticket'
+```
+### Administration: restart headquarter
+
+```bash
+curl -XGET 'localhost:8080/restart'
+```
+
 ## Our range of products
 
 - [Supplier](./docs/supplier.md)
