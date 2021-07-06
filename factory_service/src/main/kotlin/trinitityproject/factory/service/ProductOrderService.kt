@@ -29,7 +29,7 @@ class ProductOrderService(
             order.partOrders,
             factoryName)
         val submitedOrder = repository.insert(test).block()
-        log.info("Saved to order to database: $submitedOrder")
+        log.info("saved order ${submitedOrder?.productOrderId} to database")
     }
 
     /**
