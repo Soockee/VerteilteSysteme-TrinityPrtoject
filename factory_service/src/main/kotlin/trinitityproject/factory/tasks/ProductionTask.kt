@@ -34,7 +34,7 @@ class ProductionTask(
     private val log: Logger = LoggerFactory.getLogger(ProductionTask::class.java)
 
 
-    @Scheduled(fixedRate = 3000)
+    @Scheduled(fixedDelay = 500)
     fun scheduleTaskWithFixedRate() {
         val currDate = LocalDate.ofInstant(
             timeService.getVirtualLocalTime(System.currentTimeMillis()),

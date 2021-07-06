@@ -29,7 +29,7 @@ class SupplierPartTask(
         val logger = LoggerFactory.getLogger(SupplierPartTask::class.java)
     }
 
-    @Scheduled(fixedRate = 2000)
+    @Scheduled(fixedDelay = 500)
     fun processSupplierOrder() {
         try {
             val openSupplierOrder = supplierOrderRepository
