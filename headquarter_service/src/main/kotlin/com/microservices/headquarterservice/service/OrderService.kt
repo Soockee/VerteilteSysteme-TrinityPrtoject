@@ -39,10 +39,11 @@ class OrderService(
     fun createOrder(orderRequest: OrderRequest): Order {
         var orderRaw = Order(null, orderRequest.customer_id, Instant.now(), "uncomplete")
         val order = orderRepository.save(orderRaw).block()!!
-        logger.warn("create:::: order  ${order.order_id} ---  ${order.customer_id}")
+
+        logger.warn("create order  ${order.order_id} ---  ${order.customer_id}")
+
         val orderProductList = mutableListOf<OrderProduct>()
         for (product in orderRequest.products) {
-
             orderProductList.add(
                 orderProductRepository.save(
                     OrderProduct(
@@ -53,8 +54,10 @@ class OrderService(
                     )
                 ).block()!!
             )
-            logger.warn("saving some stuff :::: order  ${order.order_id} ---  ${order.customer_id}")
         }
+
+        logger.warn("saved order  ${order.order_id} ---  ${order.customer_id}")
+
         sendCustomerOrder(order, orderProductList)
         return order
     }

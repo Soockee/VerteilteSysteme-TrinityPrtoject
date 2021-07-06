@@ -43,7 +43,7 @@ class SupplierPartTask(
             while (!future.isDone) {
             }
         } catch (e: NullPointerException) {
-            logger.error("No supplier-order found")
+            logger.error("no open supplier order found")
         }
     }
 

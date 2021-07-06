@@ -41,13 +41,13 @@ class ProductionTask(
             TimeZone.getTimeZone(timeZone).toZoneId()
         )
         if ((currDate.dayOfWeek == DayOfWeek.SATURDAY) || (currDate.dayOfWeek == DayOfWeek.SUNDAY)) {
-            log.info("Today it's: ${currDate.dayOfWeek}, WE DON'T WORK\"")
+            log.info("today it's: ${currDate.dayOfWeek}, WE DON'T WORK\"")
         } else {
-            log.info("Today it's: ${currDate.dayOfWeek}, WE WORK")
+            log.info("today it's: ${currDate.dayOfWeek}, WE WORK")
             runBlocking {
                 try {
                     var productOrder = partOrderService.getUnfinishedProductOrder()
-                    log.warn("Process: $productOrder")
+                    log.warn("processing order ${productOrder.productOrderId}")
                     if (productOrder.partOrders.isEmpty()) {
                         val partOrders = partOrderService
                             .getRequiredParts(productOrder)
@@ -95,7 +95,6 @@ class ProductionTask(
                                     //The creation of a part-order will be requested 3 time with an 2 second delay which will be doubled on each retry
                                     .retryWhen(Retry.backoff(3, Duration.ofSeconds(2)))
                                     .block()!!
-                                log.warn("orderID: " + res.supplierId.toString())
                                 partOrder.orderId = res.supplierId
                             }
                         //If all orders have been accepted by the suppliers, the orders will be saved to the database
@@ -104,7 +103,7 @@ class ProductionTask(
                             partOrders = partOrders
                         )
                         productOrder = productOrderService.getOrder(productOrder.productOrderId)
-                        log.warn("Added part Orders to productOrder: $productOrder")
+                        log.warn("added part orders to order: ${productOrder.productOrderId}")
                     }
 
                     // It will be checked that all part-orders are completed by the supplier
@@ -129,14 +128,14 @@ class ProductionTask(
                                     .retryWhen(Retry.backoff(3, Duration.ofSeconds(2)))
                                     .block()!!
 
-                                log.warn("Got Response: $res")
+                                log.warn("got response for part order: $res")
                                 if (res.status == SupplierStatus.COMPLETE) {
                                     productOrder = partOrderService.updatePartOderStatus(
                                         productOrderId = productOrder.productOrderId,
                                         partOrderId = it.partOrderId,
                                         status = Status.DONE
                                     )
-                                    log.warn("Updated Part Order Status: $productOrder")
+                                    log.warn("updated part Order status for order ${productOrder.productOrderId}")
                                 }
                             }
                         }
@@ -154,12 +153,11 @@ class ProductionTask(
                         for (product in productOrder.products) {
                             // Wait for each product the given production-time
                             val startTime = System.currentTimeMillis()
-                            log.info("")
-                            log.info("Started Production of ${product.count} - ${product.productData.name} with the production-time ${product.productData.productionTime}: $startTime")
+                            log.info("started production of ${product.count} - ${product.productData.name} with production-time ${product.productData.productionTime}: $startTime")
                             runBlocking {
                                 delay(timeService.realtimeToVirtualTimeMillis(product.productData.productionTime) * product.count)
                             }
-                            log.info("Finished Production of ${product.count} - ${product.productData.name} after: ${System.currentTimeMillis() - startTime}")
+                            log.info("finished production of ${product.count} - ${product.productData.name} after: ${System.currentTimeMillis() - startTime}")
 
                             productOrder = productService.setProductStatusToDone(
                                 productOrderId = productOrder.productOrderId,
@@ -173,15 +171,15 @@ class ProductionTask(
                                 productOrderId = productOrder.productOrderId,
                                 status = Status.DONE
                             )
-                        log.info("Finished Product: $productOrder")
+                        log.info("finished products for order ${productOrder.productOrderId}")
                     } else {
-                        log.info("Part Orders are still pending: $productOrder")
+                        log.info("part orders still pending for order ${productOrder.productOrderId}")
                     }
                 } catch (e: NoSuchElementException) {
-                    log.warn("No open products")
+                    log.warn("no open orders")
                 } catch (e: Exception) {
                     // Show
-                    log.error("Production got interrupted: " + e.printStackTrace())
+                    log.error("production got interrupted: " + e.printStackTrace())
                 }
             }
         }

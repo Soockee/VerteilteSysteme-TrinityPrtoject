@@ -31,7 +31,7 @@ class Receiver(
 
     @RabbitListener(queues = ["\${microservice.rabbitmq.queueCondition}"])
     fun receiveCondition(@Payload request: ConditionRequest): ConditionResponse {
-        logger.warn("receiveCondition: " + request)
+        logger.warn("receiveCondition: $request")
         return conditionService.getByPartId(request.partId.toString())
             .publishOn(Schedulers.boundedElastic())
             .collectList()
